@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import EarlCanvas from "./components/EarlCanvas";
 import SpeechBubble from "./components/SpeechBubble";
 import Confetti from "./components/Confetti";
+import SettingsPanel from "./components/SettingsPanel";
+import AboutPanel from "./components/AboutPanel";
 import { useEarlBehavior } from "./hooks/useEarlBehavior";
 import { useBirthday } from "./hooks/useBirthday";
 import { useDrag } from "./hooks/useDrag";
 import { WINDOW_HEIGHT } from "./utils/constants";
 
-function App() {
+function MainWindow() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const { isBirthday, name: birthdayName } = useBirthday();
 
@@ -28,7 +30,6 @@ function App() {
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
-      // Only handle click if not a drag
       if (e.detail === 1) {
         earl.handleClick();
       }
@@ -38,7 +39,6 @@ function App() {
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    // Right-click context menu will be handled by tray events
   }, []);
 
   if (!earl.ready) return null;
@@ -53,7 +53,6 @@ function App() {
         overflow: "hidden",
       }}
     >
-      {/* Confetti layer */}
       {isBirthday && (
         <Confetti
           active={isBirthday}
@@ -64,7 +63,6 @@ function App() {
         />
       )}
 
-      {/* Earl */}
       <div
         style={{
           position: "absolute",
@@ -78,13 +76,11 @@ function App() {
         onMouseEnter={earl.handleMouseEnter}
         onMouseLeave={earl.handleMouseLeave}
       >
-        {/* Speech bubble */}
         <SpeechBubble
           message={earl.speechMessage}
           onDone={earl.dismissSpeech}
           displaySize={earl.displaySize}
         />
-
         <EarlCanvas
           animatorState={earl.animatorState}
           displaySize={earl.displaySize}
@@ -93,6 +89,15 @@ function App() {
       </div>
     </div>
   );
+}
+
+function App() {
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get("view");
+
+  if (view === "settings") return <SettingsPanel />;
+  if (view === "about") return <AboutPanel />;
+  return <MainWindow />;
 }
 
 export default App;

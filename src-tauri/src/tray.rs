@@ -2,6 +2,7 @@ use tauri::{
     image::Image,
     menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem},
     tray::TrayIconBuilder,
+    webview::WebviewWindowBuilder,
     Manager,
 };
 
@@ -27,8 +28,7 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
         ],
     )?;
 
-    let tray_icon = Image::from_path("icons/tray_icon_32.png")
-        .unwrap_or_else(|_| Image::from_bytes(include_bytes!("../../assets/icons/tray_icon_32.png")).expect("Failed to load tray icon"));
+    let tray_icon = Image::from_bytes(include_bytes!("../../assets/icons/tray_icon_32.png"))?;
 
     let _tray = TrayIconBuilder::new()
         .icon(tray_icon)
@@ -45,22 +45,15 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
                 }
             }
             "sound" => {
-                // Sound toggle — will be wired to frontend via events
                 if let Some(window) = app.get_webview_window("main") {
                     window.emit("toggle-sound", ()).ok();
                 }
             }
             "settings" => {
-                // Will open settings window in Phase 9
-                if let Some(window) = app.get_webview_window("main") {
-                    window.emit("open-settings", ()).ok();
-                }
+                open_panel_window(app, "settings", "Earl Settings", 320, 420);
             }
             "about" => {
-                // Will open about window in Phase 10
-                if let Some(window) = app.get_webview_window("main") {
-                    window.emit("open-about", ()).ok();
-                }
+                open_panel_window(app, "about", "About Earl", 300, 380);
             }
             "quit" => {
                 app.exit(0);
@@ -82,4 +75,24 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
         .build(app)?;
 
     Ok(())
+}
+
+fn open_panel_window(app: &tauri::AppHandle, label: &str, title: &str, width: u32, height: u32) {
+    // If window already exists, just focus it
+    if let Some(window) = app.get_webview_window(label) {
+        window.show().ok();
+        window.set_focus().ok();
+        return;
+    }
+
+    let url = format!("index.html?view={}", label);
+    let builder = WebviewWindowBuilder::new(app, label, tauri::WebviewUrl::App(url.into()))
+        .title(title)
+        .inner_size(width as f64, height as f64)
+        .resizable(false)
+        .center();
+
+    if let Ok(window) = builder.build() {
+        window.set_focus().ok();
+    }
 }
