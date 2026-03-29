@@ -1,0 +1,47 @@
+{
+  "idle_front": {
+    "frames": ["Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png"],
+    "durations": [800, 800, 800, 200, 150, 200],
+    "loop": true
+  },
+  "idle_side": {
+    "frames": ["Idle_Side.png"],
+    "durations": [1000],
+    "loop": true
+  },
+  "walk_right": {
+    "frames": ["walk_side.png", "Walk_step_1.png", "walk_side.png", "Walk_step_2.png"],
+    "durations": [150, 150, 150, 150],
+    "loop": true
+  },
+  "walk_left": {
+    "frames": ["walk_side_left.png", "Walk_step_1_left.png", "walk_side_left.png", "Walk_step_2_left.png"],
+    "durations": [150, 150, 150, 150],
+    "loop": true
+  },
+  "hop": {
+    "frames": ["Earl_Front_Idle.png", "Hop_Squat.png", "Hop_Air.png", "Hop_Air.png", "Hop_Squat.png", "Earl_Front_Idle.png"],
+    "durations": [80, 100, 150, 150, 100, 80],
+    "loop": false
+  },
+  "picked_up": {
+    "frames": ["Picked_up.png"],
+    "durations": [300],
+    "loop": true
+  },
+  "dropped": {
+    "frames": ["dropped_squish.png", "dropped_squish.png", "Hop_Squat.png", "Earl_Front_Idle.png"],
+    "durations": [200, 200, 150, 100],
+    "loop": false
+  },
+  "sleep": {
+    "frames": ["sleep.png"],
+    "durations": [1000],
+    "loop": true
+  },
+  "birthday": {
+    "frames": ["birthday.png"],
+    "durations": [500],
+    "loop": true
+  }
+}
