@@ -16,9 +16,25 @@ export interface AnimatorState {
 const manifest = spritesManifest as Record<string, AnimationDef>;
 const imageCache = new Map<string, HTMLImageElement>();
 
+// Fallback map: if a sprite PNG doesn't exist, use this one instead.
+// When real sprites are added to the folder, they'll be loaded automatically.
+const SPRITE_FALLBACKS: Record<string, string> = {
+  // Sprites not yet created — fall back to similar existing sprites
+  "run_step2.png": "Walk_step_2.png",
+  "run_step2_left.png": "Walk_step_2_left.png",
+  "sitting_to_standing.png": "Earl_Front_Idle.png",
+  "standing_idle.png": "Earl_Front_Idle.png",
+  "standing_to_sitting.png": "Earl_Front_Idle.png",
+  "plop_down.png": "dropped_squish.png",
+  "stretch.png": "Hop_Air.png",
+  "drag_left.png": "Picked_up.png",
+  "drag_right.png": "Picked_up.png",
+  "drag_up.png": "Picked_up.png",
+  "drag_down.png": "Picked_up.png",
+  "drag_fast.png": "Picked_up.png",
+};
+
 function resolveSpritePath(filename: string): string {
-  // Vite will handle these imports at build time via the assets directory
-  // Use a dynamic URL resolved relative to the sprites folder
   return new URL(`../assets/sprites/${filename}`, import.meta.url).href;
 }
 
@@ -43,7 +59,8 @@ export function preloadSprites(): Promise<void> {
           resolve();
         };
         img.onerror = () => {
-          console.warn(`Failed to load sprite: ${file}`);
+          // Sprite doesn't exist — fallback will be used at render time
+          console.warn(`Sprite not found, will use fallback: ${file}`);
           resolve();
         };
         img.src = resolveSpritePath(file);
@@ -100,5 +117,6 @@ export function getCurrentFrame(state: AnimatorState): HTMLImageElement | undefi
   const anim = manifest[state.animation];
   if (!anim) return undefined;
   const filename = anim.frames[state.frameIndex];
-  return imageCache.get(filename);
+  // Try the real sprite first, then fall back
+  return imageCache.get(filename) ?? imageCache.get(SPRITE_FALLBACKS[filename] ?? "");
 }

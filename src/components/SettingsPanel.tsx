@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { EarlConfig, getConfig, saveConfig } from "../utils/config";
 import { SIZE_OPTIONS } from "../utils/constants";
+import { emit } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { enable as enableAutostart, disable as disableAutostart } from "@tauri-apps/plugin-autostart";
 
 export default function SettingsPanel() {
   const [config, setConfig] = useState<EarlConfig | null>(null);
@@ -18,8 +21,20 @@ export default function SettingsPanel() {
   const update = (partial: Partial<EarlConfig>) => {
     const updated = { ...config, ...partial };
     setConfig(updated);
-    saveConfig(updated).catch(() => {});
+    saveConfig(updated).then(() => {
+      // Notify main window that config changed
+      emit("config-changed", updated).catch(() => {});
+    }).catch(() => {});
   };
+
+  const handleSaveAndClose = useCallback(() => {
+    if (config) {
+      saveConfig(config).then(() => {
+        emit("config-changed", config).catch(() => {});
+        getCurrentWindow().close().catch(() => {});
+      }).catch(() => {});
+    }
+  }, [config]);
 
   const daysSinceFirstLaunch = config.stats.firstLaunchDate
     ? Math.floor(
@@ -101,9 +116,15 @@ export default function SettingsPanel() {
           <input
             type="checkbox"
             checked={config.behavior.launchOnStartup}
-            onChange={(e) =>
-              update({ behavior: { launchOnStartup: e.target.checked } })
-            }
+            onChange={(e) => {
+              const enabled = e.target.checked;
+              update({ behavior: { launchOnStartup: enabled } });
+              if (enabled) {
+                enableAutostart().catch(() => {});
+              } else {
+                disableAutostart().catch(() => {});
+              }
+            }}
             style={styles.checkbox}
           />
           Launch on startup
@@ -120,6 +141,13 @@ export default function SettingsPanel() {
         <div style={styles.stat}>
           Days as companion: {daysSinceFirstLaunch}
         </div>
+      </div>
+
+      {/* Save & Close */}
+      <div style={styles.section}>
+        <button onClick={handleSaveAndClose} style={styles.saveButton}>
+          Save &amp; Close
+        </button>
       </div>
     </div>
   );
@@ -190,5 +218,16 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 13,
     color: "#666",
     marginBottom: 4,
+  },
+  saveButton: {
+    width: "100%",
+    padding: "10px 16px",
+    background: "#FFD666",
+    border: "1px solid #E8943A",
+    borderRadius: 8,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    color: "#333",
   },
 };

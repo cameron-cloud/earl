@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import EarlCanvas from "./components/EarlCanvas";
 import SpeechBubble from "./components/SpeechBubble";
 import Confetti from "./components/Confetti";
@@ -7,39 +7,60 @@ import AboutPanel from "./components/AboutPanel";
 import { useEarlBehavior } from "./hooks/useEarlBehavior";
 import { useBirthday } from "./hooks/useBirthday";
 import { useDrag } from "./hooks/useDrag";
-import { WINDOW_HEIGHT } from "./utils/constants";
+import PetHeart from "./components/PetHeart";
+import { showWindow } from "./utils/config";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { checkForUpdates } from "./utils/updater";
 
 function MainWindow() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const { isBirthday, name: birthdayName } = useBirthday();
 
   useEffect(() => {
-    const handleResize = () => setScreenWidth(window.innerWidth);
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+      setScreenHeight(window.innerHeight);
+    };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const earl = useEarlBehavior(isBirthday, birthdayName, screenWidth);
+  const earl = useEarlBehavior(isBirthday, birthdayName, screenWidth, screenHeight);
+
+  // Show window once sprites are loaded and Earl is ready to render
+  const shownRef = useRef(false);
+  useEffect(() => {
+    if (earl.ready && !shownRef.current) {
+      shownRef.current = true;
+      showWindow().catch(() => {});
+      checkForUpdates();
+    }
+  }, [earl.ready]);
 
   const dragCallbacks = {
     onDragStart: earl.handleDragStart,
     onDragMove: earl.handleDragMove,
     onDragEnd: earl.handleDragEnd,
   };
-  const { handleMouseDown } = useDrag(dragCallbacks);
+  const { handlePointerDown, didDrag } = useDrag(dragCallbacks);
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
+      if (didDrag.current) return; // Was a drag, not a click
       if (e.detail === 1) {
         earl.handleClick();
       }
     },
-    [earl.handleClick]
+    [earl.handleClick, didDrag]
   );
 
+  const [petCount, setPetCount] = useState(0);
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-  }, []);
+    const petted = earl.handlePet();
+    if (petted) setPetCount((c) => c + 1);
+  }, [earl.handlePet]);
 
   if (!earl.ready) return null;
 
@@ -47,7 +68,7 @@ function MainWindow() {
     <div
       style={{
         width: "100%",
-        height: WINDOW_HEIGHT,
+        height: "100vh",
         background: "transparent",
         position: "relative",
         overflow: "hidden",
@@ -59,7 +80,7 @@ function MainWindow() {
           burst={earl.confettiBurst}
           onBurstDone={earl.clearConfettiBurst}
           areaWidth={screenWidth}
-          areaHeight={WINDOW_HEIGHT}
+          areaHeight={screenHeight}
         />
       )}
 
@@ -70,7 +91,7 @@ function MainWindow() {
           top: earl.position.y,
           cursor: "pointer",
         }}
-        onMouseDown={handleMouseDown}
+        onPointerDown={handlePointerDown}
         onClick={handleClick}
         onContextMenu={handleContextMenu}
         onMouseEnter={earl.handleMouseEnter}
@@ -81,10 +102,12 @@ function MainWindow() {
           onDone={earl.dismissSpeech}
           displaySize={earl.displaySize}
         />
+        <PetHeart trigger={petCount} displaySize={earl.displaySize} />
         <EarlCanvas
           animatorState={earl.animatorState}
           displaySize={earl.displaySize}
           sleepBreathOffset={earl.sleepBreathOffset}
+          swingAngle={earl.swingAngle}
         />
       </div>
     </div>
@@ -92,11 +115,10 @@ function MainWindow() {
 }
 
 function App() {
-  const params = new URLSearchParams(window.location.search);
-  const view = params.get("view");
-
-  if (view === "settings") return <SettingsPanel />;
-  if (view === "about") return <AboutPanel />;
+  // Route by window label — Rust sets "settings" or "about" when opening panels
+  const label = getCurrentWindow().label;
+  if (label === "settings") return <SettingsPanel />;
+  if (label === "about") return <AboutPanel />;
   return <MainWindow />;
 }
 

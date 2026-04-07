@@ -20,11 +20,21 @@
     "core:window:allow-available-monitors",
     "core:window:allow-current-monitor",
     "core:window:allow-primary-monitor",
+    "core:window:allow-is-visible",
+    "core:window:allow-scale-factor",
     "core:tray:default",
     "core:tray:allow-set-icon",
     "core:menu:default",
+    "core:event:default",
+    "core:event:allow-emit",
+    "core:event:allow-listen",
     "autostart:allow-enable",
     "autostart:allow-disable",
-    "autostart:allow-is-enabled"
+    "autostart:allow-is-enabled",
+    "updater:default",
+    "updater:allow-check",
+    "updater:allow-download-and-install",
+    "process:allow-restart",
+    "process:allow-exit"
   ]
 }

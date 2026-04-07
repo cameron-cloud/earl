@@ -1,7 +1,7 @@
 {
   "idle_front": {
-    "frames": ["Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png"],
-    "durations": [800, 800, 800, 200, 150, 200],
+    "frames": ["Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Idle.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png"],
+    "durations": [1200, 800, 120, 200, 1500, 600, 120, 100, 120, 800],
     "loop": true
   },
   "idle_side": {
@@ -19,6 +19,16 @@
     "durations": [150, 150, 150, 150],
     "loop": true
   },
+  "run_right": {
+    "frames": ["run_step1.png", "walk_side.png", "run_step2.png", "walk_side.png"],
+    "durations": [100, 80, 100, 80],
+    "loop": true
+  },
+  "run_left": {
+    "frames": ["run_step1_left.png", "walk_side_left.png", "run_step2_left.png", "walk_side_left.png"],
+    "durations": [100, 80, 100, 80],
+    "loop": true
+  },
   "hop": {
     "frames": ["Earl_Front_Idle.png", "Hop_Squat.png", "Hop_Air.png", "Hop_Air.png", "Hop_Squat.png", "Earl_Front_Idle.png"],
     "durations": [80, 100, 150, 150, 100, 80],
@@ -34,14 +44,99 @@
     "durations": [200, 200, 150, 100],
     "loop": false
   },
+  "dropped_medium": {
+    "frames": ["dropped_squish.png", "dropped_squish.png", "dropped_squish.png", "Hop_Squat.png", "Earl_Front_Idle.png"],
+    "durations": [150, 100, 100, 100, 100],
+    "loop": false
+  },
+  "dropped_big": {
+    "frames": ["dropped_squish.png", "dropped_squish.png", "dropped_squish.png", "dropped_squish.png", "Hop_Squat.png", "Earl_Front_Idle.png"],
+    "durations": [200, 150, 150, 100, 100, 100],
+    "loop": false
+  },
   "sleep": {
     "frames": ["sleep.png"],
     "durations": [1000],
     "loop": true
   },
+  "wall_bump": {
+    "frames": ["wall_bump.png", "wall_bump.png", "dizzy.png", "dizzy.png", "dizzy.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png"],
+    "durations": [200, 100, 200, 200, 200, 200, 150],
+    "loop": false
+  },
+  "wall_bump_run": {
+    "frames": ["wall_bump.png", "wall_bump.png", "dizzy.png", "dizzy.png", "dizzy.png", "dizzy.png", "dizzy.png", "Earl_Front_Blink.png", "Earl_Front_Idle.png"],
+    "durations": [200, 150, 200, 200, 200, 200, 200, 200, 150],
+    "loop": false
+  },
   "birthday": {
     "frames": ["birthday.png"],
     "durations": [500],
+    "loop": true
+  },
+  "pouty": {
+    "frames": ["pouty.png"],
+    "durations": [500],
+    "loop": true
+  },
+  "huffy": {
+    "frames": ["huffy.png"],
+    "durations": [500],
+    "loop": true
+  },
+  "tantrum_stomp": {
+    "frames": ["tantrum_stomp.png", "Earl_Front_Idle.png", "tantrum_stomp.png", "Earl_Front_Idle.png", "tantrum_stomp.png"],
+    "durations": [120, 100, 120, 100, 120],
+    "loop": false
+  },
+  "puffed_up": {
+    "frames": ["puffed_up.png"],
+    "durations": [500],
+    "loop": true
+  },
+  "tumble": {
+    "frames": ["tumble.png", "dropped_squish.png", "tumble.png", "dropped_squish.png"],
+    "durations": [100, 100, 100, 100],
+    "loop": true
+  },
+  "sitting_to_standing": {
+    "frames": ["sitting_to_standing.png", "standing_idle.png"],
+    "durations": [150, 100],
+    "loop": false
+  },
+  "standing_to_sitting": {
+    "frames": ["standing_to_sitting.png", "plop_down.png", "Earl_Front_Idle.png"],
+    "durations": [150, 120, 100],
+    "loop": false
+  },
+  "stretch": {
+    "frames": ["stretch.png", "stretch.png", "Earl_Front_Idle.png"],
+    "durations": [300, 300, 200],
+    "loop": false
+  },
+  "drag_left": {
+    "frames": ["drag_left.png"],
+    "durations": [200],
+    "loop": true
+  },
+  "drag_right": {
+    "frames": ["drag_right.png"],
+    "durations": [200],
+    "loop": true
+  },
+  "drag_up": {
+    "frames": ["drag_up.png"],
+    "durations": [200],
+    "loop": true
+  },
+  "drag_down": {
+    "frames": ["drag_down.png"],
+    "durations": [200],
+    "loop": true
+  },
+  "drag_fast": {
+    "frames": ["drag_fast.png"],
+    "durations": [200],
     "loop": true
   }
 }

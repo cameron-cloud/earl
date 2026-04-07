@@ -232,6 +232,7 @@ Commit to git after each numbered section.
 - [ ] 13.2 Test the built .exe runs correctly
 - [ ] 13.3 Test the .exe runs on a fresh Windows 11 machine (no dev tools)
 - [ ] 13.4 Rename output to `Earl.exe` or `Earl_Setup.msi`
+- [ ] 13.5 Build a portable standalone `.exe` (no installer required) for easy distribution to non-technical users
 
 ---
 

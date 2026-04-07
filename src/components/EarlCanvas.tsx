@@ -6,9 +6,10 @@ interface Props {
   animatorState: AnimatorState;
   displaySize: number;
   sleepBreathOffset?: number;
+  swingAngle?: number;
 }
 
-export default function EarlCanvas({ animatorState, displaySize, sleepBreathOffset = 0 }: Props) {
+export default function EarlCanvas({ animatorState, displaySize, sleepBreathOffset = 0, swingAngle = 0 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -35,6 +36,31 @@ export default function EarlCanvas({ animatorState, displaySize, sleepBreathOffs
         displaySize,
         displaySize
       );
+
+      // Clean up noisy edge pixels visible on white backgrounds
+      const imageData = ctx.getImageData(0, 0, displaySize, displaySize);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const a = data[i + 3];
+        if (a === 0) continue;
+
+        // Kill very low alpha fringe
+        if (a < 40) {
+          data[i + 3] = 0;
+          continue;
+        }
+
+        // Kill desaturated semi-transparent pixels (checkerboard remnants)
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const maxC = Math.max(r, g, b);
+        const minC = Math.min(r, g, b);
+        const sat = maxC === 0 ? 0 : (maxC - minC) / maxC;
+        if (a < 180 && sat < 0.15) {
+          data[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+
     } else {
       // Placeholder: yellow ellipse
       ctx.fillStyle = "#FAEDB5";
@@ -73,6 +99,9 @@ export default function EarlCanvas({ animatorState, displaySize, sleepBreathOffs
         height: displaySize,
         background: "transparent",
         imageRendering: "auto",
+        transform: swingAngle ? `rotate(${swingAngle}deg)` : undefined,
+        transformOrigin: "top center",
+        transition: swingAngle ? undefined : "transform 0.2s ease-out",
       }}
     />
   );

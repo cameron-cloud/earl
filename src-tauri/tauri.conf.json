@@ -24,11 +24,13 @@
         "alwaysOnTop": true,
         "skipTaskbar": true,
         "fullscreen": false,
-        "center": false
+        "center": false,
+        "shadow": false,
+        "visible": false
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: https://asset.localhost; connect-src 'none'"
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: https://asset.localhost; connect-src ipc: http://ipc.localhost https://github.com https://api.github.com"
     }
   },
   "bundle": {
@@ -38,6 +40,15 @@
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/icon.ico"
-    ]
+    ],
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQyRkZCRkU4QTM2QTJDNDUKUldSRkxHcWo2TC8vUXBKUnlxT1VnaVRwOVpQTk9iN3ZDd1FqSVpsRG9OekJWbno3NGo1V3FJakEK",
+      "endpoints": [
+        "https://github.com/cameron-cloud/earl/releases/download/latest/latest.json"
+      ]
+    }
   }
 }

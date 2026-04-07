@@ -79,3 +79,19 @@ export function playBirthdaySound(volume: number) {
 export function playFootstep(volume: number) {
   playTone(300, 50, "triangle", 0, volume * 0.15);
 }
+
+export function playWallBumpSound(volume: number) {
+  playTone(200, 150, "triangle", 0, volume * 0.4);
+  playRisingChirp(600, 900, 100, volume * 0.3);
+}
+
+export function playTumbleSound(volume: number) {
+  playTone(300, 100, "triangle", 0, volume * 0.3);
+  playTone(250, 100, "triangle", 0.1, volume * 0.25);
+}
+
+export function playTantrumSound(volume: number) {
+  playTone(500, 80, "square", 0, volume * 0.2);
+  playTone(450, 80, "square", 0.12, volume * 0.2);
+  playTone(500, 80, "square", 0.24, volume * 0.2);
+}

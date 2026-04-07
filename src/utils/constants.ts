@@ -5,7 +5,7 @@ export const SIZE_OPTIONS = [48, 64, 80, 96] as const;
 
 // Window
 export const WINDOW_HEIGHT = 200;
-export const TASKBAR_HEIGHT = 48;
+export const TASKBAR_HEIGHT = 40;
 
 // Behavior timing (milliseconds)
 export const IDLE_BEFORE_WALK_MIN = 10_000;
@@ -17,6 +17,15 @@ export const IDLE_BEFORE_SLEEP_MAX = 120_000;
 
 // Movement
 export const WALK_SPEED = 40; // pixels per second
+export const RUN_SPEED = 135; // pixels per second (120-150 range)
+
+// Running chance
+export const RUN_CHANCE = 0.2; // 20% chance to run instead of walk
+export const RUN_CHANCE_HAPPY = 0.4; // 40% when mood >= 75
+
+// Transitions
+export const STRETCH_IDLE_THRESHOLD = 60_000; // 60s idle before stretch chance
+export const STRETCH_CHANCE_AFTER_IDLE = 0.05; // 5% when threshold crossed
 
 // Animation speed multipliers
 export const SPEED_MULTIPLIERS: Record<string, number> = {
@@ -27,6 +36,14 @@ export const SPEED_MULTIPLIERS: Record<string, number> = {
 
 // Hop physics (pixels, relative to ground)
 export const HOP_OFFSETS = [0, 5, -20, -20, 5, 0];
+
+// Gravity / falling physics
+export const GRAVITY = 1200; // px/s²
+export const TERMINAL_VELOCITY = 600; // max fall speed px/s
+
+// Drag inertia
+export const DRAG_SWING_DAMPING = 0.85; // how quickly swing decays
+export const DRAG_SWING_SCALE = 0.15; // how much velocity affects swing angle
 
 // Speech bubble
 export const SPEECH_BUBBLE_DURATION = 3_000;

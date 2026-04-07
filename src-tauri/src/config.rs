@@ -11,6 +11,13 @@ pub struct EarlConfig {
     pub behavior: BehaviorConfig,
     pub stats: StatsConfig,
     pub position: PositionConfig,
+    #[serde(default)]
+    pub mood: Option<MoodConfig>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MoodConfig {
+    pub value: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -73,6 +80,7 @@ impl Default for EarlConfig {
                 y: None,
                 on_taskbar: true,
             },
+            mood: Some(MoodConfig { value: 50.0 }),
         }
     }
 }
