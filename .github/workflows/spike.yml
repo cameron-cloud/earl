@@ -1,0 +1,64 @@
+# M0.4 Windows platform spike: builds the throwaway overlay exe for W0.
+# Lives only on the spike/overlay branch, which is never merged.
+name: Spike overlay (M0.4)
+
+on:
+  push:
+    branches: [spike/overlay, v2, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: spike-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Build Windows spike exe
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Typecheck and build frontend
+        run: npm run build
+
+      - name: Unit tests (portable spike logic)
+        run: cargo test --manifest-path src-tauri/Cargo.toml --locked
+
+      - name: Build exe and NSIS installer (unsigned)
+        run: npx tauri build --bundles nsis
+
+      - name: Collect artifact
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force out | Out-Null
+          Copy-Item src-tauri/target/release/earl-spike.exe out/
+          Copy-Item src-tauri/target/release/bundle/nsis/*.exe out/
+          Copy-Item SPIKE_W0.md out/
+          Get-ChildItem out | Format-Table Name, Length
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: earl-spike-windows
+          path: out/
+          if-no-files-found: error
+          retention-days: 30
