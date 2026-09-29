@@ -1,0 +1,175 @@
+name: CI rust
+
+on:
+  pull_request:
+  push:
+    branches: [v2, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-rust-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: rust (linux fmt, clippy, test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src-tauri
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Tauri system libraries
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libxdo-dev libssl-dev \
+            libayatana-appindicator3-dev librsvg2-dev
+
+      # Installed here, never on the dev server (plan D34 / Q10).
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Format check
+        run: cargo fmt --all -- --check
+
+      # The dev server has no rustfmt yet (Q10). On a format failure this
+      # uploads the exact fix as a patch: gh run download, then git apply.
+      - name: Save rustfmt patch
+        if: failure()
+        run: |
+          cargo fmt --all
+          git diff > "$RUNNER_TEMP/rustfmt.patch"
+      - name: Upload rustfmt patch
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rustfmt-patch
+          path: ${{ runner.temp }}/rustfmt.patch
+          if-no-files-found: ignore
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --workspace
+
+      - name: Versions agree
+        working-directory: .
+        run: node scripts/bump-version.mjs --check
+
+  audit:
+    name: cargo audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - name: Audit Cargo.lock
+        working-directory: src-tauri
+        run: cargo audit
+
+  windows:
+    name: windows (clippy, test, signed NSIS build)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ hashFiles('.nvmrc') != '' && '.nvmrc' || '' }}
+          node-version: ${{ hashFiles('.nvmrc') == '' && '24' || '' }}
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Clippy
+        working-directory: src-tauri
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        working-directory: src-tauri
+        run: cargo test --workspace
+
+      - name: Build id
+        shell: bash
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: echo "EARL_BUILD=${BRANCH}@${SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Set up Windows code signing
+        id: signing
+        uses: ./.github/actions/windows-signing
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_SIGNING_ENDPOINT: ${{ vars.AZURE_SIGNING_ENDPOINT }}
+          AZURE_SIGNING_ACCOUNT: ${{ vars.AZURE_SIGNING_ACCOUNT }}
+          AZURE_SIGNING_PROFILE: ${{ vars.AZURE_SIGNING_PROFILE }}
+
+      # Branch builds carry no updater key (D28): tauri.conf.json has an empty
+      # pubkey and createUpdaterArtifacts false.
+      - name: Build NSIS installer
+        shell: pwsh
+        env:
+          SIGNING_CONFIG: ${{ steps.signing.outputs.config }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          $tauriArgs = @('tauri', 'build', '--bundles', 'nsis')
+          if ($env:SIGNING_CONFIG) { $tauriArgs += @('--config', $env:SIGNING_CONFIG) }
+          npx @tauriArgs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Collect artifacts
+        id: collect
+        shell: pwsh
+        env:
+          SIGNED: ${{ steps.signing.outputs.enabled }}
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP 'earl-build'
+          New-Item -ItemType Directory -Force -Path $out | Out-Null
+          $setup = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis/*-setup.exe')
+          $exe = @(Get-ChildItem 'src-tauri/target/release/*.exe')
+          if ($setup.Count -eq 0 -or $exe.Count -eq 0) { throw 'NSIS installer or earl.exe not found' }
+          $files = $setup + $exe
+          foreach ($file in $files) {
+            $status = (Get-AuthenticodeSignature $file.FullName).Status
+            Write-Output "$($file.Name): signature $status"
+            if ($env:SIGNED -eq 'true' -and $status -ne 'Valid') { throw "$($file.Name) is not validly signed ($status)" }
+            Copy-Item $file.FullName $out
+          }
+          "dir=$out" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: earl-windows-${{ github.run_number }}
+          path: ${{ steps.collect.outputs.dir }}
+          retention-days: 14
+          if-no-files-found: error

@@ -1,46 +1,103 @@
 name: Release Earl
 
+# Tag-triggered only (plan 12, D28). Builds the per-user NSIS installer, signs
+# it when Windows code signing is set up, signs the updater artifacts with the
+# PRODUCTION updater key, and creates a DRAFT release that Cameron publishes.
 on:
   push:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
 jobs:
-  build-windows:
+  release:
     runs-on: windows-latest
+    # The production updater key lives only in this environment. Restrict the
+    # environment to v* tags so no other workflow or branch can read it.
+    environment: release
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: ${{ hashFiles('.nvmrc') != '' && '.nvmrc' || '' }}
+          node-version: ${{ hashFiles('.nvmrc') == '' && '24' || '' }}
           cache: npm
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri -> target
 
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build Tauri app
+      - name: Tag matches the version
+        shell: bash
+        run: |
+          node scripts/bump-version.mjs --check
+          version="$(node -p "require('./package.json').version")"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version. Run scripts/bump-version.mjs first."
+            exit 1
+          fi
+
+      - name: Set up Windows code signing
+        id: signing
+        uses: ./.github/actions/windows-signing
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_SIGNING_ENDPOINT: ${{ vars.AZURE_SIGNING_ENDPOINT }}
+          AZURE_SIGNING_ACCOUNT: ${{ vars.AZURE_SIGNING_ACCOUNT }}
+          AZURE_SIGNING_PROFILE: ${{ vars.AZURE_SIGNING_PROFILE }}
+
+      # tauri.release.conf.json carries the production public key and turns on
+      # updater artifacts. Without the private key the release still builds,
+      # but with no updater artifacts or latest.json, and says so loudly.
+      - name: Updater signing key
+        id: updater
+        shell: bash
+        env:
+          UPDATER_KEY: ${{ secrets.EARL_UPDATER_PROD_KEY }}
+        run: |
+          configs="${GITHUB_WORKSPACE}/src-tauri/tauri.release.conf.json"
+          if [ -n "$UPDATER_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning title=No updater signature::EARL_UPDATER_PROD_KEY is not set in the release environment. This release has no updater artifacts or latest.json, so installed copies will not be offered it."
+            off="${RUNNER_TEMP}/tauri.no-updater.conf.json"
+            echo '{"bundle":{"createUpdaterArtifacts":false}}' > "$off"
+            configs="$configs --config $off"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -n "${{ steps.signing.outputs.config }}" ]; then
+            configs="$configs --config ${{ steps.signing.outputs.config }}"
+          fi
+          echo "args=--bundles nsis --config $configs" >> "$GITHUB_OUTPUT"
+
+      - name: Build and draft the release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.EARL_UPDATER_PROD_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.EARL_UPDATER_PROD_KEY_PASSWORD }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'Earl v__VERSION__'
           releaseBody: 'Earl desktop duckling update'
-          releaseDraft: false
+          releaseDraft: true
           prerelease: false
-          includeUpdaterJson: true
+          includeUpdaterJson: ${{ steps.updater.outputs.enabled == 'true' }}
+          updaterJsonPreferNsis: true
+          args: ${{ steps.updater.outputs.args }}
