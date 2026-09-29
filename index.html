@@ -3,20 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Earl</title>
+    <title>Earl spike overlay</title>
     <style>
-      html, body, #root {
+      html,
+      body {
         margin: 0;
         padding: 0;
-        background: transparent;
-        overflow: hidden;
         width: 100%;
         height: 100%;
+        overflow: hidden;
+        background: transparent;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      #hud {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        max-width: 560px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: rgba(20, 20, 24, 0.82);
+        color: #e8e8e8;
+        font: 12px/1.45 Consolas, "Cascadia Mono", monospace;
+        white-space: pre;
+        pointer-events: none;
+      }
+      #hud[hidden] {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="hud"></div>
+    <script type="module" src="/src/spike/overlay.ts"></script>
   </body>
 </html>
