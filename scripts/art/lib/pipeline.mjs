@@ -664,16 +664,22 @@ export async function importInbox(root, { inbox, profile, keep = false, log = co
           all.byId.get(`${shot.id}_${String(k + 1).padStart(2, "0")}`),
         );
         const stripScale = stripScaleFor(shot, frames, segs, raw, masterOf);
+        // Every frame is processed before any master is written, so a strip that fails partway
+        // leaves no half-imported set behind. A base inside the strip (prop_fan) comes from here.
+        const staged = new Map();
         for (const [k, seg] of segs.entries()) {
           const frame = frames[k];
           const master = processRaw(seg, frame, all.byId, {
             profile: prof,
             prekeyed: true,
             stripScale,
-            baseMaster: frame.base ? masterOf(frame.base) : null,
+            baseMaster: frame.base ? (staged.get(frame.base) ?? masterOf(frame.base)) : null,
           });
-          writePng(path.join(masterDir, `${frame.id}.png`), master);
-          outcomes.push({ id: frame.id, file: name, ok: true, warn });
+          staged.set(frame.id, master);
+        }
+        for (const [id, master] of staged) {
+          writePng(path.join(masterDir, `${id}.png`), master);
+          outcomes.push({ id, file: name, ok: true, warn });
         }
       }
       if (!keep) moved.push(...t.files);

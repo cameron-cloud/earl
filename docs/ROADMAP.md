@@ -17,7 +17,7 @@ release to Juliette waits for P0 and P1 art to be final (M5.3), then M6.
 | M0.0 | Branch setup (main session, alone) | merged | on `v2` (M0.0 commit `cd36674`) |
 | M0.1 | JS tooling and web CI | merged | PR #1 |
 | M0.2 | Rust tooling, icons, config, signing | merged | PR #2 |
-| M0.3 | Docs and art pipeline | merged | PR from `feat/m0.3-art-pipeline` |
+| M0.3 | Docs and art pipeline | merged | PR #3 |
 | M0.4 | Windows platform spike (one worker, throwaway branch `spike/overlay`) | in progress | branch `spike/overlay` (throwaway; result goes into D13 and D14) |
 
 ## M1 First playable v2 (new engine, the taskbar request, working settings, updater prompt)

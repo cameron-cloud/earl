@@ -224,7 +224,9 @@ Edit this image. Change ONLY his face: <EYES / LIDS / BROWS / BILL>. Do not move
 
 ### T4: Cycle strip (walk, run, climb)
 
-Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`.
+Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts in `art/SHOTLIST.md` fill in `<N>` and one `Frame k` clause per frame.
+
+Sizing: a strip whose frames have no base outside the strip (`earl_walk` and the prop strips) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. Ask for the ducks to fill most of the frame height, and compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.
 
 ```
 Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.

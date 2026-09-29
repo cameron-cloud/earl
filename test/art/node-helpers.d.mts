@@ -11,3 +11,8 @@ export declare function envFlag(name: string): boolean;
 export declare function writeBytes(file: string, bytes: Uint8Array): void;
 export declare function copy(from: string, to: string): void;
 export declare function listFiles(dir: string): string[];
+export declare function symlink(target: string, file: string): void;
+export declare function runNode(
+  args: string[],
+  cwd: string,
+): { status: number | null; stdout: string; stderr: string };

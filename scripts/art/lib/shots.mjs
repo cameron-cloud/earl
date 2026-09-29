@@ -367,10 +367,18 @@ export function shotPrompt(doc, shot, key) {
     three_quarter: "three-quarter front-right",
   }[shot.facing];
   if (facing) text = text.replace("<right | front | back>", facing);
-  const depicts = shot.row[4].replace(/\*\*/g, "");
+  const depicts = shot.row[4].replace(/\*\*/g, "").trim();
+  // A strip prompt (T4) names its frame count and has one "Frame k" clause per frame.
+  if (shot.frames > 1) {
+    text = text.replace("<N>", String(shot.frames));
+    text = text.replace(/Frame 1: <\.\.\.>\.(?: Frame \d+: <\.\.\.>\.)*/, () =>
+      Array.from({ length: shot.frames }, (_, k) => `Frame ${k + 1}: <...>.`).join(" "),
+    );
+  }
+  // The template's own period follows the placeholder, so the description's is dropped.
   return text.replace(
-    /<(POSE NOTE|POSE|PROP|STATE CHANGE|CROP|EYES \/ LIDS \/ BROWS \/ BILL)>/g,
-    depicts,
+    /<(POSE NOTE|POSE|PROP|STATE CHANGE|CROP|EYES \/ LIDS \/ BROWS \/ BILL)>(\.?)/g,
+    (_, _key, dot) => (dot ? `${depicts.replace(/\.+$/, "")}.` : depicts),
   );
 }
 

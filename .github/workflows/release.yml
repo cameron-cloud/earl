@@ -1,18 +1,35 @@
 name: Release Earl
 
-# Tag-triggered only (plan 12, D28). Builds the per-user NSIS installer, signs
-# it when Windows code signing is set up, signs the updater artifacts with the
-# PRODUCTION updater key, and creates a DRAFT release that Cameron publishes.
+# Releases are tag-triggered only (plan 12, D28). The release job builds the
+# per-user NSIS installer, signs it when Windows code signing is set up, signs
+# the updater artifacts with the PRODUCTION updater key, and creates a DRAFT
+# release that Cameron publishes.
+#
+# The dry-run job rehearses that build before the first v* tag: the same
+# tauri-action with the same --config overlays (Windows absolute paths), but
+# unsigned, with no updater key, no environment and read-only permissions, so
+# it cannot create a release or read the release secrets. It runs from the
+# Actions tab (workflow_dispatch, once this file is on the default branch) and
+# on pull requests that change the release path, and uploads the installer as
+# a CI artifact.
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - .github/actions/windows-signing/**
+      - src-tauri/tauri.conf.json
+      - src-tauri/tauri.release.conf.json
 
 permissions:
   contents: read
 
 jobs:
   release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: windows-latest
     # The production updater key lives only in this environment. Restrict the
     # environment to v* tags so no other workflow or branch can read it.
@@ -101,3 +118,68 @@ jobs:
           includeUpdaterJson: ${{ steps.updater.outputs.enabled == 'true' }}
           updaterJsonPreferNsis: true
           args: ${{ steps.updater.outputs.args }}
+
+  dry-run:
+    if: github.event_name != 'push'
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: release-dry-run-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ${{ hashFiles('.nvmrc') != '' && '.nvmrc' || '' }}
+          node-version: ${{ hashFiles('.nvmrc') == '' && '24' || '' }}
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Versions agree
+        run: node scripts/bump-version.mjs --check
+
+      # No Azure secrets or variables are passed, so this takes the action's
+      # unsigned path, as a release does before signing is set up.
+      - name: Set up Windows code signing (unsigned)
+        id: signing
+        uses: ./.github/actions/windows-signing
+
+      # Built the same way as the release job's args, minus the updater key.
+      - name: Release config overlays
+        id: updater
+        shell: bash
+        run: |
+          if [ -n "${{ steps.signing.outputs.config }}" ]; then
+            echo "::error::The dry run must stay unsigned, but the signing action returned a config."
+            exit 1
+          fi
+          configs="${GITHUB_WORKSPACE}/src-tauri/tauri.release.conf.json"
+          off="${RUNNER_TEMP}/tauri.no-updater.conf.json"
+          echo '{"bundle":{"createUpdaterArtifacts":false}}' > "$off"
+          configs="$configs --config $off"
+          echo "args=--bundles nsis --config $configs" >> "$GITHUB_OUTPUT"
+
+      # No tagName or releaseId, so tauri-action only builds; the read-only
+      # token could not create a release anyway.
+      - name: Build without a release
+        uses: tauri-apps/tauri-action@v0
+        with:
+          args: ${{ steps.updater.outputs.args }}
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: earl-release-dry-run-${{ github.run_number }}
+          path: src-tauri/target/release/bundle/nsis/*-setup.exe
+          retention-days: 7
+          if-no-files-found: error

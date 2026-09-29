@@ -19,7 +19,9 @@ env:
 jobs:
   rust:
     name: rust (linux fmt, clippy, test)
-    runs-on: ubuntu-latest
+    # Pinned like ci.yml: ubuntu-latest moves to Ubuntu 26 from 2026-10-19, which can rename the
+    # webkit2gtk packages installed below.
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: src-tauri
