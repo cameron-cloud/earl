@@ -9,13 +9,10 @@ pub fn run() {
     tauri::Builder::default()
         // D30: single-instance is registered first, so a second launch hands
         // over to the running instance before any other plugin starts. The
-        // running instance shows Earl and opens Settings. The handler is
-        // queued onto the event loop, the same path tray menu clicks take, so
-        // Settings is never built inside the plugin's own message handler.
+        // running instance shows Earl and opens Settings, queued onto the
+        // event loop (see queue_second_launch).
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            let handle = app.clone();
-            app.run_on_main_thread(move || tray::on_second_launch(&handle))
-                .ok();
+            queue_second_launch(app.clone());
         }))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
@@ -80,4 +77,30 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running Earl");
+}
+
+/// Queues the D30 second-launch handling (show Earl, open Settings) onto the
+/// event loop instead of running it inside the single-instance callback.
+///
+/// On Windows the plugin calls its callback from the window procedure of its
+/// hidden message window, on the main thread, while the second process waits
+/// in SendMessageW. `run_on_main_thread` called from the main thread runs the
+/// closure inline (tauri-runtime-wry `send_user_message`), so calling it there
+/// would build Settings inside that window procedure. Called from another
+/// thread it posts the task through the event loop proxy, the same queue that
+/// tray menu and tray icon events go through. The callback returns at once,
+/// the second process can exit, and Settings is built on a later turn of the
+/// event loop.
+fn queue_second_launch(app: tauri::AppHandle) {
+    let spawned = std::thread::Builder::new()
+        .name("earl-second-launch".into())
+        .spawn(move || {
+            let handle = app.clone();
+            if let Err(err) = app.run_on_main_thread(move || tray::on_second_launch(&handle)) {
+                eprintln!("second launch: could not queue on the event loop: {err}");
+            }
+        });
+    if let Err(err) = spawned {
+        eprintln!("second launch: could not start the queueing thread: {err}");
+    }
 }

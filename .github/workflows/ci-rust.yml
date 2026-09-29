@@ -75,17 +75,8 @@ jobs:
         working-directory: .
         run: node --test scripts/bump-version.selftest.mjs
 
-  audit:
-    name: cargo audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-audit
-      - name: Audit Cargo.lock
-        working-directory: src-tauri
-        run: cargo audit
+  # No cargo audit job here: plan 12.4 keeps cargo audit (with npm audit) in
+  # the single `audit` job of ci.yml, so the lockfile is audited in one place.
 
   windows:
     name: windows (clippy, test, signed NSIS build)
