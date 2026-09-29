@@ -108,7 +108,12 @@ function groundDisc(rim?: { colour: RGB; width: number }) {
   return alignFrame(keyed, { anchorType: "gnd", facing: "front", canvas: [256, 256] }, 1).image;
 }
 
-describe("soft keyer", () => {
+// These suites push real images through the pipeline. They take about a second each, but v8
+// coverage instrumentation (npm run test:coverage, CI) slows the pixel loops about 10x, so
+// they get a generous timeout instead of vitest's 5 s default.
+const HEAVY = { timeout: 60_000 };
+
+describe("soft keyer", HEAVY, () => {
   const { img: raw, coverage: truth } = paint(256, 256, MAGENTA, [
     { cx: 128.3, cy: 121.7, r: 70.4, colour: CREAM },
   ]);
@@ -189,7 +194,7 @@ describe("background inspection", () => {
   });
 });
 
-describe("frame lint", () => {
+describe("frame lint", HEAVY, () => {
   it("flags see-through eye holes and passes solid eyes", () => {
     const solid = groundDisc();
     expect(findHoles(solid)).toHaveLength(0);
@@ -233,7 +238,7 @@ describe("frame lint", () => {
   });
 });
 
-describe("alignment", () => {
+describe("alignment", HEAVY, () => {
   it("puts gnd feet on y=240 and the eye midpoint on x=128", () => {
     const keyed = softKey(paint(256, 256, MAGENTA, duck(256, 256, -30, -40)).img);
     const { image } = alignFrame(
@@ -346,7 +351,7 @@ describe("shot list", () => {
   });
 });
 
-describe("pipeline", () => {
+describe("pipeline", HEAVY, () => {
   it("builds placeholders from v1 art at 2x and reports coverage", () => {
     const all = computeAll(ROOT);
     expect(coverageLine(coverage(all))).toBe("final 0/133, placeholder 21");

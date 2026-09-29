@@ -156,7 +156,12 @@ export declare function checkFrame(
   l1: Img,
   frame: Frame,
   meta: FrameMeta,
-  ctx: { profile?: string | null; baseL1?: Img | null; refHeadWidth?: number | null },
+  ctx: {
+    profile?: string | null;
+    baseL1?: Img | null;
+    refHeadWidth?: number | null;
+    refHeadId?: string | null;
+  },
 ): Issue[];
 export declare function computeAll(root: string, doc?: ShotsDoc): All;
 export declare function coverage(all: All): Coverage;

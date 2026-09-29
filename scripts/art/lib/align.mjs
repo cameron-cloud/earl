@@ -86,20 +86,71 @@ function mask(img) {
   return m;
 }
 
-function shiftedIoU(m, base, w, h, tx, ty) {
-  let inter = 0;
-  let uni = 0;
+function maskBox(m, w, h) {
+  let x0 = w;
+  let y0 = h;
+  let x1 = -1;
+  let y1 = -1;
+  let count = 0;
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++)
+      if (m[y * w + x]) {
+        count++;
+        if (x < x0) x0 = x;
+        if (x > x1) x1 = x;
+        if (y < y0) y0 = y;
+        if (y > y1) y1 = y;
+      }
+  return count ? { x0, y0, x1, y1, count } : null;
+}
+
+/**
+ * Alpha IoU of mask `m` shifted by (tx, ty) against `base`, both w x h, as a function of the
+ * shift. Exact (the same integer counts as a full-canvas scan) but it only visits the overlap of
+ * the two bounding boxes, and counts the shifted mask with a summed-area table. The overlay
+ * search calls it about 3700 times per frame, so this is the hot loop of art:build.
+ */
+function shiftedIoU(m, base, baseBox, w, h) {
+  const box = maskBox(m, w, h);
+  const sat = new Int32Array((w + 1) * (h + 1));
   for (let y = 0; y < h; y++) {
-    const sy = y - ty;
+    let row = 0;
     for (let x = 0; x < w; x++) {
-      const sx = x - tx;
-      const p = sx >= 0 && sy >= 0 && sx < w && sy < h ? m[sy * w + sx] : 0;
-      const q = base[y * w + x];
-      inter += p & q;
-      uni += p | q;
+      row += m[y * w + x];
+      sat[(y + 1) * (w + 1) + x + 1] = sat[y * (w + 1) + x + 1] + row;
     }
   }
-  return uni ? inter / uni : 1;
+  const rectSum = (x0, y0, x1, y1) =>
+    x1 <= x0 || y1 <= y0
+      ? 0
+      : sat[y1 * (w + 1) + x1] -
+        sat[y0 * (w + 1) + x1] -
+        sat[y1 * (w + 1) + x0] +
+        sat[y0 * (w + 1) + x0];
+  const baseCount = baseBox ? baseBox.count : 0;
+  return (tx, ty) => {
+    // Pixels of m that land inside the canvas after the shift.
+    const inside = rectSum(
+      Math.max(0, -tx),
+      Math.max(0, -ty),
+      Math.min(w, w - tx),
+      Math.min(h, h - ty),
+    );
+    let inter = 0;
+    if (box && baseBox) {
+      const ya = Math.max(baseBox.y0, box.y0 + ty);
+      const yb = Math.min(baseBox.y1, box.y1 + ty);
+      const xa = Math.max(baseBox.x0, box.x0 + tx);
+      const xb = Math.min(baseBox.x1, box.x1 + tx);
+      for (let y = ya; y <= yb; y++) {
+        const bi = y * w;
+        const mi = (y - ty) * w - tx;
+        for (let x = xa; x <= xb; x++) inter += m[mi + x] & base[bi + x];
+      }
+    }
+    const uni = inside + baseCount - inter;
+    return uni ? inter / uni : 1;
+  };
 }
 
 /**
@@ -112,14 +163,26 @@ export function alignOverlay(img, base, range = 8) {
   const h = Math.round(img.height / f);
   const small = resize(img, w, h);
   const baseMask = mask(resize(base, w, h));
-  let best = { scale: 1, tx: 0, ty: 0, iou: shiftedIoU(mask(small), baseMask, w, h, 0, 0) };
+  const baseBox = maskBox(baseMask, w, h);
+  let best = {
+    scale: 1,
+    tx: 0,
+    ty: 0,
+    iou: shiftedIoU(mask(small), baseMask, baseBox, w, h)(0, 0),
+  };
   const scales = [1];
   for (let k = 1; k <= 6; k++) scales.push(1 - k * 0.01, 1 + k * 0.01);
   for (const sc of scales) {
-    const m = mask(sc === 1 ? small : warp(small, sc, 0, 0));
+    const iouAt = shiftedIoU(
+      mask(sc === 1 ? small : warp(small, sc, 0, 0)),
+      baseMask,
+      baseBox,
+      w,
+      h,
+    );
     for (let ty = -range; ty <= range; ty++) {
       for (let tx = -range; tx <= range; tx++) {
-        const iou = shiftedIoU(m, baseMask, w, h, tx, ty);
+        const iou = iouAt(tx, ty);
         if (iou > best.iou + 1e-9) best = { scale: sc, tx, ty, iou };
       }
     }

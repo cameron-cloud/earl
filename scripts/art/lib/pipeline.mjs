@@ -267,7 +267,7 @@ export function checkFrame(l1, frame, meta, ctx) {
       add(
         "WARN",
         "head_width",
-        `head width ${hw} px is ${Math.round(off * 100)}% off earl_sit_idle_01 (${ctx.refHeadWidth} px, allowance ${Math.round(tol * 100)}%)`,
+        `head width ${hw} px is ${Math.round(off * 100)}% off ${ctx.refHeadId || "the reference"} (${ctx.refHeadWidth} px, allowance ${Math.round(tol * 100)}%)`,
       );
   }
   if (meta.prop && frame.n === 1) {
@@ -332,6 +332,7 @@ export function computeAll(root, doc = loadDoc(root)) {
         profile: source === "placeholder" ? "v1-faithful" : doc.profile,
         baseL1,
         refHeadWidth: ref?.l1 ? A.headWidth(ref.l1) : null,
+        refHeadId: refId,
       });
       if (source === "placeholder") res.status = "PLACEHOLDER";
       else

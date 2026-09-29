@@ -468,7 +468,7 @@ Until these arrive, the swarm uses a small tinted Earl.
 
 ## 7. Delivery instructions
 
-1. **Drop folder:** save raw exports to `/home/cameron/mini-earl/art/inbox/`. The folder is gitignored; keep your own originals in OneDrive.
+1. **Drop folder:** save raw exports to `/mnt/HC_Volume_106939637/earl/art-inbox/` (the main checkout's `art/inbox/` points there; `npm run art:import -- --inbox <dir>` reads any other folder). The folder is gitignored; keep your own originals in OneDrive. The pipeline itself is described in `docs/ART.md`.
 2. **Naming:**
    - Use `<shot>_<nn>.png` with lowercase snake_case, exactly as in the table, e.g. `earl_peek_01.png`, `prop_bread_03.png`.
    - A strip can be saved as `<shot>.png`, e.g. `earl_walk.png`. The pipeline splits it on the magenta gaps and errors if the frame count does not match the table.

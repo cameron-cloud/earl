@@ -1,6 +1,20 @@
 # Earl - Desktop Duckling Companion
 
-## Project Specification & Claude Code Prompt
+## Product specification
+
+This is the short product spec. **The source of truth for v2 is [`V2_PLAN.md`](V2_PLAN.md)**
+(decisions, architecture, behaviors, settings, testing and the milestone plan). Where anything
+here disagrees with the plan, the plan wins. Other docs:
+
+| Doc | What it holds |
+|---|---|
+| [`V2_PLAN.md`](V2_PLAN.md) | The approved v2 plan |
+| [`ROADMAP.md`](ROADMAP.md) | Milestones and the status of every work unit |
+| [`ART_SHOTLIST.md`](ART_SHOTLIST.md) | Art style guide, the 133-image shot list and prompt templates |
+| [`ART.md`](ART.md) | The art pipeline (`npm run art:*`) |
+| [`TESTING.md`](TESTING.md) | How to test: local checks, CI and the Windows checklist |
+| [`ANIMATIONS.md`](ANIMATIONS.md) | v1 animation timing (replaced by `sprites.gen.ts` and clips in v2) |
+| [`archive/`](archive/) | The original build instructions (`.docx`), kept for history |
 
 ---
 
@@ -25,7 +39,71 @@ These photos should guide all art generation decisions. Earl's digital version s
 
 ---
 
-## Tech Stack
+## v2 in one page
+
+**Vision** (plan section 1). The same duck with much more life: many more animations, behaviors
+and settings. Earl should have real attitude and be unpredictable, reading as a grumpy-but-loving,
+chaotic, curious little creature rather than a timer-driven robot. The rebuild also cleans up the
+assets and makes him cheap to run.
+
+**What he does**
+- Lives on top of the taskbar, and now and then slips behind it to peek, sulk, hide or nap
+  (D1, `earl.taskbarHiding`, default `sometimes`). Where else he may go is a settings group (D35).
+- Has needs (hunger, energy, fun, plus a hidden "clean"), moods, a relationship with you that
+  warms up over days, short-term and episodic memory, whims and an onboarding arc (plan section 6).
+- 80+ behaviors chosen by utility plus sampling, never timers (section 7).
+- Can be picked up, thrown, and parachutes down (5.4-5.5); perches on real windows (M3).
+- A toolbox of persistent items: trampoline, bed, bread, seeds, tub, ball, rubber duck, fan,
+  umbrella (section 8).
+- Optional chaos behind one master switch with four independent subs, all telegraphed and capped
+  (6.11, 7.8).
+- Settings and About in a separate panel window; tray menu; hotkeys; autostart; single instance
+  (section 9, 4.11).
+- Birthday mode on April 4th (Juliette) and June 23rd (Cam).
+
+**How it is built** (plan sections 3-5)
+- One transparent overlay window over the primary monitor; "behind the taskbar" and "behind a
+  window" are clip rects, the real z-order is left alone. Rust owns window geometry, the taskbar,
+  fullscreen state, hit testing and the cursor.
+- A pure, deterministic TypeScript simulation (`src/sim/`) on a fixed 60 Hz step, outside React.
+  React is only used for panels and the toolbox drawer.
+- Zero work when nothing changes: no draw, IPC or setState on an unchanged scene; everything pauses
+  when Earl is hidden, the session is locked or the display is off.
+- Safe and private by construction: key identity and window titles are never read, prank limits
+  are hard-coded in Rust, and a dead-man switch means the desktop is never blocked.
+
+**Tech stack**
+
+| Layer | Technology |
+|---|---|
+| App framework | Tauri v2 (Rust + WebView2) |
+| Frontend | TypeScript, React 18 (panels only), HTML5 Canvas |
+| Bundler | Vite |
+| Tests | Vitest, Playwright (browser sandbox), `cargo test` |
+| Installer | NSIS, per user, no UAC; signed (Q9) |
+| Updates | Tauri updater: a preview channel for `v2` builds and a production channel (4.12) |
+| Settings and state | JSON in the app data folder, owned by Rust (section 9) |
+| Art | Generated on #FF00FF, keyed and packed by `npm run art:*` ([`ART.md`](ART.md)) |
+
+**Network.** v1 was fully offline. v2 is offline except for the updater, which checks the
+release endpoint 30 s after start and then every 24 h when `autoCheckUpdates` is on; offline is
+silent (4.12). No other network access, no CDN and no external resources.
+
+**Release.** No hard date (Q14). Every milestone ships as a `v2-preview` build to Cameron; the
+release to Juliette waits for P0 and P1 art to be final. See [`ROADMAP.md`](ROADMAP.md).
+
+---
+
+## v1 specification (historical)
+
+This is the v1 spec as shipped for April 4th 2026. v1 still runs from `src/App.tsx`,
+`src/components`, `src/engine` and `src/hooks` until M1.4 replaces it, so it is kept as the
+reference for current behavior. **Stale for v2:** the portable exe (v2 ships an NSIS installer),
+"fully offline" (v2 has the updater), a canvas the exact size of Earl (v2 uses one full-monitor
+overlay), sprite sheets under `assets/` (the v1 PNGs now live in `art/reference/v1/`, and the
+app still loads `src/assets/sprites/`), and the V2 wish list at the end (superseded by the plan).
+
+### Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -39,7 +117,7 @@ These photos should guide all art generation decisions. Earl's digital version s
 | Config storage | Local JSON in %APPDATA%/earl/ |
 | Security | Tauri capabilities + CSP |
 
-### Why Tauri v2
+#### Why Tauri v2
 - Tiny installer size (under 10MB vs Electron's 150MB+)
 - Uses Windows 11's built-in WebView2 (no bundled browser)
 - Rust backend is memory-safe and secure by default
@@ -47,7 +125,7 @@ These photos should guide all art generation decisions. Earl's digital version s
 - System tray integration
 - No runtime vulnerabilities from Node.js
 
-### Dev Environment Requirements
+#### Dev Environment Requirements
 - Rust (via rustup)
 - Node.js v18+
 - Visual Studio Build Tools (C++ workload)
@@ -56,24 +134,24 @@ These photos should guide all art generation decisions. Earl's digital version s
 
 ---
 
-## Art Specification
+### Art Specification
 
-### Style
+#### Style
 High-resolution pixel art. 128x128 pixel sprites where individual pixels are small enough to form smooth curves and subtle shading - similar to modern indie games like Celeste or Eastward. NOT chunky retro 8-bit. Think "pixel art with a lot of pixels."
 
-### Colors (sampled from reference photos)
+#### Colors (sampled from reference photos)
 - Body: pale cream yellow (#FFFCE8 to #FAEDB5 range)
 - Feet/beak: warm orange (#E8943A to #D4802E)
 - Eyes: near-black (#0A0A0A) with white highlights (#FFFFFF)
 - Cheek blush (subtle): soft pink (#F0A08C at low opacity)
 
-### Resolution & Display
+#### Resolution & Display
 - Sprites rendered at 128x128 pixels
 - Displayed on screen at user-configurable size (default 64px)
 - Size options in settings: 48px, 64px, 80px, 96px
 - Canvas uses `imageSmoothingEnabled = true` with `imageSmoothingQuality = 'high'` for clean downscaling
 
-### Required Sprite Sheets (MVP)
+#### Required Sprite Sheets (MVP)
 
 Each animation is a horizontal strip of frames in a single PNG. All frames are 128x128 with transparent backgrounds.
 
@@ -89,7 +167,7 @@ Each animation is a horizontal strip of frames in a single PNG. All frames are 1
 | sleep | 4-6 | Eyes closed, gentle breathing, slight head nod |
 | birthday | 6-8 | Wearing tiny party hat, confetti, happy wiggle |
 
-### Sprite Sheet Format
+#### Sprite Sheet Format
 ```
 sprite_idle_front.png  ->  [frame1][frame2][frame3][frame4]  (each 128x128)
 sprite_walk_right.png  ->  [frame1][frame2][frame3][frame4][frame5][frame6]
@@ -108,32 +186,32 @@ If sprite sheets are not yet available, the app should fall back to a simple col
 
 ---
 
-## Application Behavior
+### Application Behavior
 
-### Window
+#### Window
 - Transparent, frameless, always-on-top window
 - Click-through in transparent regions (user can interact with desktop behind Earl)
 - Earl's sprite area is clickable/draggable
 - Window repositions to keep Earl on screen when display resolution changes
 
-### Taskbar Roaming
+#### Taskbar Roaming
 - Earl's default position is on the bottom edge of the screen, just above the Windows 11 taskbar
 - He periodically waddles short distances left or right along the taskbar (random intervals, 10-30 seconds idle between walks)
 - He stays within screen bounds (bounces back or turns around at edges)
 - Walking speed is casual - maybe 30-50 pixels per second
 
-### Drag & Drop
+#### Drag & Drop
 - User can click and drag Earl anywhere on screen
 - While being dragged: switch to `picked_up` animation (surprised face, dangling feet)
 - On release: play `dropped` animation (bounce), then Earl stays at the new position
 - After being dropped somewhere other than the taskbar, Earl stays in the new spot
 - Option: after 60 seconds of sitting in a non-taskbar location, Earl slowly waddles back toward the taskbar (optional, could be V2)
 
-### Click Interaction
+#### Click Interaction
 - Single click on Earl: play `hop` animation (happy bounce)
 - Right-click on Earl: show context menu (same as system tray menu)
 
-### Idle Behavior State Machine
+#### Idle Behavior State Machine
 ```
 IDLE -> (random timer 10-30s) -> WALK
 WALK -> (reach destination) -> IDLE
@@ -146,13 +224,13 @@ PICKED_UP -> (drag end) -> DROPPED -> IDLE
 
 At any time, if the current date is a birthday date, overlay the birthday hat on Earl and use the birthday idle animation.
 
-### Birthday Mode
+#### Birthday Mode
 - **April 4th**: Earl wears a tiny party hat all day. Clicking him shows a speech bubble: "Happy Birthday Juliette! 🎉"
 - **June 23rd**: Earl wears a tiny party hat all day. Clicking him shows a speech bubble: "Happy Birthday Cam! 🎉"
 - Small confetti particles occasionally drift around Earl on birthday days
 - Birthday check runs on app launch and at midnight
 
-### Speech Bubbles
+#### Speech Bubbles
 - Small rounded rectangle that appears above Earl's head
 - Fades in, stays for 3 seconds, fades out
 - Used for: birthday messages, future duck facts, reactions
@@ -160,14 +238,14 @@ At any time, if the current date is a birthday date, overlay the birthday hat on
 
 ---
 
-## Sound
+### Sound
 
-### Implementation
+#### Implementation
 - Use Web Audio API for synthesized sounds (no external audio files needed for MVP)
 - Simple sine/triangle wave peeps and chirps
 - Short duration (100-300ms per sound)
 
-### Sound Events
+#### Sound Events
 | Event | Sound |
 |---|---|
 | Click (hop) | Short happy peep (high pitch) |
@@ -176,7 +254,7 @@ At any time, if the current date is a birthday date, overlay the birthday hat on
 | Birthday click | Happy double-peep melody |
 | Walk start | Tiny footstep sound (very subtle) |
 
-### Sound Settings
+#### Sound Settings
 - Sound is **OFF by default**
 - Toggle in system tray menu: "Sound: On/Off"
 - Volume slider in settings (if sound is enabled)
@@ -184,14 +262,14 @@ At any time, if the current date is a birthday date, overlay the birthday hat on
 
 ---
 
-## System Tray
+### System Tray
 
-### Tray Icon
+#### Tray Icon
 - Small 16x16 or 32x32 icon of Earl's face
 - Left-click tray icon: toggle Earl visible/hidden
 - Right-click tray icon: context menu
 
-### Context Menu
+#### Context Menu
 ```
 Show Earl          (toggle visibility)
 Sound              (toggle, default off)
@@ -204,7 +282,7 @@ Sound              (toggle, default off)
 
 ---
 
-## Settings Panel
+### Settings Panel
 
 A small, clean settings window (not a full app - just a compact panel):
 
@@ -222,7 +300,7 @@ A small, clean settings window (not a full app - just a compact panel):
 
 ---
 
-## About Panel
+### About Panel
 
 A small window with:
 - Earl's sprite (animated idle)
@@ -233,7 +311,7 @@ A small window with:
 
 ---
 
-## Config File
+### Config File
 
 Stored at `%APPDATA%/earl/config.json`:
 
@@ -266,28 +344,28 @@ Stored at `%APPDATA%/earl/config.json`:
 
 ---
 
-## Security
+### Security
 
 This is critical - Earl should be safe to install on anyone's machine with zero concerns.
 
-### Tauri Capabilities (v2 permission system)
+#### Tauri Capabilities (v2 permission system)
 - ALLOW: window management (create, position, resize, always-on-top)
 - ALLOW: system tray
 - ALLOW: local file read/write (config only, scoped to %APPDATA%/earl/)
 - ALLOW: autostart registration
 - DENY: shell access
 - DENY: broad file system access
-- DENY: HTTP/network (Earl is fully offline)
+- DENY: HTTP/network (v1 was fully offline; v2 allows only the updater endpoint)
 - DENY: clipboard access
 - DENY: notifications (not needed)
 
-### Content Security Policy
+#### Content Security Policy
 ```
 default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none';
 ```
-No external resources. No network calls. Everything bundled.
+No external resources. No network calls. Everything bundled. (v1; v2 adds only the updater check.)
 
-### Additional Security Measures
+#### Additional Security Measures
 - No telemetry, no analytics, no data collection
 - No auto-updater (eliminates supply chain attack surface)
 - Config file contains no sensitive data
@@ -296,7 +374,7 @@ No external resources. No network calls. Everything bundled.
 
 ---
 
-## Project Structure
+### Project Structure
 
 ```
 earl-project/
@@ -355,9 +433,9 @@ earl-project/
 
 ---
 
-## MVP Feature Checklist (Target: April 4th)
+### MVP Feature Checklist (Target: April 4th)
 
-### Must Have (V1)
+#### Must Have (V1)
 - [ ] Transparent always-on-top window
 - [ ] Earl renders on screen with idle animation
 - [ ] Earl waddles along bottom of screen periodically
@@ -370,14 +448,14 @@ earl-project/
 - [ ] Config persistence across sessions
 - [ ] Placeholder art fallback if sprites aren't ready
 
-### Nice to Have (V1 stretch)
+#### Nice to Have (V1 stretch)
 - [ ] Sleep animation after long idle
 - [ ] Earl Stats tracking
 - [ ] About panel with backstory
 - [ ] Launch on startup option
 - [ ] Animation speed setting
 
-### V2 (Post-April 4th, target June 23rd)
+#### V2 (Post-April 4th, target June 23rd)
 - [ ] Birthday mode for June 23rd (Cam)
 - [ ] Weather awareness (tiny umbrella when raining)
 - [ ] Duck facts in speech bubbles
@@ -389,18 +467,15 @@ earl-project/
 
 ---
 
+---
+
 ## Appendix: recovered from the original March 2026 spec
 
-These sections existed only in the unpacked starter copies (`~/mini earl /earl-project/`, `~/Downloads/earl-project.zip`) and never made it into git. They are kept here for history. Where they conflict with `docs/V2_PLAN.md` (offline-only, canvas sized to Earl, portable exe), the v2 plan wins. The current art instructions are in `docs/ART_SHOTLIST.md`.
+These sections existed only in the unpacked starter copies (`~/mini earl /earl-project/`, `~/Downloads/earl-project.zip`) and never made it into git. They are kept here for history. Where they conflict with `docs/V2_PLAN.md` (offline-only, canvas sized to Earl, portable exe), the v2 plan wins. The current art instructions are in `docs/ART_SHOTLIST.md` and `docs/ART.md`.
 
 ### Art Pipeline (AI-Generated)
-Art will be generated using free AI tools and cleaned up manually:
 
-1. **Google AI Studio (Nano Banana / Gemini 2.5 Flash Image)** - generate Earl's character design and poses using the plush reference photos as input. Free tier allows 500-1000 images/day.
-2. **PixelLab AI** - generate sprite animation frames and directional variants from the established character design. Specialized for game-ready pixel art.
-3. **PixelBox by LlamaGen** - convert static poses into animated sprite sheets automatically.
-4. **Piskel / Libresprite** - manual cleanup, frame alignment, color consistency, final sprite sheet export.
-
+Moved to the "History" section of [`ART.md`](ART.md), next to the current pipeline.
 
 ### Birthday check (original snippet)
 
