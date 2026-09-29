@@ -16,12 +16,12 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
     };
 
     let show_hide = MenuItem::with_id(app, "show_hide", "Hide Earl", true, None::<&str>)?;
-    let sound_toggle =
-        MenuItem::with_id(app, "sound_toggle", sound_label, true, None::<&str>)?;
+    let sound_toggle = MenuItem::with_id(app, "sound_toggle", sound_label, true, None::<&str>)?;
     let separator1 = PredefinedMenuItem::separator(app)?;
     let settings_item = MenuItem::with_id(app, "settings", "Settings...", true, None::<&str>)?;
     let about_item = MenuItem::with_id(app, "about", "About Earl", true, None::<&str>)?;
-    let reset_pos_item = MenuItem::with_id(app, "reset_position", "Reset Position", true, None::<&str>)?;
+    let reset_pos_item =
+        MenuItem::with_id(app, "reset_position", "Reset Position", true, None::<&str>)?;
     let separator2 = PredefinedMenuItem::separator(app)?;
     let restart_item = MenuItem::with_id(app, "restart", "Restart Earl", true, None::<&str>)?;
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
@@ -137,18 +137,15 @@ fn open_panel_window(app: &tauri::AppHandle, label: &str, title: &str, width: u3
 
     // Use App URL - Tauri proxies to Vite in dev, serves dist in prod.
     // This ensures the IPC bridge is injected. Routing is by window label.
-    let builder = WebviewWindowBuilder::new(
-        app,
-        label,
-        tauri::WebviewUrl::App("index.html".into()),
-    )
-        .title(title)
-        .inner_size(width as f64, height as f64)
-        .resizable(false)
-        .always_on_top(true)
-        .decorations(true)
-        .transparent(false)
-        .center();
+    let builder =
+        WebviewWindowBuilder::new(app, label, tauri::WebviewUrl::App("index.html".into()))
+            .title(title)
+            .inner_size(width as f64, height as f64)
+            .resizable(false)
+            .always_on_top(true)
+            .decorations(true)
+            .transparent(false)
+            .center();
 
     if let Ok(window) = builder.build() {
         window.set_focus().ok();

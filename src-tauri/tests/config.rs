@@ -19,7 +19,8 @@ const MINISIGN_PUBLIC_KEY_PREFIX: &str = "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIH
 const PRIVATE_KEY_PREFIX: &str = "dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWdu";
 
 /// The v1 updater public key id. v2 uses fresh keypairs (D28).
-const V1_PUBLIC_KEY: &str = "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQyRkZCRkU4QTM2QTJDNDUK";
+const V1_PUBLIC_KEY: &str =
+    "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQyRkZCRkU4QTM2QTJDNDUK";
 
 fn manifest_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -89,7 +90,10 @@ fn overlay_window_is_created_unfocused() {
         .and_then(Value::as_array)
         .expect("app.windows");
     let label = |w: &Value| w.get("label").and_then(Value::as_str).map(str::to_owned);
-    match windows.iter().find(|w| label(w).as_deref() == Some("overlay")) {
+    match windows
+        .iter()
+        .find(|w| label(w).as_deref() == Some("overlay"))
+    {
         Some(overlay) => assert_eq!(
             overlay.get("focus"),
             Some(&Value::Bool(false)),

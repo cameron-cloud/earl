@@ -24,7 +24,7 @@ jobs:
       run:
         working-directory: src-tauri
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Tauri system libraries
         working-directory: .
@@ -55,7 +55,7 @@ jobs:
           git diff > "$RUNNER_TEMP/rustfmt.patch"
       - name: Upload rustfmt patch
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: rustfmt-patch
           path: ${{ runner.temp }}/rustfmt.patch
@@ -75,7 +75,7 @@ jobs:
     name: cargo audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-audit
@@ -87,9 +87,9 @@ jobs:
     name: windows (clippy, test, signed NSIS build)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: ${{ hashFiles('.nvmrc') != '' && '.nvmrc' || '' }}
           node-version: ${{ hashFiles('.nvmrc') == '' && '24' || '' }}
@@ -167,7 +167,7 @@ jobs:
           }
           "dir=$out" >> $env:GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: earl-windows-${{ github.run_number }}
           path: ${{ steps.collect.outputs.dir }}

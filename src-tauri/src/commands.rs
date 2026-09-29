@@ -1,15 +1,16 @@
 use crate::config::{self, EarlConfig};
 
+// Layout mirrors of the Win32 POINT and RECT structs for the FFI calls below.
 #[cfg(windows)]
 #[repr(C)]
-struct POINT {
+struct Point {
     x: i32,
     y: i32,
 }
 
 #[cfg(windows)]
 #[repr(C)]
-struct RECT {
+struct Rect {
     left: i32,
     top: i32,
     right: i32,
@@ -18,9 +19,9 @@ struct RECT {
 
 #[cfg(windows)]
 extern "system" {
-    fn GetCursorPos(lp_point: *mut POINT) -> i32;
+    fn GetCursorPos(lp_point: *mut Point) -> i32;
     fn FindWindowW(class_name: *const u16, window_name: *const u16) -> isize;
-    fn GetWindowRect(hwnd: isize, rect: *mut RECT) -> i32;
+    fn GetWindowRect(hwnd: isize, rect: *mut Rect) -> i32;
 }
 
 #[tauri::command]
@@ -29,10 +30,7 @@ pub fn show_window(window: tauri::WebviewWindow) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn set_ignore_cursor_events(
-    window: tauri::WebviewWindow,
-    ignore: bool,
-) -> Result<(), String> {
+pub fn set_ignore_cursor_events(window: tauri::WebviewWindow, ignore: bool) -> Result<(), String> {
     window
         .set_ignore_cursor_events(ignore)
         .map_err(|e| e.to_string())
@@ -165,7 +163,12 @@ pub fn get_taskbar_state(window: tauri::WebviewWindow) -> Result<TaskbarState, S
             return Ok(TaskbarState { visible: true }); // assume visible if can't find
         }
 
-        let mut rect = RECT { left: 0, top: 0, right: 0, bottom: 0 };
+        let mut rect = Rect {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+        };
         let ok = unsafe { GetWindowRect(hwnd, &mut rect) };
         if ok == 0 {
             return Ok(TaskbarState { visible: true });
@@ -201,7 +204,7 @@ pub fn update_hit_test(
 ) -> Result<bool, String> {
     #[cfg(windows)]
     {
-        let mut cursor = POINT { x: 0, y: 0 };
+        let mut cursor = Point { x: 0, y: 0 };
         let ok = unsafe { GetCursorPos(&mut cursor) };
         if ok == 0 {
             return Err("GetCursorPos failed".into());
@@ -209,18 +212,14 @@ pub fn update_hit_test(
 
         // Get window position in physical pixels
         let win_pos = window.outer_position().map_err(|e| e.to_string())?;
-        let scale = window
-            .scale_factor()
-            .map_err(|e| e.to_string())?;
+        let scale = window.scale_factor().map_err(|e| e.to_string())?;
 
         // Convert cursor to logical coordinates relative to window
         let cx = (cursor.x - win_pos.x) as f64 / scale;
         let cy = (cursor.y - win_pos.y) as f64 / scale;
 
-        let over_earl = cx >= earl_x
-            && cx <= earl_x + earl_size
-            && cy >= earl_y
-            && cy <= earl_y + earl_size;
+        let over_earl =
+            cx >= earl_x && cx <= earl_x + earl_size && cy >= earl_y && cy <= earl_y + earl_size;
 
         window
             .set_ignore_cursor_events(!over_earl)
