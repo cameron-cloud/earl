@@ -64,6 +64,8 @@ fn platform_init(state: State<'_, AppState>, window: tauri::WebviewWindow, info:
     #[cfg(windows)]
     let (ground_y, taskbar_edge, dpi_scale) = {
         let (g, tb) = win::ground_now(shared);
+        // Overlay rect not recorded yet (height 0): fall back to the WebView's own height.
+        let g = if g > 0.0 { g } else { info.inner_height };
         let dpi = window
             .hwnd()
             .map(|h| f64::from(unsafe { windows::Win32::UI::HiDpi::GetDpiForWindow(h) }) / 96.0)
