@@ -73,7 +73,7 @@ export async function getTaskbarState(): Promise<{ visible: boolean }> {
 export async function updateHitTest(
   earlX: number,
   earlY: number,
-  earlSize: number
+  earlSize: number,
 ): Promise<boolean> {
   return invoke<boolean>("update_hit_test", {
     earlX,
