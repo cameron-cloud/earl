@@ -1,3 +1,4 @@
+use crate::commands::FrontendReady;
 use tauri::{
     image::Image,
     menu::{Menu, MenuItem, PredefinedMenuItem},
@@ -98,7 +99,12 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
                 open_panel_window(app, "about", "About Earl", 300, 380);
             }
             "restart" => {
-                app.restart();
+                // request_restart, not restart: on the main thread restart()
+                // skips RunEvent::Exit and spawns the new process at once, but
+                // the single-instance plugin only releases its mutex on
+                // RunEvent::Exit. The new process could then find the mutex
+                // still held, hand over to the dying instance and quit.
+                app.request_restart();
             }
             "quit" => {
                 app.exit(0);
@@ -117,11 +123,20 @@ struct TrayItems {
 
 /// A second launch of Earl (D30): show Earl if he was hidden, keep the tray's
 /// Show/Hide label in step, and open Settings.
+///
+/// If the first instance is still starting (W16a: autostart at login, then a
+/// Start-menu launch), the frontend has not signalled ready yet and will show
+/// Earl itself when it has, so the window is left alone until then.
 pub fn on_second_launch(app: &tauri::AppHandle) {
-    if let Some(window) = app.get_webview_window("main") {
-        window.show().ok();
-        if let Some(items) = app.try_state::<TrayItems>() {
-            items.show_hide.set_text("Hide Earl").ok();
+    let frontend_ready = app
+        .try_state::<FrontendReady>()
+        .is_some_and(|ready| ready.is_set());
+    if frontend_ready {
+        if let Some(window) = app.get_webview_window("main") {
+            window.show().ok();
+            if let Some(items) = app.try_state::<TrayItems>() {
+                items.show_hide.set_text("Hide Earl").ok();
+            }
         }
     }
     open_panel_window(app, "settings", "Earl Settings", 320, 420);

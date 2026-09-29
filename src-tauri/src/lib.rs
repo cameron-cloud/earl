@@ -23,6 +23,7 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
         ))
+        .manage(commands::FrontendReady::default())
         .setup(|app| {
             let app_handle = app.handle().clone();
             config::init_config(&app_handle)?;

@@ -1,4 +1,5 @@
 use crate::config::{self, EarlConfig};
+use std::sync::atomic::{AtomicBool, Ordering};
 
 // Layout mirrors of the Win32 POINT and RECT structs for the FFI calls below.
 #[cfg(windows)]
@@ -24,9 +25,28 @@ extern "system" {
     fn GetWindowRect(hwnd: isize, rect: *mut Rect) -> i32;
 }
 
+/// Set once the main window's frontend has called show_window, which it does
+/// when it is ready to draw. Until then Earl stays hidden (lib.rs setup), and
+/// a second launch (D30) must not show him early.
+#[derive(Default)]
+pub struct FrontendReady(AtomicBool);
+
+impl FrontendReady {
+    pub fn is_set(&self) -> bool {
+        self.0.load(Ordering::Acquire)
+    }
+}
+
 #[tauri::command]
-pub fn show_window(window: tauri::WebviewWindow) -> Result<(), String> {
-    window.show().map_err(|e| e.to_string())
+pub fn show_window(
+    window: tauri::WebviewWindow,
+    ready: tauri::State<'_, FrontendReady>,
+) -> Result<(), String> {
+    window.show().map_err(|e| e.to_string())?;
+    if window.label() == "main" {
+        ready.0.store(true, Ordering::Release);
+    }
+    Ok(())
 }
 
 #[tauri::command]
