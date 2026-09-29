@@ -41,10 +41,13 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
         ],
     )?;
 
-    let tray_icon = Image::from_bytes(include_bytes!("../../assets/icons/tray_icon_32.png"))?;
+    let tray_icon = Image::from_bytes(include_bytes!("../icons/tray_32.png"))?;
 
     // Clone menu items so we can update their text from within the closure
     let show_hide_ref = show_hide.clone();
+    app.manage(TrayItems {
+        show_hide: show_hide.clone(),
+    });
     let sound_toggle_ref = sound_toggle.clone();
 
     let _tray = TrayIconBuilder::new()
@@ -105,6 +108,23 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
         .build(app)?;
 
     Ok(())
+}
+
+/// Tray menu items that code outside the tray's own menu handler updates.
+struct TrayItems {
+    show_hide: MenuItem<tauri::Wry>,
+}
+
+/// A second launch of Earl (D30): show Earl if he was hidden, keep the tray's
+/// Show/Hide label in step, and open Settings.
+pub fn on_second_launch(app: &tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        window.show().ok();
+        if let Some(items) = app.try_state::<TrayItems>() {
+            items.show_hide.set_text("Hide Earl").ok();
+        }
+    }
+    open_panel_window(app, "settings", "Earl Settings", 320, 420);
 }
 
 fn open_panel_window(app: &tauri::AppHandle, label: &str, title: &str, width: u32, height: u32) {

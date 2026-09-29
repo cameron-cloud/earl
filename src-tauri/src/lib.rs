@@ -7,6 +7,16 @@ use tauri::Manager;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        // D30: single-instance is registered first, so a second launch hands
+        // over to the running instance before any other plugin starts. The
+        // running instance shows Earl and opens Settings. The handler is
+        // queued onto the event loop, the same path tray menu clicks take, so
+        // Settings is never built inside the plugin's own message handler.
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            let handle = app.clone();
+            app.run_on_main_thread(move || tray::on_second_launch(&handle))
+                .ok();
+        }))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_autostart::init(
