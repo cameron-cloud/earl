@@ -1,3 +1,4 @@
+use crate::commands::FrontendReady;
 use tauri::{
     image::Image,
     menu::{Menu, MenuItem, PredefinedMenuItem},
@@ -16,12 +17,12 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
     };
 
     let show_hide = MenuItem::with_id(app, "show_hide", "Hide Earl", true, None::<&str>)?;
-    let sound_toggle =
-        MenuItem::with_id(app, "sound_toggle", sound_label, true, None::<&str>)?;
+    let sound_toggle = MenuItem::with_id(app, "sound_toggle", sound_label, true, None::<&str>)?;
     let separator1 = PredefinedMenuItem::separator(app)?;
     let settings_item = MenuItem::with_id(app, "settings", "Settings...", true, None::<&str>)?;
     let about_item = MenuItem::with_id(app, "about", "About Earl", true, None::<&str>)?;
-    let reset_pos_item = MenuItem::with_id(app, "reset_position", "Reset Position", true, None::<&str>)?;
+    let reset_pos_item =
+        MenuItem::with_id(app, "reset_position", "Reset Position", true, None::<&str>)?;
     let separator2 = PredefinedMenuItem::separator(app)?;
     let restart_item = MenuItem::with_id(app, "restart", "Restart Earl", true, None::<&str>)?;
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
@@ -41,10 +42,13 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
         ],
     )?;
 
-    let tray_icon = Image::from_bytes(include_bytes!("../../assets/icons/tray_icon_32.png"))?;
+    let tray_icon = Image::from_bytes(include_bytes!("../icons/tray_32.png"))?;
 
     // Clone menu items so we can update their text from within the closure
     let show_hide_ref = show_hide.clone();
+    app.manage(TrayItems {
+        show_hide: show_hide.clone(),
+    });
     let sound_toggle_ref = sound_toggle.clone();
 
     let _tray = TrayIconBuilder::new()
@@ -95,7 +99,12 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
                 open_panel_window(app, "about", "About Earl", 300, 380);
             }
             "restart" => {
-                app.restart();
+                // request_restart, not restart: on the main thread restart()
+                // skips RunEvent::Exit and spawns the new process at once, but
+                // the single-instance plugin only releases its mutex on
+                // RunEvent::Exit. The new process could then find the mutex
+                // still held, hand over to the dying instance and quit.
+                app.request_restart();
             }
             "quit" => {
                 app.exit(0);
@@ -105,6 +114,32 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
         .build(app)?;
 
     Ok(())
+}
+
+/// Tray menu items that code outside the tray's own menu handler updates.
+struct TrayItems {
+    show_hide: MenuItem<tauri::Wry>,
+}
+
+/// A second launch of Earl (D30): show Earl if he was hidden, keep the tray's
+/// Show/Hide label in step, and open Settings.
+///
+/// If the first instance is still starting (W16a: autostart at login, then a
+/// Start-menu launch), the frontend has not signalled ready yet and will show
+/// Earl itself when it has, so the window is left alone until then.
+pub fn on_second_launch(app: &tauri::AppHandle) {
+    let frontend_ready = app
+        .try_state::<FrontendReady>()
+        .is_some_and(|ready| ready.is_set());
+    if frontend_ready {
+        if let Some(window) = app.get_webview_window("main") {
+            window.show().ok();
+            if let Some(items) = app.try_state::<TrayItems>() {
+                items.show_hide.set_text("Hide Earl").ok();
+            }
+        }
+    }
+    open_panel_window(app, "settings", "Earl Settings", 320, 420);
 }
 
 fn open_panel_window(app: &tauri::AppHandle, label: &str, title: &str, width: u32, height: u32) {
@@ -117,18 +152,15 @@ fn open_panel_window(app: &tauri::AppHandle, label: &str, title: &str, width: u3
 
     // Use App URL - Tauri proxies to Vite in dev, serves dist in prod.
     // This ensures the IPC bridge is injected. Routing is by window label.
-    let builder = WebviewWindowBuilder::new(
-        app,
-        label,
-        tauri::WebviewUrl::App("index.html".into()),
-    )
-        .title(title)
-        .inner_size(width as f64, height as f64)
-        .resizable(false)
-        .always_on_top(true)
-        .decorations(true)
-        .transparent(false)
-        .center();
+    let builder =
+        WebviewWindowBuilder::new(app, label, tauri::WebviewUrl::App("index.html".into()))
+            .title(title)
+            .inner_size(width as f64, height as f64)
+            .resizable(false)
+            .always_on_top(true)
+            .decorations(true)
+            .transparent(false)
+            .center();
 
     if let Ok(window) = builder.build() {
         window.set_focus().ok();

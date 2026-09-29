@@ -1,0 +1,9 @@
+[package]
+name = "earl-core"
+version = "0.1.0"
+description = "Earl's pure logic: geometry, classification, settings. No Tauri, no Win32, so it tests on Linux."
+authors = ["Cameron"]
+edition = "2021"
+publish = false
+
+[dependencies]
