@@ -4,3 +4,8 @@ src-tauri/target/
 .env
 *.log
 logs/
+# Threx credential and runtime hygiene
+prospects/
+drafts/
+runs/
+openclaw.json
