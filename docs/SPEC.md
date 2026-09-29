@@ -386,3 +386,45 @@ earl-project/
 - [ ] Additional sound effects
 - [ ] Proper .msi installer with splash screen
 - [ ] Code signing certificate
+
+---
+
+## Appendix: recovered from the original March 2026 spec
+
+These sections existed only in the unpacked starter copies (`~/mini earl /earl-project/`, `~/Downloads/earl-project.zip`) and never made it into git. They are kept here for history. Where they conflict with `docs/V2_PLAN.md` (offline-only, canvas sized to Earl, portable exe), the v2 plan wins. The current art instructions are in `docs/ART_SHOTLIST.md`.
+
+### Art Pipeline (AI-Generated)
+Art will be generated using free AI tools and cleaned up manually:
+
+1. **Google AI Studio (Nano Banana / Gemini 2.5 Flash Image)** - generate Earl's character design and poses using the plush reference photos as input. Free tier allows 500-1000 images/day.
+2. **PixelLab AI** - generate sprite animation frames and directional variants from the established character design. Specialized for game-ready pixel art.
+3. **PixelBox by LlamaGen** - convert static poses into animated sprite sheets automatically.
+4. **Piskel / Libresprite** - manual cleanup, frame alignment, color consistency, final sprite sheet export.
+
+
+### Birthday check (original snippet)
+
+```typescript
+const today = new Date();
+const month = today.getMonth() + 1;
+const day = today.getDate();
+
+if (month === 4 && day === 4) {
+  activateBirthday("Juliette");
+} else if (month === 6 && day === 23) {
+  activateBirthday("Cam");
+}
+```
+
+### Original notes for Claude Code (v1)
+
+- This is a Windows 11 desktop application, NOT a web app
+- The app must work offline with zero network access
+- Keep the bundle size minimal - every dependency matters
+- The transparent window with click-through is the trickiest part - get this working first
+- Tauri v2's `window.set_decorations(false)`, `window.set_transparent(true)`, and `window.set_always_on_top(true)` are the key APIs
+- For click-through, the transparent regions need to pass mouse events to the desktop below
+- Test window positioning relative to the taskbar - it varies with taskbar size and multi-monitor setups
+- The Canvas element should be the exact size of Earl's display size, not the full screen
+- Frame timing should use `requestAnimationFrame` with delta time, not `setInterval`
+- All Tauri plugin imports use the `@tauri-apps/plugin-*` namespace in v2
