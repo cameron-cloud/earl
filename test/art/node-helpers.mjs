@@ -1,5 +1,6 @@
 // Node file-system helpers for the art tests. The repo has no @types/node (and adding it is a
 // new dependency), so tests reach Node APIs through this typed module instead.
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -31,3 +32,13 @@ export const listFiles = (dir) =>
     .filter((d) => d.isFile())
     .map((d) => d.name)
     .sort();
+
+export function symlink(target, file) {
+  fs.symlinkSync(target, file);
+}
+
+/** Runs a Node script with this Node binary and returns its exit status and output. */
+export function runNode(args, cwd) {
+  const r = spawnSync(process.execPath, args, { cwd, encoding: "utf8" });
+  return { status: r.status, stdout: r.stdout, stderr: r.stderr };
+}

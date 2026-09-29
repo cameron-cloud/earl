@@ -52,7 +52,9 @@ Edit this image. Change ONLY his face: <EYES / LIDS / BROWS / BILL>. Do not move
 
 ### T4: Cycle strip (walk, run, climb)
 
-Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`.
+Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts in `art/SHOTLIST.md` fill in `<N>` and one `Frame k` clause per frame.
+
+Sizing: a strip whose frames have no base outside the strip (`earl_walk` and the prop strips) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. Ask for the ducks to fill most of the frame height, and compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.
 
 ```
 Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
@@ -301,7 +303,7 @@ Each prompt below is the template with the STYLE LOCK (or, for babies, the BABY 
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Earl_Front_Idle: sits facing front, soles forward, wing nubs down, neutral open eyes, closed bill smile. Master #1.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Earl_Front_Idle: sits facing front, soles forward, wing nubs down, neutral open eyes, closed bill smile. Master #1. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -314,7 +316,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Eyes closed as soft downward arcs (redraw of Front_Blink).. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Eyes closed as soft downward arcs (redraw of Front_Blink). Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_sit_quack
@@ -324,7 +326,7 @@ Edit this image. Change ONLY his face: Eyes closed as soft downward arcs (redraw
 T3:
 
 ```
-Edit this image. Change ONLY his face: Neutral eyes, bill open mid-quack (the mouth frame for quacks and speech while he faces front).. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Neutral eyes, bill open mid-quack (the mouth frame for quacks and speech while he faces front). Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_sit_side
@@ -334,7 +336,7 @@ Edit this image. Change ONLY his face: Neutral eyes, bill open mid-quack (the mo
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Idle_Side: sitting side view, feet poking forward. Master #4.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Idle_Side: sitting side view, feet poking forward. Master #4. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -347,7 +349,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Side view, eye closed as an arc.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Side view, eye closed as an arc. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_stand_front
@@ -357,7 +359,7 @@ Edit this image. Change ONLY his face: Side view, eye closed as an arc.. Do not 
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing front, feet under body, toes forward. Master #3.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing front, feet under body, toes forward. Master #3. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -380,7 +382,7 @@ Edit this image. Change ONLY his face: Standing front, eyes closed as soft arcs.
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: 01: near foot forward (Walk_step_1). 02: feet together, passing (walk_side), Master #2. 03: far foot forward (Walk_step_2). Bob and waddle rock are added in code.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: 01: near foot forward (Walk_step_1). 02: feet together, passing (walk_side), Master #2. 03: far foot forward (Walk_step_2). Bob and waddle rock are added in code. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -389,7 +391,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T4:
 
 ```
-Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
+Make a horizontal sprite strip of 3 frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -402,7 +404,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T4:
 
 ```
-Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
+Make a horizontal sprite strip of 4 frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>. Frame 4: <...>.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -415,7 +417,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Three-quarter standing view, front-right, so he stops snapping between front and side.. Facing: three-quarter front-right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Three-quarter standing view, front-right, so he stops snapping between front and side. Facing: three-quarter front-right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -428,7 +430,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Halfway up: bottom lifting, feet planted under him, wings out for balance. Played forward and reversed on every sit and stand.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Halfway up: bottom lifting, feet planted under him, wings out for balance. Played forward and reversed on every sit and stand. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -441,7 +443,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sit impact: body squashed about 10% shorter and wider, feet flung up, eyes squeezed.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sit impact: body squashed about 10% shorter and wider, feet flung up, eyes squeezed. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -454,7 +456,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Hop_Squat: crouched, ready to spring.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Hop_Squat: crouched, ready to spring. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -467,7 +469,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Hop_Air: wings up, feet dangling, happy.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Hop_Air: wings up, feet dangling, happy. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -480,7 +482,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of dropped_squish: pancake, eyes wide, feet splayed.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of dropped_squish: pancake, eyes wide, feet splayed. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -493,7 +495,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: On tiptoes, wings high, body about 8% taller, eyes shut, bill slightly open.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: On tiptoes, wings high, body about 8% taller, eyes shut, bill slightly open. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -506,7 +508,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: 01: bill opening, eyes half shut. 02: bill wide open, eyes squeezed, wings lifted.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: 01: bill opening, eyes half shut. 02: bill wide open, eyes squeezed, wings lifted. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -519,7 +521,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing proudly, wings flung wide, chest out, smug closed-eye smile ("ta-da").. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing proudly, wings flung wide, chest out, smug closed-eye smile ("ta-da"). Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -532,7 +534,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Picked_up: dangling by the scruff, big surprised eyes, feet hanging, wings slightly out.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of Picked_up: dangling by the scruff, big surprised eyes, feet hanging, wings slightly out. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -545,7 +547,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same pose, flat unimpressed lids, pouting bill.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same pose, flat unimpressed lids, pouting bill. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_held_side
@@ -555,7 +557,7 @@ Edit this image. Change ONLY his face: Same pose, flat unimpressed lids, pouting
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Dragged sideways fast: body trailing, feet and wings streaming back, eyes squeezed, bill open.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Dragged sideways fast: body trailing, feet and wings streaming back, eyes squeezed, bill open. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -568,7 +570,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Panic: wings up (01) and down (02), feet kicking, bill open, eyes wide. Free fall, throws, falling off windows.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Panic: wings up (01) and down (02), feet kicking, bill open, eyes wide. Free fall, throws, falling off windows. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -581,7 +583,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Curled into a ball, eyes squeezed, feet tucked; the game spins it. Redraw of tumble without motion lines.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Curled into a ball, eyes squeezed, feet tucked; the game spins it. Redraw of tumble without motion lines. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -594,7 +596,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw as a side view: hits a wall at the right edge face-first, bill and face flattened, body squashed sideways, eyes squeezed.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw as a side view: hits a wall at the right edge face-first, bill and face flattened, body squashed sideways, eyes squeezed. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -607,7 +609,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw. 01: sitting lopsided, spiral eyes, slack bill. 02 (P2 frame): spirals turned 90° so the spin animates. Stars are drawn in code.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw. 01: sitting lopsided, spiral eyes, slack bill. 02 (P2 frame): spirals turned 90° so the spin animates. Stars are drawn in code. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -616,7 +618,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: April redraw. 01: sitting lopsided, spiral eyes, slack bill. 02 (P2 frame): spirals turned 90° so the spin animates. Stars are drawn in code.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: April redraw. 01: sitting lopsided, spiral eyes, slack bill. 02 (P2 frame): spirals turned 90° so the spin animates. Stars are drawn in code. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_sit_pouty
@@ -626,7 +628,7 @@ Edit this image. Change ONLY his face: April redraw. 01: sitting lopsided, spira
 T3:
 
 ```
-Edit this image. Change ONLY his face: April redraw: lower bill pushed out, brows tilted up at the middle, glossy eyes.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: April redraw: lower bill pushed out, brows tilted up at the middle, glossy eyes. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_sit_huffy
@@ -636,7 +638,7 @@ Edit this image. Change ONLY his face: April redraw: lower bill pushed out, brow
 T3:
 
 ```
-Edit this image. Change ONLY his face: April redraw: heavy flat lids, brows angled down, bill clamped shut.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: April redraw: heavy flat lids, brows angled down, bill clamped shut. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_puffed_up
@@ -646,7 +648,7 @@ Edit this image. Change ONLY his face: April redraw: heavy flat lids, brows angl
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw: standing, every feather fluffed (bumpy fuzzy silhouette about 12% wider), angry brows, wings out. Also the fluffy look after a bath shake.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw: standing, every feather fluffed (bumpy fuzzy silhouette about 12% wider), angry brows, wings out. Also the fluffy look after a bath shake. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -659,7 +661,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw: standing, one foot raised to stomp, wings flailing down, eyes squeezed, bill wide open squawking. Mirrored for the other foot.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: April redraw: standing, one foot raised to stomp, wings flailing down, eyes squeezed, bill wide open squawking. Mirrored for the other foot. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -672,7 +674,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Curious head tilt about 18° to his left, eyes extra glossy, bill slightly open.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Curious head tilt about 18° to his left, eyes extra glossy, bill slightly open. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -685,7 +687,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Happy closed-eye arcs, head pressed down into the hand, blush, wings relaxed out.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Happy closed-eye arcs, head pressed down into the hand, blush, wings relaxed out. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -698,7 +700,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Eyes closed but brows flat, pouting bill, faint blush ("fine. you may.").. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Eyes closed but brows flat, pouting bill, faint blush ("fine. you may."). Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_sit_sleepy
@@ -708,7 +710,7 @@ Edit this image. Change ONLY his face: Eyes closed but brows flat, pouting bill,
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Drowsy: lids half closed and heavy, head drooping slightly, bill relaxed. His resting look every night.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Drowsy: lids half closed and heavy, head drooping slightly, bill relaxed. His resting look every night. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -721,7 +723,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Content: eyes open and bright, a wider bill smile, faint blush.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Content: eyes open and bright, a wider bill smile, faint blush. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_look
@@ -731,7 +733,7 @@ Edit this image. Change ONLY his face: Content: eyes open and bright, a wider bi
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting, head turned three-quarters to the viewer's right, looking off-screen. Mirrored to look left.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting, head turned three-quarters to the viewer's right, looking off-screen. Mirrored to look left. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -744,7 +746,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing side view, head turned back over his shoulder toward the viewer (the "turn-back" look while walking, investigating or being chased).. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing side view, head turned back over his shoulder toward the viewer (the "turn-back" look while walking, investigating or being chased). Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -757,7 +759,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting, head tipped back, looking up at a window top or a parachute.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting, head tipped back, looking up at a window top or a parachute. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -770,7 +772,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing side view, head tipped back looking up (before jumping to a window, while eating).. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing side view, head tipped back looking up (before jumping to a window, while eating). Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -783,7 +785,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Deadpan half-lidded stare straight at you, flat bill. His first reaction to a stranger's click.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Deadpan half-lidded stare straight at you, flat bill. His first reaction to a stranger's click. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_side_eye
@@ -793,7 +795,7 @@ Edit this image. Change ONLY his face: Deadpan half-lidded stare straight at you
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Jealous side-eye: head turned 15°, heavy lids, eyes pushed to one side, pout.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Jealous side-eye: head turned 15°, heavy lids, eyes pushed to one side, pout. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -806,7 +808,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Droopy head, big wet eyes (bigger sparkles, one tiny tear), bill down, wings limp.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Droopy head, big wet eyes (bigger sparkles, one tiny tear), bill down, wings limp. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -819,7 +821,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing and squawking: bill wide, sharp brows, wings raised like tiny fists.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Standing and squawking: bill wide, sharp brows, wings raised like tiny fists. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -832,7 +834,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Jump-scare: feathers bristled, eyes wide, both wings flung up, feet just off the ground.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Jump-scare: feathers bristled, eyes wide, both wings flung up, feet just off the ground. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -845,7 +847,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Happy closed-eye arcs, open-bill smile, blush, wings out, leaning to one side. Mirrored on alternate frames.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Happy closed-eye arcs, open-bill smile, blush, wings out, leaning to one side. Mirrored on alternate frames. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -858,7 +860,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Back view, sitting, head down, slumped, small tail tuft. Turned away from you.. Facing: back. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Back view, sitting, head down, slumped, small tail tuft. Turned away from you. Facing: back. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -871,7 +873,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: 01 wind-up: head back, eyes squinting, bill parted. 02: head snapped forward and down, eyes shut, bill open.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: 01 wind-up: head back, eyes squinting, bill parted. 02: head snapped forward and down, eyes shut, bill open. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -884,7 +886,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting side view, head twisted back into the wing feathers. 02: tugging, one feather tuft sticking up.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting side view, head twisted back into the wing feathers. 02: tugging, one feather tuft sticking up. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -897,7 +899,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting side view, one foot raised scratching his cheek, blissful shut eyes. 01 foot up, 02 foot lower.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting side view, one foot raised scratching his cheek, blissful shut eyes. 01 foot up, 02 foot lower. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -910,7 +912,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: 01 wind-up: neck pulled back, chest puffed. 02: neck thrust forward, bill wide, eyes shut.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: 01 wind-up: neck pulled back, chest puffed. 02: neck thrust forward, bill wide, eyes shut. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -923,7 +925,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Inspecting: leaning forward, neck stretched, bill near the ground, eye wide. Also peering down off a ledge.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Inspecting: leaning forward, neck stretched, bill near the ground, eye wide. Also peering down off a ledge. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -936,7 +938,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Eating: 01 bill down at ground level, 02 head up chewing. A grumpy nibble plays the same frames slower.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Eating: 01 bill down at ground level, 02 head up chewing. A grumpy nibble plays the same frames slower. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -949,7 +951,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting side view, cheeks puffed, content shut eyes.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting side view, cheeks puffed, content shut eyes. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -962,7 +964,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Ball: 01 wind-up, leg back, wing out for balance. 02 kick-through, foot high forward, bill open.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Ball: 01 wind-up, leg back, wing out for balance. 02 kick-through, foot high forward, bill open. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -975,7 +977,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Shoving something on the right with his chest and head down, feet braced. 02: bigger shove, one foot sliding back.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Shoving something on the right with his chest and head down, feet braced. 02: bigger shove, one foot sliding back. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -988,7 +990,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T1:
 
 ```
-Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of sleep: slumped, head drooped to one side, eyes closed, bill tucked. Breathing and Zzz are added in code.. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
+Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: Redraw of sleep: slumped, head drooped to one side, eyes closed, bill tucked. Breathing and Zzz are added in code. <EDGES: v1-faithful = "Keep the crisp sprite look, just at higher resolution" | smooth = "Replace the pixelated edges with smooth clean shapes">. Do not add anything.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1001,7 +1003,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Lying on his side curled up, head resting, eyes closed. Drawn between the bed and the blanket.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Lying on his side curled up, head resting, eyes closed. Drawn between the bed and the blanket. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1014,7 +1016,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Top of a trampoline bounce, star jump: wings and feet spread wide, happy eyes, laughing.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Top of a trampoline bounce, star jump: wings and feet spread wide, happy eyes, laughing. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1027,7 +1029,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Cannonball tuck with a gleeful grin; the game spins it for flips.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Cannonball tuck with a gleeful grin; the game spins it for flips. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1040,7 +1042,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting in the tub: one wing high flinging water, the other low, happy squeezed eyes, laughing. Mirrored on alternate frames. The tub's front layer hides his lower body.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Sitting in the tub: one wing high flinging water, the other low, happy squeezed eyes, laughing. Mirrored on alternate frames. The tub's front layer hides his lower body. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1053,7 +1055,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Shaking dry: head twisted one way, body the other, feathers ruffled out, eyes shut. Mirrored plus fast wobble in code.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Shaking dry: head twisted one way, body the other, feathers ruffled out, eyes shut. Mirrored plus fast wobble in code. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1066,7 +1068,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Facing into the wind (fan on the right): leaning hard forward, eyes squeezed, head fluff swept back, feet braced and skidding.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Facing into the wind (fan on the right): leaning hard forward, eyes squeezed, head fluff swept back, feet braced and skidding. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1079,7 +1081,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Leaning back and away, visible eye narrowed, one wing half-raised defensively (the rubber duck).. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Leaning back and away, visible eye narrowed, one wing half-raised defensively (the rubber duck). Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1092,7 +1094,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Leaning forward, cheek pressed against something on the right, happy shut eyes, blush.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Leaning forward, cheek pressed against something on the right, happy shut eyes, blush. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1105,7 +1107,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Peeking over a ledge: chin resting on the ledge line, wing tips resting on the line (nothing that should be seen goes below y=124), wide curious eyes. Full body drawn; the game hides everything below the taskbar line. His chin-on-the-edge rest when he slips behind the taskbar.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Peeking over a ledge: chin resting on the ledge line, wing tips resting on the line (nothing that should be seen goes below y=124), wide curious eyes. Full body drawn; the game hides everything below the taskbar line. His chin-on-the-edge rest when he slips behind the taskbar. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1118,7 +1120,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same, eyes closed as soft arcs (a blink, not sleep: chin still up).. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same, eyes closed as soft arcs (a blink, not sleep: chin still up). Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_peek_look
@@ -1128,7 +1130,7 @@ Edit this image. Change ONLY his face: Same, eyes closed as soft arcs (a blink, 
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Same ledge pose, head turned three-quarters to the right, looking along the taskbar. Mirrored to look left.. Facing: three-quarter front-right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Same ledge pose, head turned three-quarters to the right, looking along the taskbar. Mirrored to look left. Facing: three-quarter front-right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1141,7 +1143,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same, half-lidded sulky eyes, flat brows. When sulking, the game sinks him until only his eyes show.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same, half-lidded sulky eyes, flat brows. When sulking, the game sinks him until only his eyes show. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_peek_sleep
@@ -1151,7 +1153,7 @@ Edit this image. Change ONLY his face: Same, half-lidded sulky eyes, flat brows.
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same, eyes closed as soft arcs, chin drooped onto the ledge, content. Napping behind the taskbar.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same, eyes closed as soft arcs, chin drooped onto the ledge, content. Napping behind the taskbar. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_peek_happy
@@ -1161,7 +1163,7 @@ Edit this image. Change ONLY his face: Same, eyes closed as soft arcs, chin droo
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same, bright eyes, wider bill smile, faint blush.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same, bright eyes, wider bill smile, faint blush. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_peek_quack
@@ -1171,7 +1173,7 @@ Edit this image. Change ONLY his face: Same, bright eyes, wider bill smile, fain
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same, bill open mid-quack.. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same, bill open mid-quack. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_jump_up
@@ -1181,7 +1183,7 @@ Edit this image. Change ONLY his face: Same, bill open mid-quack.. Do not move, 
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Launching up onto a window top: stretched tall, wings swept down and back, feet trailing, bill up.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Launching up onto a window top: stretched tall, wings swept down and back, feet trailing, bill up. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1194,7 +1196,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: At a ledge edge leaning over, wings windmilling (01 forward, 02 back), eyes wide.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: At a ledge edge leaning over, wings windmilling (01 forward, 02 back), eyes wide. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1207,7 +1209,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T4:
 
 ```
-Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
+Make a horizontal sprite strip of 2 frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1220,7 +1222,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Hanging: both wings raised overhead gripping something, feet dangling, smug and content. One pose for both the parachute and the umbrella ride. Wing-tip attach points are stored.. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Hanging: both wings raised overhead gripping something, feet dangling, smug and content. One pose for both the parachute and the umbrella ride. Wing-tip attach points are stored. Facing: front. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1233,7 +1235,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T3:
 
 ```
-Edit this image. Change ONLY his face: Same, eyes wide, bill open (parachute yank, fan gust).. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+Edit this image. Change ONLY his face: Same, eyes wide, bill open (parachute yank, fan gust). Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
 ```
 
 ### earl_tug
@@ -1243,7 +1245,7 @@ Edit this image. Change ONLY his face: Same, eyes wide, bill open (parachute yan
 T2:
 
 ```
-Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Cursor tug-of-war: bill clamped on a point (the bill attach point, where the cursor goes), leaning back, feet braced and sliding. 02: a bigger heave.. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
+Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: Cursor tug-of-war: bill clamped on a point (the bill attach point, where the cursor goes), leaning back, feet braced and sliding. 02: a bigger heave. Facing: right. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1256,7 +1258,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T4:
 
 ```
-Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
+Make a horizontal sprite strip of 2 frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>.
 STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
@@ -1269,7 +1271,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 T5:
 
 ```
-Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Earl's baby sibling sitting: about 55% of his height, butter yellow, head tuft.. Place it small on the canvas with its feet on the same ground line as the reference duck.
+Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Earl's baby sibling sitting: about 55% of his height, butter yellow, head tuft. Place it small on the canvas with its feet on the same ground line as the reference duck.
 BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
@@ -1282,7 +1284,7 @@ FRAMING: square image, whole duck visible and not cropped, drawn small at the sa
 T5:
 
 ```
-Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Two-frame waddle; the bob is added in code.. Place it small on the canvas with its feet on the same ground line as the reference duck.
+Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Two-frame waddle; the bob is added in code. Place it small on the canvas with its feet on the same ground line as the reference duck.
 BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
@@ -1291,7 +1293,7 @@ FRAMING: square image, whole duck visible and not cropped, drawn small at the sa
 T4:
 
 ```
-Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
+Make a horizontal sprite strip of 2 frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>.
 BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
@@ -1304,7 +1306,7 @@ FRAMING: square image, whole duck visible and not cropped, drawn small at the sa
 T5:
 
 ```
-Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Bill open peeping, wings up.. Place it small on the canvas with its feet on the same ground line as the reference duck.
+Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Bill open peeping, wings up. Place it small on the canvas with its feet on the same ground line as the reference duck.
 BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
@@ -1317,7 +1319,7 @@ FRAMING: square image, whole duck visible and not cropped, drawn small at the sa
 T5:
 
 ```
-Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Curled up asleep.. Place it small on the canvas with its feet on the same ground line as the reference duck.
+Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: Curled up asleep. Place it small on the canvas with its feet on the same ground line as the reference duck.
 BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
@@ -1336,7 +1338,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: 01: crumpled fabric bursting out. 02: half open, stretched tall, rippled. 03: fully open dome with red (#D9483B) and cream (#FBF3DD) panels, about 320 wide. 04: deflating, sides sagging. 05: collapsed heap on the ground (he wriggles out from under it). No strings (drawn in code). Attach points: `hemL`, `hemR` (set in the lineup).. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: 01: crumpled fabric bursting out. 02: half open, stretched tall, rippled. 03: fully open dome with red (#D9483B) and cream (#FBF3DD) panels, about 320 wide. 04: deflating, sides sagging. 05: collapsed heap on the ground (he wriggles out from under it). No strings (drawn in code). Attach points: `hemL`, `hemR` (set in the lineup). Everything else identical - size, position, colors, background.
 ```
 
 ### prop_bed
@@ -1356,7 +1358,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: Same canvas as the bed. Blue gingham (#8DB6E0 / #F8F4EA). 01: flat on the empty bed. 02: tucked over a duckling-shaped bump, pillow area left open. Front layer.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: Same canvas as the bed. Blue gingham (#8DB6E0 / #F8F4EA). 01: flat on the empty bed. 02: tucked over a duckling-shaped bump, pillow area left open. Front layer. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_bread
@@ -1372,7 +1374,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: Bread slice (crust #C98A43, crumb #F2DDB0), about 96 wide. 01 whole, 02 one bite, 03 half, 04 crust scraps. Crumbs are drawn in code.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: Bread slice (crust #C98A43, crumb #F2DDB0), about 96 wide. 01 whole, 02 one bite, 03 half, 04 crust scraps. Crumbs are drawn in code. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_ball
@@ -1398,7 +1400,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: Small pile of mixed brown and tan seeds. 01 full, 02 half, 03 a few scattered.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: Small pile of mixed brown and tan seeds. 01 full, 02 half, 03 a few scattered. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_trampoline
@@ -1414,7 +1416,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: Mini trampoline, three-quarter front view: navy mat (#2F3E57), red padded rim, silver legs, about 290 wide. 01 at rest, 02 mat pressed down. Attach line: `mat`.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: Mini trampoline, three-quarter front view: navy mat (#2F3E57), red padded rim, silver legs, about 290 wide. 01 at rest, 02 mat pressed down. Attach line: `mat`. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_tub_back
@@ -1434,7 +1436,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: The same tub's front wall and front rim only, lined up exactly with `prop_tub_back_01` (draw it as an edit of the back layer). It covers Earl's lower body.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: The same tub's front wall and front rim only, lined up exactly with `prop_tub_back_01` (draw it as an edit of the back layer). It covers Earl's lower body. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_rubber_duck
@@ -1450,7 +1452,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: Classic glossy vinyl rubber duck, saturated #FFD21F (contrasts with Earl's cream), orange bill #FF7A1A, painted dot eye, about 75% of Earl's height, duck framing (ground line 240). 02: squeezed mid-squeak, bill open.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: Classic glossy vinyl rubber duck, saturated #FFD21F (contrasts with Earl's cream), orange bill #FF7A1A, painted dot eye, about 75% of Earl's height, duck framing (ground line 240). 02: squeezed mid-squeak, bill open. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_fan
@@ -1466,7 +1468,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T7:
 
 ```
-Edit this image. Change ONLY: Small retro desk fan, mint body (#9ED9C3), silver cage, three-quarter view facing right, about Earl's height. Three blade positions, opaque (the blur is added in code). Attach point: `hub`.. Everything else identical - size, position, colors, background.
+Edit this image. Change ONLY: Small retro desk fan, mint body (#9ED9C3), silver cage, three-quarter view facing right, about Earl's height. Three blade positions, opaque (the blur is added in code). Attach point: `hub`. Everything else identical - size, position, colors, background.
 ```
 
 ### prop_umbrella_open
@@ -1516,7 +1518,7 @@ Using the attached duck ONLY as a style and scale reference (do NOT draw the duc
 T8:
 
 ```
-App icon of this duck: 1024 master: Earl's head and shoulders, front, big eyes, brown rim. `tauri icon` builds every app icon from it.. Front view, centered, filling about 88% of a square canvas, flat magenta #FF00FF background. Same art style, BUT add a clean medium-brown rim (#9C7443) about 2% of the image width around the whole silhouette so it reads on light and dark taskbars. Bold simple shapes, oversized eyes and bill, no text.
+App icon of this duck: 1024 master: Earl's head and shoulders, front, big eyes, brown rim. `tauri icon` builds every app icon from it. Front view, centered, filling about 88% of a square canvas, flat magenta #FF00FF background. Same art style, BUT add a clean medium-brown rim (#9C7443) about 2% of the image width around the whole silhouette so it reads on light and dark taskbars. Bold simple shapes, oversized eyes and bill, no text.
 ```
 
 ### icon_tray
@@ -1526,7 +1528,7 @@ App icon of this duck: 1024 master: Earl's head and shoulders, front, big eyes, 
 T8:
 
 ```
-App icon of this duck: 1024 master built to read at 16-32 px: head only, oversized eyes and bill, thick brown rim. Exported per DPI (16/20/24/32).. Front view, centered, filling about 88% of a square canvas, flat magenta #FF00FF background. Same art style, BUT add a clean medium-brown rim (#9C7443) about 2% of the image width around the whole silhouette so it reads on light and dark taskbars. Bold simple shapes, oversized eyes and bill, no text.
+App icon of this duck: 1024 master built to read at 16-32 px: head only, oversized eyes and bill, thick brown rim. Exported per DPI (16/20/24/32). Front view, centered, filling about 88% of a square canvas, flat magenta #FF00FF background. Same art style, BUT add a clean medium-brown rim (#9C7443) about 2% of the image width around the whole silhouette so it reads on light and dark taskbars. Bold simple shapes, oversized eyes and bill, no text.
 ```
 
 ### icon_toolbox

@@ -5,7 +5,7 @@
 // Usage: node scripts/check-dashes.mjs   (or: npm run check:dashes)
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -86,8 +86,9 @@ function main() {
     let bytes;
     try {
       bytes = readFileSync(resolve(root, file));
-    } catch {
-      continue; // tracked but deleted in the working tree
+    } catch (e) {
+      if (e?.code === "ENOENT") continue; // tracked but deleted in the working tree
+      throw e;
     }
     if (isBinary(file, bytes)) continue;
     scanned++;
@@ -96,6 +97,10 @@ function main() {
       console.error(`${file}:${hit.line}:${hit.column}: ${hit.name}, use a plain " - " instead`);
     }
   }
+  if (scanned === 0) {
+    console.error("check-dashes: git tracks no readable text files here, so nothing was checked.");
+    process.exit(1);
+  }
   if (offenders > 0) {
     console.error(`check-dashes: ${offenders} forbidden dash(es) found in ${scanned} text files.`);
     process.exit(1);
@@ -103,6 +108,11 @@ function main() {
   console.log(`check-dashes: ${scanned} tracked text files, no en or em dashes.`);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Compares real paths, so running the script through a symlink or a non-canonical path still
+// scans instead of exiting 0 without checking anything.
+if (
+  process.argv[1] &&
+  realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
+) {
   main();
 }

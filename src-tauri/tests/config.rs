@@ -82,31 +82,51 @@ fn updater_installs_passively_from_the_latest_release() {
     );
 }
 
-#[test]
-fn overlay_window_is_created_unfocused() {
-    let config = base();
-    let windows = config
+fn window_label(w: &Value) -> Option<&str> {
+    w.get("label").and_then(Value::as_str)
+}
+
+fn configured_windows(config: &Value) -> &Vec<Value> {
+    config
         .pointer("/app/windows")
         .and_then(Value::as_array)
-        .expect("app.windows");
-    let label = |w: &Value| w.get("label").and_then(Value::as_str).map(str::to_owned);
-    match windows
-        .iter()
-        .find(|w| label(w).as_deref() == Some("overlay"))
-    {
+        .expect("app.windows")
+}
+
+#[test]
+fn window_layout_is_the_v1_main_or_an_unfocused_overlay() {
+    let config = base();
+    let windows = configured_windows(&config);
+    match windows.iter().find(|w| window_label(w) == Some("overlay")) {
         Some(overlay) => assert_eq!(
             overlay.get("focus"),
             Some(&Value::Bool(false)),
             "the overlay must never take focus (4.1, 4.12)"
         ),
-        // Until M1 replaces the v1 "main" strip with the v2 overlay, M0 keeps
-        // v1 behavior unchanged. This check turns itself on when the overlay
-        // window appears; an unknown layout fails instead of passing quietly.
+        // Until M1.1 replaces the v1 "main" strip with the v2 overlay, M0 keeps v1 behavior
+        // unchanged, so only the layout is checked here. An unknown layout fails instead of
+        // passing quietly; the strict 4.12 check is the ignored test below.
         None => assert!(
-            windows.iter().any(|w| label(w).as_deref() == Some("main")),
+            windows.iter().any(|w| window_label(w) == Some("main")),
             "neither the v2 overlay nor the v1 main window is configured"
         ),
     }
+}
+
+// Tracked todo (plan 12.2): M1.1 creates the overlay window and removes this #[ignore].
+#[test]
+#[ignore = "unit: M1.1 - the v2 overlay window does not exist until M1.1"]
+fn overlay_window_is_created_unfocused() {
+    let config = base();
+    let overlay = configured_windows(&config)
+        .iter()
+        .find(|w| window_label(w) == Some("overlay"))
+        .expect("app.windows has an \"overlay\" window (4.1)");
+    assert_eq!(
+        overlay.get("focus"),
+        Some(&Value::Bool(false)),
+        "the overlay must never take focus (4.1, 4.12)"
+    );
 }
 
 #[test]
