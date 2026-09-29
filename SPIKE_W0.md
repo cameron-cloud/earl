@@ -22,6 +22,10 @@ an hour. Any test you cannot do, write "skipped" and move on.
    `spike/overlay` branch (GitHub > cameron-cloud/earl > Actions). At the
    bottom of the run page, under **Artifacts**, download
    **earl-spike-windows** (a zip).
+   Downloads are kept for 90 days after the build. If the Artifacts section
+   says the download has expired (or shows nothing), ask Claude to rebuild the
+   spike: any new commit pushed to the `spike/overlay` branch starts a fresh
+   build, and a new download appears on the new run page in about 10 minutes.
 2. Unzip it anywhere, for example `Downloads\earl-spike`. Inside:
    - `earl-spike.exe` - the app. Just double-click it; no install needed.
    - `Earl Spike_0.0.1_x64-setup.exe` - optional installer (per-user). You
@@ -38,7 +42,8 @@ an hour. Any test you cannot do, write "skipped" and move on.
 - A new tray icon (it may be hidden under the **^** arrow near the clock).
   Left- or right-click it for the spike menu:
   - **Renderer: layers** / **Renderer: canvas** - switch drawing mode (the
-    overlay reloads in under a second).
+    overlay reloads in under a second; your walk and stats panel choices are
+    kept).
   - **Walk / stand still** - freeze Earl in place (nothing animates).
   - **Show / hide stats panel.**
   - **Hide / show Earl** - hides the whole overlay window.
@@ -48,6 +53,12 @@ an hour. Any test you cannot do, write "skipped" and move on.
 **Playing with him:** hovering over Earl makes him stop and wait. Click him to
 turn him around. Drag him anywhere and let go: he drops back to the ground.
 Right-click him: he hops.
+
+**Safety nets (you should never see them):** if Earl's drawing freezes for 2
+seconds, he stops catching clicks until it recovers ("dead-man trips" in the
+stats panel counts this). If the app itself hangs while the mouse is on him, it
+restarts itself and the stats panel then says **RESTARTED AFTER A HANG**. If
+either happens, write it down in the last rows of the table.
 
 **If Earl does not show up at all:** quit it (tray > Quit, or end
 `earl-spike.exe` in Task Manager), then start it from a terminal with the
@@ -86,27 +97,50 @@ The stats panel also shows two numbers worth copying: **DPR** and **scale**
 Earl must be nearly free when he is just walking around. Target from the plan:
 under 1% CPU in total.
 
+Keep the **focus test page closed** for steps 1 to 6. That page does its own
+work every second, so while it is open, the numbers are not only Earl's. (If
+you opened it or started with `--keylog`, close it with the X in its corner.)
+
 1. Close heavy apps (games, video, big browser tabs). Wait a minute for the
    PC to settle.
 2. Tray > **Show / hide stats panel** to hide the panel (it updates every
-   second and would skew the numbers).
-3. Open Task Manager (Ctrl+Shift+Esc) > **Processes** tab. Find
-   **Earl Spike** under Apps. If you do not see a **GPU** column, right-click
-   any column header and tick **GPU**.
-4. Watch the **CPU** and **GPU** values on the Earl Spike row for 60 seconds
-   and write down the typical value (ignore one-off spikes). Do this for:
+   second and would skew the numbers). It stays hidden when you switch
+   renderer.
+3. Open Task Manager (Ctrl+Shift+Esc) > **Processes** tab. Type **earl** into
+   the search box at the top ("Type a name, publisher, or PID to search").
+   Earl has no taskbar button, so without the search he is easy to miss: he
+   is usually listed under **Background processes**, not under Apps. Leave
+   the **Earl Spike** row collapsed: it then shows the total for all of
+   Earl's parts, including WebView2. If you do not see a **GPU** column,
+   right-click any column header and tick **GPU**.
+4. In **layers** mode (the default), watch the **CPU** and **GPU** values on
+   the Earl Spike row for 60 seconds each and write down the typical value
+   (ignore one-off spikes) for:
    - **walking** (the default),
-   - **standing still** (tray > Walk / stand still),
-   - **hidden** (tray > Hide / show Earl). This is the baseline.
-5. Also note the whole-PC GPU usage: Task Manager > **Performance** > **GPU**,
-   the "3D" graph, walking vs quit completely.
-6. **WebView2 detail (optional but useful):** tray > **Open focus test page**,
-   click inside that window and press **Shift+Esc**. A small "Browser task
-   manager" lists Earl's WebView2 processes (GPU process, the overlay page,
-   the focus page). Write down the CPU of the **GPU Process** and of the
-   **Earl spike overlay** row while he walks. If Shift+Esc does nothing,
-   write "n/a".
-7. Tray > **Renderer: canvas** and repeat steps 2 to 6.
+   - **standing still** (tray > Walk / stand still; choose it again after to
+     walk on),
+   - **hidden** (tray > Hide / show Earl; choose it again after to show him).
+     This is the baseline.
+5. Tray > **Renderer: canvas**, wait 10 seconds, and repeat step 4 in canvas
+   mode.
+6. Whole-PC GPU: Task Manager > **Performance** > **GPU**, the "3D" graph.
+   Write down the typical value with Earl walking in canvas mode, then tray >
+   **Renderer: layers** and again with him walking in layers mode, then tray >
+   **Quit Earl spike** and once more with Earl quit completely. **Then start
+   `earl-spike.exe` again** (double-click it): the rest of the tests need him
+   and his tray icon. He starts in layers mode, walking, with the stats panel
+   on.
+7. **WebView2 detail (optional but useful, do it last):** tray > **Show /
+   hide stats panel** to hide the panel again, then tray > **Open focus test
+   page**, click inside that window and press **Shift+Esc**. A small
+   "Browser task manager" lists each of Earl's WebView2 parts on its own row
+   (GPU process, the overlay page, the focus page), so here the focus page
+   does not skew the numbers you write down. Write down the CPU of the **GPU
+   Process** and of the **Earl spike overlay** row while he walks in layers
+   mode. Then tray > **Renderer: canvas** and write them down again (if the
+   small window closed, click the focus page and press Shift+Esc again). If
+   Shift+Esc does nothing, write "n/a". Close the Browser task manager
+   afterwards.
 
 ### T2 - Hover flicker
 
@@ -116,8 +150,13 @@ under 1% CPU in total.
 3. Watch for any flicker: of Earl himself, the taskbar, the windows behind,
    the whole screen going dark or blinking, or the mouse cursor changing
    shape. Record: none / occasional / every time.
-4. Click the desktop (or a desktop icon) right next to Earl, just outside
-   him. The click must reach the desktop. Record yes or no.
+4. Click the desktop (or a desktop icon) next to Earl, about a thumb's width
+   (2 cm) away from him. The click must reach the desktop. Record yes or no.
+   Note: in this spike the part of the screen that catches clicks is an
+   invisible rectangle around Earl, a bit bigger than the duck itself (it
+   fits every picture of his walk). A click in the empty corners of that
+   rectangle is caught by Earl. That is expected here, so do not count it as
+   a "no". (The real v2 will use his exact outline.)
 5. Repeat in the other mode.
 
 ### T3 - Focus while typing
@@ -130,14 +169,19 @@ Clicking Earl must never steal your typing from another app.
    him, right-click him.
 3. Record: did any letters go missing, did Notepad's title bar turn grey
    (inactive), did the taskbar hide or flash?
-4. Now tray > **Open focus test page**, click into its typing box and do the
-   same. This page counts problems for you. Write down after 1 minute:
+4. Now tray > **Open focus test page** (leave its "Measure this page's frame
+   rate" box unticked). Clicking around in earlier tests and using the tray
+   already added to its counters, so first click **Reset counters**. Then
+   click into its typing box and do the same as in step 2 for 1 minute. This
+   page counts problems for you. Write down after the minute:
    **focus losses**, **Earl overlay activations**, **Earl overlay became
    foreground**. All three should stay 0.
 5. **Fast flick test:** press on Earl and fling the mouse away fast. He should
    stay attached to the cursor (not get dropped halfway) until you let go.
    Record yes or no.
-6. Repeat in the other mode.
+6. Repeat in the other mode: tray > **Renderer**, then click **Reset
+   counters** on the focus test page again before the 1-minute run (the tray
+   click itself counts as a focus loss).
 
 ### T4 (W3b) - Other apps keep playing behind Earl
 
@@ -161,8 +205,13 @@ them. Earl's window covers the whole screen (invisibly), so check this.
 5. If you have Teams handy: start a "Meet now" call with your camera on and
    do the same hover and drag. Record whether your own video preview kept
    moving.
-6. The focus test page also shows **this page rAF frames/s**: it should stay
-   near your refresh rate while Earl walks over it.
+6. The focus test page can check the same for a WebView2 window of Earl's
+   own. Earl walks along the top of the taskbar, so he only crosses that
+   window if it reaches down there: drag the focus test window by its title
+   bar until its bottom edge touches the taskbar. Tick **Measure this page's
+   frame rate** and watch **this page rAF frames/s** while Earl walks across
+   the window. It should stay near your refresh rate. Untick the box when
+   done.
 7. Repeat in the other mode.
 
 ### T5 - Fullscreen video: "Independent Flip" or "Composed" (PresentMon)
@@ -172,39 +221,71 @@ Windows can hand it straight to the screen ("Independent Flip", fastest). A big
 always-on-top window like Earl's might force Windows to blend everything
 together instead ("Composed"), which costs power and adds lag.
 
+**Never click the video during this test.** A click on a YouTube video pauses
+it, and a recording of a paused video tells us nothing. Switch windows with
+the keyboard (Alt+Tab) only.
+
 1. Download PresentMon from
    https://github.com/GameTechDev/PresentMon/releases - the file named like
    `PresentMon-2.x.x-x64.exe` (the console tool, no install).
-2. Start a YouTube video in Chrome and press **F** for fullscreen. Earl
-   should still be visible walking on top.
+2. Close the focus test page if it is open.
 3. Open **Terminal as Administrator** (right-click Start > Terminal (Admin)),
-   go to the download folder and run (use your real file name):
+   go to the download folder and type the command below (use your real file
+   name), but **do not press Enter yet**:
 
    ```
    cd $HOME\Downloads
-   .\PresentMon-2.3.1-x64.exe --process_name chrome.exe --output_file earl_layers.csv --timed 20 --terminate_after_timed
+   .\PresentMon-2.3.1-x64.exe --process_name chrome.exe --output_file earl_quit.csv --delay 10 --timed 20 --terminate_after_timed
    ```
 
-   Then click back on the video so it stays fullscreen for the 20 seconds.
-4. Open the CSV in Excel, find the **PresentMode** column and write down the
+   `--delay 10` makes it wait 10 seconds before recording, so you have time
+   to get back to the video. `--timed 20` then records for 20 seconds. The
+   file name is for the first case in step 8 (Earl quit).
+4. Set Earl up for the case you are measuring (the list in step 8) using his
+   tray icon now, while the taskbar is still visible.
+5. In Chrome, start a YouTube video and press **F** for fullscreen. Earl
+   should still be visible walking on top. In fullscreen the taskbar is gone,
+   but Earl keeps walking at the height where its top edge was, so he floats
+   a little above the bottom of the screen. That is expected in this spike
+   (it does not follow fullscreen apps); do not note it as a bug.
+6. With the video playing fullscreen:
+   1. Press **Alt+Tab** to switch to the Terminal (if another window is
+      picked first, keep holding Alt and tap Tab until the Terminal is
+      selected). Press **Enter** to start the command.
+   2. Straight away press **Alt+Tab** again to switch back to Chrome.
+   3. Check that the video is still fullscreen and **moving**. If it paused,
+      press **K** (play); if it left fullscreen, press **F**. You have 10
+      seconds before the recording starts. If you could not fix it in time,
+      wait for the command to finish and redo this run.
+   4. Leave the mouse and keyboard alone for about 35 seconds (10 seconds of
+      waiting plus 20 of recording, plus a little). Moving the mouse brings
+      up YouTube's controls, which can change the result.
+   5. Alt+Tab back to the Terminal: the command has finished when the prompt
+      is back.
+7. Open the CSV in Excel, find the **PresentMode** column and write down the
    value that appears most often. Typical values:
    - `Hardware: Independent Flip` or `Hardware Composed: Independent Flip` -
      good.
    - `Composed: Flip` or `Composed: Copy with GPU GDI` - Windows is blending
      (bad for D13).
-5. Repeat with a different output file name for each case:
-   - Earl **quit completely** (the baseline: what Chrome gets without Earl),
-   - Earl in **layers** mode, walking,
-   - Earl in **canvas** mode, walking,
-   - Earl **hidden** from the tray.
-6. If you have a game that runs in "borderless windowed" or "fullscreen
+8. Do steps 4 to 7 once for each case below. In the Terminal, press the Up
+   arrow to get the command back, and change the output file name each time
+   so no run overwrites another. To reach Earl's tray icon between runs,
+   press **Esc** in Chrome to leave fullscreen first.
+   - Earl **quit completely** (`earl_quit.csv`; the baseline: what Chrome
+     gets without Earl). Start `earl-spike.exe` again afterwards.
+   - Earl in **layers** mode, walking (`earl_layers.csv`),
+   - Earl in **canvas** mode, walking (`earl_canvas.csv`),
+   - Earl **hidden** from the tray (`earl_hidden.csv`).
+9. If you have a game that runs in "borderless windowed" or "fullscreen
    windowed" mode, repeat the baseline and the layers case with
    `--process_name <game>.exe` (the name from Task Manager > Details).
+   Switch with Alt+Tab here too.
 
 If the command-line options are rejected, run the tool with `--help` and
-look for the "process name", "output file" and "timed" options, or use the
-PresentMon app (the installer version), which shows "Present Mode" in its
-on-screen overlay.
+look for the "process name", "output file", "delay" and "timed" options, or
+use the PresentMon app (the installer version), which shows "Present Mode" in
+its on-screen overlay.
 
 ### T6 - Layers vs canvas, side by side
 
@@ -240,7 +321,7 @@ Copy this table into a reply (or a text file) and fill it in.
 | T1 CPU %, standing still |  |  |  |
 | T1 GPU %, standing still |  |  |  |
 | T1 CPU % / GPU %, hidden (baseline) |  |  |  |
-| T1 whole-PC GPU 3D %, walking vs Earl quit |  |  |  |
+| T1 whole-PC GPU 3D %, walking (Earl quit in Notes) |  |  |  |
 | T1 Shift+Esc: GPU Process CPU / overlay page CPU |  |  |  |
 | T2 flicker on hover (none / occasional / always) |  |  |  |
 | T2 click next to Earl reaches the desktop (yes/no) |  |  |  |
@@ -256,6 +337,8 @@ Copy this table into a reply (or a text file) and fill it in.
 | T5 game (optional): baseline / Earl walking |  |  |  |
 | T6 stats panel: rAF fps / repaints/s / region IPC/s |  |  |  |
 | T7 feet on the taskbar (exact / floating / sinking) |  |  |  |
+| Stats panel: dead-man trips (should be 0) |  |  |  |
+| Stats panel ever said RESTARTED AFTER A HANG (yes/no) |  |  |  |
 | Anything else odd (crashes, black screen, cursor issues) |  |  |  |
 
 ---

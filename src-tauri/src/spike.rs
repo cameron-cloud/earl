@@ -83,11 +83,14 @@ pub struct Flags {
     /// `--layered-alpha`: also call SetLayeredWindowAttributes(255, LWA_ALPHA).
     /// Fallback only, in case the overlay is invisible without it.
     pub layered_alpha: bool,
+    /// `--recovered`: set by the hang watchdog when it restarts the spike, so
+    /// the stats panel can say so.
+    pub recovered: bool,
 }
 
 impl Default for Flags {
     fn default() -> Self {
-        Flags { mode: RenderMode::Layers, still: false, no_hud: false, keylog: false, layered_alpha: false }
+        Flags { mode: RenderMode::Layers, still: false, no_hud: false, keylog: false, layered_alpha: false, recovered: false }
     }
 }
 
@@ -101,6 +104,7 @@ pub fn parse_flags<I: IntoIterator<Item = String>>(args: I) -> Flags {
             "--no-hud" => f.no_hud = true,
             "--keylog" => f.keylog = true,
             "--layered-alpha" => f.layered_alpha = true,
+            "--recovered" => f.recovered = true,
             _ => {}
         }
     }
@@ -324,6 +328,10 @@ pub struct Stats {
     pub region_pushes: AtomicU64,
     /// `pointer://hover` events emitted.
     pub hover_events: AtomicU64,
+    /// Heartbeats from JS (sent only when no region push went out recently).
+    pub heartbeats: AtomicU64,
+    /// Times the dead-man switch emptied the regions because JS went silent.
+    pub deadman_trips: AtomicU64,
 }
 
 impl Stats {
@@ -336,6 +344,8 @@ impl Stats {
             pointer_polls: AtomicU64::new(0),
             region_pushes: AtomicU64::new(0),
             hover_events: AtomicU64::new(0),
+            heartbeats: AtomicU64::new(0),
+            deadman_trips: AtomicU64::new(0),
         }
     }
 
@@ -353,6 +363,8 @@ impl Stats {
             pointer_polls: g(&self.pointer_polls),
             region_pushes: g(&self.region_pushes),
             hover_events: g(&self.hover_events),
+            heartbeats: g(&self.heartbeats),
+            deadman_trips: g(&self.deadman_trips),
         }
     }
 }
@@ -375,6 +387,18 @@ pub struct StatsSnapshot {
     pub pointer_polls: u64,
     pub region_pushes: u64,
     pub hover_events: u64,
+    pub heartbeats: u64,
+    pub deadman_trips: u64,
+}
+
+/// Plan 4.3 dead-man switch: no region push or heartbeat for this long empties
+/// the regions, so a hung or crashed overlay page can never leave a hittable
+/// rect on the desktop.
+pub const DEADMAN_MS: u64 = 2000;
+
+/// True when JS has been silent for `DEADMAN_MS` while regions are still set.
+pub fn deadman_expired(now_ms: u64, last_push_ms: u64, has_regions: bool) -> bool {
+    has_regions && now_ms.saturating_sub(last_push_ms) >= DEADMAN_MS
 }
 
 /// State shared between Tauri commands, the tray and the pointer thread.
@@ -391,6 +415,10 @@ pub struct Shared {
     /// Raw HANDLE of the pointer thread's wake event (0 until created).
     pub wake: AtomicIsize,
     pub visible: AtomicBool,
+    /// `now_ms` of the last region push or heartbeat from JS.
+    last_push_ms: AtomicU64,
+    /// The dead-man switch dropped the regions; JS must send them again.
+    dropped: AtomicBool,
 }
 
 impl Shared {
@@ -404,6 +432,8 @@ impl Shared {
             overlay: Mutex::new((0, 0, 0, 0)),
             wake: AtomicIsize::new(0),
             visible: AtomicBool::new(true),
+            last_push_ms: AtomicU64::new(0),
+            dropped: AtomicBool::new(false),
         }
     }
     pub fn now_ms(&self) -> u64 {
@@ -427,6 +457,37 @@ impl Shared {
     }
     pub fn regions(&self) -> Arc<Vec<Region>> {
         self.regions.lock().map(|g| Arc::clone(&g)).unwrap_or_default()
+    }
+    /// A region push from JS: store it and feed the dead-man switch.
+    pub fn push_regions(&self, r: Vec<Region>, now_ms: u64) {
+        if let Ok(mut g) = self.regions.lock() {
+            *g = Arc::new(r);
+            self.last_push_ms.store(now_ms, Ordering::Relaxed);
+            self.dropped.store(false, Ordering::Relaxed);
+        }
+    }
+    /// A heartbeat from JS. Returns true when the dead-man switch dropped the
+    /// regions since the last push, so JS must send them again.
+    pub fn heartbeat(&self, now_ms: u64) -> bool {
+        match self.regions.lock() {
+            Ok(_g) => {
+                self.last_push_ms.store(now_ms, Ordering::Relaxed);
+                self.dropped.swap(false, Ordering::Relaxed)
+            }
+            Err(_) => false,
+        }
+    }
+    /// Pointer thread: empty the regions if JS has been silent too long.
+    /// Returns true when it tripped. The lock makes it atomic with pushes.
+    pub fn deadman_check(&self, now_ms: u64) -> bool {
+        let Ok(mut g) = self.regions.lock() else { return false };
+        if !deadman_expired(now_ms, self.last_push_ms.load(Ordering::Relaxed), !g.is_empty()) {
+            return false;
+        }
+        *g = Arc::new(Vec::new());
+        self.dropped.store(true, Ordering::Relaxed);
+        Stats::bump(&STATS.deadman_trips);
+        true
     }
 }
 
@@ -468,7 +529,8 @@ mod tests {
         assert_eq!(f.mode, RenderMode::Canvas);
         assert!(f.still && f.keylog && !f.no_hud && !f.layered_alpha);
         assert_eq!(parse_flags(Vec::<String>::new()), Flags::default());
-        assert_eq!(parse_flags(["--LAYERED-ALPHA".to_string()]).layered_alpha, true);
+        assert!(parse_flags(["--LAYERED-ALPHA".to_string()]).layered_alpha);
+        assert!(parse_flags(["--recovered".to_string()]).recovered);
     }
 
     #[test]
@@ -561,5 +623,30 @@ mod tests {
         assert_eq!(ground_css(None, 1, 1079, 1.0), 1079.0);
         let sliver = TaskbarInfo { rect: PhysRect { l: 0, t: 1076, r: 1920, b: 1080 }, ..tb };
         assert_eq!(ground_css(Some(sliver), 1, 1079, 1.0), 1079.0, "under 8 px is not a floor");
+    }
+
+    #[test]
+    fn deadman_expires_only_with_regions_after_two_silent_seconds() {
+        assert!(!deadman_expired(1999, 0, true));
+        assert!(deadman_expired(2000, 0, true));
+        assert!(!deadman_expired(60_000, 0, false), "nothing to drop");
+        assert!(!deadman_expired(100, 500, true), "a push stamped after now never expires");
+    }
+
+    #[test]
+    fn deadman_drops_regions_and_the_next_heartbeat_asks_for_them_again() {
+        let s = Shared::new(RenderMode::Layers);
+        let earl = vec![Region { id: 1, rect: PhysRect { l: 0, t: 0, r: 96, b: 96 } }];
+        s.push_regions(earl.clone(), 1000);
+        assert!(!s.deadman_check(2999));
+        assert!(!s.heartbeat(2500), "nothing was dropped");
+        assert!(!s.deadman_check(4499), "the heartbeat fed the switch");
+        assert!(s.deadman_check(4500));
+        assert!(s.regions().is_empty());
+        assert!(!s.deadman_check(9000), "already empty");
+        assert!(s.heartbeat(9000), "JS must re-send");
+        assert!(!s.heartbeat(9500), "asked only once");
+        s.push_regions(earl, 9600);
+        assert_eq!(s.regions().len(), 1);
     }
 }

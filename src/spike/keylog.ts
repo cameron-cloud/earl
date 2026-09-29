@@ -13,13 +13,14 @@ const counters = document.getElementById("counters") as HTMLDivElement;
 const log = document.getElementById("log") as HTMLDivElement;
 const typing = document.getElementById("typing") as HTMLTextAreaElement;
 const reset = document.getElementById("reset") as HTMLButtonElement;
+const measureFps = document.getElementById("measure-fps") as HTMLInputElement;
 
 const MAX_LOG_LINES = 400;
 let keys = 0;
 let focusLosses = 0;
 let hiddenEvents = 0;
 let rafFrames = 0;
-let fps = 0;
+let fps: number | "off" = "off";
 let base: Stats = { sethitPosts: 0, activations: 0, foregroundHits: 0 };
 let latest: Stats = base;
 
@@ -94,8 +95,10 @@ reset.addEventListener("click", () => {
 });
 
 // This page's own frame rate: shows whether WebView2 throttles a window that
-// sits under the full-monitor overlay (occlusion).
-let windowStart = performance.now();
+// sits under the full-monitor overlay (occlusion, test T4). Off by default: a
+// refresh-rate loop here would add WebView2 work to the idle numbers of T1.
+let windowStart = 0;
+let rafId = 0;
 function frame(now: number): void {
   rafFrames++;
   if (now - windowStart >= 1000) {
@@ -103,9 +106,23 @@ function frame(now: number): void {
     rafFrames = 0;
     windowStart = now;
   }
-  requestAnimationFrame(frame);
+  rafId = requestAnimationFrame(frame);
 }
-requestAnimationFrame(frame);
+measureFps.addEventListener("change", () => {
+  cancelAnimationFrame(rafId);
+  rafFrames = 0;
+  if (measureFps.checked) {
+    fps = 0;
+    windowStart = performance.now();
+    rafId = requestAnimationFrame(frame);
+    write("frame-rate measuring on");
+  } else {
+    fps = "off";
+    write("frame-rate measuring off");
+  }
+  render();
+  typing.focus();
+});
 
 async function poll(): Promise<void> {
   try {

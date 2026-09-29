@@ -63,6 +63,7 @@
       button {
         font: inherit;
         padding: 4px 12px;
+        margin-right: 16px;
       }
     </style>
   </head>
@@ -73,7 +74,10 @@
     <div id="status" class="ok">This window has focus</div>
     <textarea id="typing" placeholder="Type here..." autofocus></textarea>
     <div id="counters"></div>
-    <p><button id="reset" type="button">Reset counters</button></p>
+    <p>
+      <button id="reset" type="button">Reset counters</button>
+      <label><input id="measure-fps" type="checkbox" /> Measure this page's frame rate (test T4 only)</label>
+    </p>
     <div id="log"></div>
     <script type="module" src="/src/spike/keylog.ts"></script>
   </body>

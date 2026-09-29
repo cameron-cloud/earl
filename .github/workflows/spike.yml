@@ -61,4 +61,4 @@ jobs:
           name: earl-spike-windows
           path: out/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90

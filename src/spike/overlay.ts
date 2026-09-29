@@ -14,6 +14,8 @@ interface InitReply {
   mode: "layers" | "canvas";
   still: boolean;
   hud: boolean;
+  visible: boolean;
+  recovered: boolean;
   groundY: number;
   taskbarEdge: string;
   scale: number;
@@ -30,6 +32,8 @@ interface Stats {
   pointerPolls: number;
   regionPushes: number;
   hoverEvents: number;
+  heartbeats: number;
+  deadmanTrips: number;
 }
 
 const SPEED = 55; // CSS px per second
@@ -108,7 +112,7 @@ async function main(): Promise<void> {
   let dir: 1 | -1 = 1;
   let walking = !init.still;
   let hovered = false;
-  let visible = true;
+  let visible = init.visible;
   let vy = 0;
   let airborne = false;
   let animMs = 0;
@@ -149,6 +153,19 @@ async function main(): Promise<void> {
     const regions = visible ? [{ id: EARL_REGION, rect: hitRect() }] : [];
     void invoke("hit_set_regions", { regions });
   }
+
+  // Plan 4.3 dead-man switch feed: Rust empties the regions after 2 s without a
+  // push or heartbeat, so a hung page can never block the desktop. Sent only
+  // when no push went out in the last half second (never while walking).
+  const HEARTBEAT_MS = 1000;
+  window.setInterval(() => {
+    if (!visible || performance.now() - lastHitSent < HEARTBEAT_MS / 2) return;
+    void invoke<boolean>("hit_heartbeat").then((resend) => {
+      if (!resend) return;
+      lastHitKey = ""; // the switch dropped them meanwhile: send them again
+      pushHit(performance.now(), true);
+    });
+  }, HEARTBEAT_MS);
 
   function frameFor(): HTMLImageElement {
     const set = dir === 1 ? right : left;
@@ -276,6 +293,7 @@ async function main(): Promise<void> {
       `rAF frames/s ${rate(rafFrames, prev.frames)}   canvas repaints/s ${rate(renderer.repaints, prev.repaints)}   region IPC/s ${rate(regionIpc, prev.ipc)}`,
       `click-through switches ${stats.sethitPosts}   pointer polls/s ${rate(stats.pointerPolls, ps.pointerPolls)}`,
       `overlay activations ${stats.activations}   overlay became foreground ${stats.foregroundHits}   style rewrites ${stats.styleRewrites}`,
+      `heartbeats ${stats.heartbeats}   dead-man trips ${stats.deadmanTrips}${init.recovered ? "   RESTARTED AFTER A HANG (write this down)" : ""}`,
       `ground y ${groundY.toFixed(1)} (taskbar: ${taskbarEdge})   DPR ${dpr}   scale ${init.scale.toFixed(3)}   dpi scale ${init.dpiScale.toFixed(3)}`,
       `overlay ${ow}x${oh} at (${ox},${oy}) physical px   page ${window.innerWidth}x${window.innerHeight} CSS px`,
       `Tray icon menu: switch renderer, walk / stand still, hide this panel, focus test page, quit.`,

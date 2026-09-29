@@ -11,7 +11,7 @@ mod win;
 
 use serde::{Deserialize, Serialize};
 use spike::{Flags, RegionIn, RenderMode, Shared, Stats, StatsSnapshot, BROWSER_ARGS, STATS};
-use std::sync::atomic::Ordering;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
@@ -23,6 +23,9 @@ const KEYLOG: &str = "keylog";
 struct AppState {
     shared: Arc<Shared>,
     flags: Flags,
+    /// Tray toggles, kept here so a renderer switch (a page reload) keeps them.
+    still: AtomicBool,
+    hud: AtomicBool,
 }
 
 #[derive(Deserialize)]
@@ -39,6 +42,9 @@ struct InitReply {
     mode: RenderMode,
     still: bool,
     hud: bool,
+    visible: bool,
+    /// The hang watchdog restarted the spike (`--recovered`).
+    recovered: bool,
     ground_y: f64,
     taskbar_edge: &'static str,
     /// Physical px per CSS px, derived as physWidth / innerWidth (plan 4.2).
@@ -80,8 +86,10 @@ fn platform_init(state: State<'_, AppState>, window: tauri::WebviewWindow, info:
 
     InitReply {
         mode: shared.mode(),
-        still: state.flags.still,
-        hud: !state.flags.no_hud,
+        still: state.still.load(Ordering::Relaxed),
+        hud: state.hud.load(Ordering::Relaxed),
+        visible: shared.visible.load(Ordering::Relaxed),
+        recovered: state.flags.recovered,
         ground_y,
         taskbar_edge,
         scale,
@@ -95,10 +103,20 @@ fn platform_init(state: State<'_, AppState>, window: tauri::WebviewWindow, info:
 #[tauri::command]
 fn hit_set_regions(state: State<'_, AppState>, regions: Vec<RegionIn>) {
     let shared = &state.shared;
-    shared.set_regions(spike::regions_from_css(&regions, shared.scale()));
+    shared.push_regions(spike::regions_from_css(&regions, shared.scale()), shared.now_ms());
     Stats::bump(&STATS.region_pushes);
     #[cfg(windows)]
     win::wake(shared);
+}
+
+/// Dead-man switch feed (plan 4.3), sent by JS only when no region push went
+/// out recently. Returns true when the switch dropped the regions meanwhile,
+/// so JS sends them again.
+#[tauri::command]
+fn hit_heartbeat(state: State<'_, AppState>) -> bool {
+    Stats::bump(&STATS.heartbeats);
+    let shared = &state.shared;
+    shared.heartbeat(shared.now_ms())
 }
 
 /// Extends (true) or ends (false) the pointer thread's capture latch.
@@ -157,9 +175,11 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
             "mode-layers" => set_mode(app, RenderMode::Layers),
             "mode-canvas" => set_mode(app, RenderMode::Canvas),
             "toggle-walk" => {
+                app.state::<AppState>().still.fetch_xor(true, Ordering::Relaxed);
                 let _ = app.emit_to(OVERLAY, "spike://toggle", "walk");
             }
             "toggle-hud" => {
+                app.state::<AppState>().hud.fetch_xor(true, Ordering::Relaxed);
                 let _ = app.emit_to(OVERLAY, "spike://toggle", "hud");
             }
             "toggle-visible" => {
@@ -193,8 +213,13 @@ fn main() {
     let shared = Arc::new(Shared::new(flags.mode));
 
     tauri::Builder::default()
-        .manage(AppState { shared: Arc::clone(&shared), flags })
-        .invoke_handler(tauri::generate_handler![platform_init, hit_set_regions, hit_capture, spike_stats])
+        .manage(AppState {
+            shared: Arc::clone(&shared),
+            flags,
+            still: AtomicBool::new(flags.still),
+            hud: AtomicBool::new(!flags.no_hud),
+        })
+        .invoke_handler(tauri::generate_handler![platform_init, hit_set_regions, hit_heartbeat, hit_capture, spike_stats])
         .setup(move |app| {
             let handle = app.handle().clone();
             // Plan 4.1 window config, built in Rust so the one BROWSER_ARGS constant applies.

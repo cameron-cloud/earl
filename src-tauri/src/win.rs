@@ -21,8 +21,8 @@ use windows::core::PCWSTR;
 use windows::Win32::Foundation::{COLORREF, HANDLE, HWND, LPARAM, LRESULT, POINT, WPARAM};
 use windows::Win32::Graphics::Gdi::{GetMonitorInfoW, MonitorFromPoint, MONITORINFO, MONITOR_DEFAULTTOPRIMARY};
 use windows::Win32::System::Threading::{
-    CreateEventW, CreateWaitableTimerExW, SetEvent, SetWaitableTimer, WaitForMultipleObjects,
-    CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, INFINITE, TIMER_ALL_ACCESS,
+    CreateEventW, CreateWaitableTimerExW, GetCurrentProcess, SetEvent, SetWaitableTimer, TerminateProcess,
+    WaitForMultipleObjects, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, INFINITE, TIMER_ALL_ACCESS,
 };
 use windows::Win32::UI::HiDpi::GetDpiForWindow;
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_LBUTTON, VK_RBUTTON};
@@ -30,11 +30,12 @@ use windows::Win32::UI::Shell::{
     DefSubclassProc, SHAppBarMessage, SetWindowSubclass, ABM_GETSTATE, ABM_GETTASKBARPOS, ABS_AUTOHIDE, APPBARDATA,
 };
 use windows::Win32::UI::WindowsAndMessaging::{
-    DisableProcessWindowsGhosting, GetCursorPos, GetForegroundWindow, GetSystemMetrics, GetWindowLongPtrW,
-    PostMessageW, SetForegroundWindow, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, ShowWindow,
-    GWL_EXSTYLE, LWA_ALPHA, MA_NOACTIVATE, SM_SWAPBUTTON, STYLESTRUCT, SWP_NOACTIVATE, SWP_NOMOVE,
-    SWP_NOOWNERZORDER, SWP_NOSIZE, SWP_NOZORDER, SW_HIDE, SW_SHOWNOACTIVATE, WA_ACTIVE, WA_CLICKACTIVE, WINDOWPOS,
-    WM_ACTIVATE, WM_APP, WM_MOUSEACTIVATE, WM_STYLECHANGING, WM_WINDOWPOSCHANGING,
+    DisableProcessWindowsGhosting, GetCursorPos, GetForegroundWindow, GetSystemMetrics, GetWindowLongPtrW, IsWindow,
+    PostMessageW, SendMessageTimeoutW, SetForegroundWindow, SetLayeredWindowAttributes, SetWindowLongPtrW,
+    SetWindowPos, ShowWindow, GWL_EXSTYLE, LWA_ALPHA, MA_NOACTIVATE, SMTO_ABORTIFHUNG, SM_SWAPBUTTON, STYLESTRUCT,
+    SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOOWNERZORDER, SWP_NOSIZE, SWP_NOZORDER, SW_HIDE, SW_SHOWNOACTIVATE, WA_ACTIVE,
+    WA_CLICKACTIVE, WINDOWPOS, WM_ACTIVATE, WM_APP, WM_MOUSEACTIVATE, WM_NULL, WM_STYLECHANGING,
+    WM_WINDOWPOSCHANGING,
 };
 
 /// Posted by the pointer thread: wParam 1 = take input, 0 = click-through.
@@ -45,6 +46,9 @@ pub const WM_APP_SHOW: u32 = WM_APP + 2;
 const SUBCLASS_ID: usize = 0x0EA7_0004;
 
 static OVERLAY_HWND: AtomicIsize = AtomicIsize::new(0);
+/// The last foreground window that was not the overlay (pointer thread), the
+/// fallback hand-back target when WM_ACTIVATE carries no previous window.
+static LAST_OTHER_FG: AtomicIsize = AtomicIsize::new(0);
 static HITTABLE: AtomicBool = AtomicBool::new(false);
 static DESIRED_SET: AtomicBool = AtomicBool::new(false);
 static DESIRED_X: AtomicI32 = AtomicI32::new(0);
@@ -109,8 +113,12 @@ unsafe extern "system" fn overlay_subclass(
                 // We are foreground at this instant, so handing foreground back
                 // to the window being deactivated is allowed.
                 Stats::bump(&STATS.activations);
-                let prev = HWND(lparam.0 as *mut c_void);
-                if !prev.is_invalid() && prev != hwnd {
+                // lParam may be NULL (MSDN): fall back to the last other foreground window.
+                let mut prev = HWND(lparam.0 as *mut c_void);
+                if prev.is_invalid() || prev == hwnd {
+                    prev = HWND(LAST_OTHER_FG.load(Ordering::Acquire) as *mut c_void);
+                }
+                if !prev.is_invalid() && prev != hwnd && IsWindow(Some(prev)).as_bool() {
                     let _ = SetForegroundWindow(prev);
                 }
                 return LRESULT(0);
@@ -236,6 +244,25 @@ struct GroundPayload {
     taskbar_edge: &'static str,
 }
 
+/// Hang watchdog: ping the overlay this often while it is hittable.
+const HANG_PING_MS: u64 = 250;
+/// Hang watchdog: how long the overlay's thread may take to answer (plan 4.3).
+const HANG_TIMEOUT_MS: u32 = 1500;
+
+/// Start a fresh copy with `--recovered` and end this one at once. The hung
+/// main thread cannot run a clean shutdown, so terminate instead of exiting.
+fn restart_after_hang() -> ! {
+    if let Ok(exe) = std::env::current_exe() {
+        let mut args: Vec<std::ffi::OsString> = std::env::args_os().skip(1).filter(|a| a != "--recovered").collect();
+        args.push("--recovered".into());
+        let _ = std::process::Command::new(exe).args(args).spawn();
+    }
+    unsafe {
+        let _ = TerminateProcess(GetCurrentProcess(), 3);
+    }
+    std::process::abort()
+}
+
 pub fn spawn_pointer_thread(shared: Arc<Shared>, app: AppHandle) {
     let _ = std::thread::Builder::new()
         .name("earl-pointer".into())
@@ -255,10 +282,13 @@ unsafe fn pointer_loop(shared: &Shared, app: &AppHandle) {
     let mut was_foreground = false;
     let mut last_ground_check: u64 = 0;
     let mut last_ground: f64 = f64::NAN;
+    let mut last_hang_ping: u64 = 0;
 
     loop {
         let now_ms = shared.now_ms();
         let Some(hwnd) = overlay_hwnd() else { return };
+        // Plan 4.3 dead-man switch: silent JS for 2 s empties the regions.
+        shared.deadman_check(now_ms);
         let regions = shared.regions();
         let (ox, oy, _, _) = shared.overlay.lock().map(|g| *g).unwrap_or((0, 0, 0, 0));
 
@@ -289,6 +319,21 @@ unsafe fn pointer_loop(shared: &Shared, app: &AppHandle) {
             posted = Some(hittable);
             Stats::bump(&STATS.sethit_posts);
         }
+
+        // Plan 4.3 hang watchdog: while the overlay takes input, its thread
+        // must answer, or a stalled main thread could leave it hittable.
+        if hittable && now_ms.saturating_sub(last_hang_ping) >= HANG_PING_MS {
+            last_hang_ping = now_ms;
+            let mut result = 0usize;
+            let out: *mut usize = &mut result;
+            let answered = SendMessageTimeoutW(hwnd, WM_NULL, WPARAM(0), LPARAM(0), SMTO_ABORTIFHUNG, HANG_TIMEOUT_MS, Some(out));
+            if answered.0 == 0 {
+                if !IsWindow(Some(hwnd)).as_bool() {
+                    return; // the overlay is gone (quitting), not hung
+                }
+                restart_after_hang();
+            }
+        }
         if over != last_hover {
             last_hover = over;
             Stats::bump(&STATS.hover_events);
@@ -296,7 +341,11 @@ unsafe fn pointer_loop(shared: &Shared, app: &AppHandle) {
         }
 
         // Diagnostics for W0: did the overlay ever become the foreground window?
-        let fg = GetForegroundWindow() == hwnd;
+        let fg_hwnd = GetForegroundWindow();
+        let fg = fg_hwnd == hwnd;
+        if !fg && !fg_hwnd.is_invalid() {
+            LAST_OTHER_FG.store(fg_hwnd.0 as isize, Ordering::Release);
+        }
         if fg && !was_foreground {
             Stats::bump(&STATS.foreground_hits);
         }
