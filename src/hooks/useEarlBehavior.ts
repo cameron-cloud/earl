@@ -81,7 +81,7 @@ export function useEarlBehavior(
 
   const normalGroundY = WINDOW_HEIGHT - taskbarPadRef.current - displaySize;
 
-  // React state — only used for rendering
+  // React state - only used for rendering
   const [position, setPosition] = useState<Position>(
     createPosition(screenWidth / 2 - DEFAULT_DISPLAY_SIZE / 2, normalGroundY)
   );
@@ -97,7 +97,7 @@ export function useEarlBehavior(
   const [confettiBurst, setConfettiBurst] = useState(false);
   const [swingAngle, setSwingAngle] = useState(0);
 
-  // Refs — authoritative game state, updated synchronously in the game loop
+  // Refs - authoritative game state, updated synchronously in the game loop
   const configRef = useRef(config);
   const smRef = useRef(smState);
   const posRef = useRef(position);
@@ -110,7 +110,7 @@ export function useEarlBehavior(
   const swingRef = useRef(0);
 
   configRef.current = config;
-  // posRef, animRef, moodRef synced from refs in game loop — don't overwrite from React state
+  // posRef, animRef, moodRef synced from refs in game loop - don't overwrite from React state
 
   // Update ground level when display size changes
   useEffect(() => {
@@ -223,15 +223,15 @@ export function useEarlBehavior(
 
       // ── 3. Animation update ──
       if (sm.current !== prevStateRef.current) {
-        // State changed — set new animation
+        // State changed - set new animation
         anim = createAnimatorState(getAnimationForState(sm.current, sm.isBirthday, moodVal));
         prevStateRef.current = sm.current;
       } else {
-        // Same state — advance animation frames
+        // Same state - advance animation frames
         const updated = updateAnimator(anim, delta, speedMult);
 
         if (updated.finished && !anim.finished) {
-          // Animation just finished — dispatch event
+          // Animation just finished - dispatch event
           const afterFinish = updateStateMachine(sm, { type: "ANIMATION_FINISHED" });
           if (afterFinish.current !== sm.current) {
             anim = createAnimatorState(getAnimationForState(afterFinish.current, afterFinish.isBirthday, moodVal));
@@ -373,7 +373,7 @@ export function useEarlBehavior(
     return () => cancelAnimationFrame(rafId);
   }, [ready, screenWidth, screenHeight, displaySize, speedMult, soundEnabled, soundVolume]);
 
-  // Poll taskbar visibility — adjust ground level and window position
+  // Poll taskbar visibility - adjust ground level and window position
   useEffect(() => {
     if (!ready) return;
     let lastVisible: boolean | null = null;
@@ -385,7 +385,7 @@ export function useEarlBehavior(
       try {
         const { visible } = await getTaskbarState();
 
-        // First poll — just record state
+        // First poll - just record state
         if (lastVisible === null) {
           lastVisible = visible;
           taskbarPadRef.current = visible ? TASKBAR_HEIGHT : 4;
@@ -398,7 +398,7 @@ export function useEarlBehavior(
         const state = smRef.current.current;
 
         if (!visible) {
-          // Taskbar just hid — move window flush to bottom, reduce padding
+          // Taskbar just hid - move window flush to bottom, reduce padding
           taskbarPadRef.current = 4;
           shrinkWindow(false).catch(() => {});
 
@@ -420,7 +420,7 @@ export function useEarlBehavior(
             prevStateRef.current = "FALLING";
           }
         } else {
-          // Taskbar just appeared — move window up, raise padding, snap Earl
+          // Taskbar just appeared - move window up, raise padding, snap Earl
           taskbarPadRef.current = TASKBAR_HEIGHT;
           shrinkWindow(true).catch(() => {});
 
@@ -539,7 +539,7 @@ export function useEarlBehavior(
   const handleDragStart = useCallback(async (): Promise<void> => {
     const currentMood = moodRef.current;
 
-    // Angry Earl dodges pickup — puff up briefly via TANTRUM state
+    // Angry Earl dodges pickup - puff up briefly via TANTRUM state
     if (shouldDodgePickup(currentMood)) {
       const dodgeX = Math.random() > 0.5 ? 40 : -40;
       posRef.current = { ...posRef.current, x: posRef.current.x + dodgeX };

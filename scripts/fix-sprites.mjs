@@ -2,7 +2,7 @@
  * fix-sprites.mjs
  * Removes checkerboard transparency artifacts from AI-generated sprite PNGs
  * using flood-fill from the image edges. This ensures only the background
- * checkerboard is removed — Earl's body pixels are never touched.
+ * checkerboard is removed - Earl's body pixels are never touched.
  */
 
 import fs from "fs";
@@ -103,7 +103,7 @@ function processSprite(filePath) {
 
   if (changed > 0) {
     fs.writeFileSync(filePath, PNG.sync.write(png));
-    console.log("  Fixed " + path.basename(filePath) + " — " + changed + " pixels");
+    console.log("  Fixed " + path.basename(filePath) + " - " + changed + " pixels");
   } else {
     console.log("  Skipped " + path.basename(filePath));
   }

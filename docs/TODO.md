@@ -1,4 +1,4 @@
-# TODO — Earl Build Tasks
+# TODO - Earl Build Tasks
 
 Work through these in order. Check off each task as you complete it.
 Commit to git after each numbered section.
@@ -106,7 +106,7 @@ Commit to git after each numbered section.
   - When cursor leaves Earl's bounds → `set_ignore_cursor_events(true)`
   - This allows clicking/dragging Earl while passing through empty space
 - [ ] 5.4 Right-click on Earl → show context menu (same as tray menu)
-- [ ] 5.5 **Git commit: "Mouse interaction — click, drag, drop"**
+- [ ] 5.5 **Git commit: "Mouse interaction - click, drag, drop"**
 
 ---
 
@@ -221,7 +221,7 @@ Commit to git after each numbered section.
 - [ ] 12.5 Test config saves and loads correctly
 - [ ] 12.6 Test birthday mode triggers on correct dates
 - [ ] 12.7 Set app icon (Earl's face) for the window and .exe
-- [ ] 12.8 Optimize bundle size — remove unused dependencies
+- [ ] 12.8 Optimize bundle size - remove unused dependencies
 - [ ] 12.9 **Git commit: "v1.0 release ready"**
 
 ---
@@ -238,7 +238,7 @@ Commit to git after each numbered section.
 
 ## Notes
 
-- Phases 1-5 are the critical path — get these done first
+- Phases 1-5 are the critical path - get these done first
 - Phases 6-8 add the charm
 - Phases 9-11 add polish
 - Phase 12-13 must happen on the Windows machine

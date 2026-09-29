@@ -9,3 +9,11 @@ prospects/
 drafts/
 runs/
 openclaw.json
+# Tauri regenerates these on every build
+src-tauri/gen/schemas/
+# v2 generated outputs (D19): rebuilt by the build, never committed
+src/assets/atlas/
+src/sim/anim/sprites.gen.ts
+coverage/
+test-results/
+playwright-report/

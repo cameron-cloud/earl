@@ -1,4 +1,4 @@
-# Earl — Windows Testing Handoff
+# Earl - Windows Testing Handoff
 
 ## What This Is
 
@@ -16,12 +16,12 @@ All 11 phases of development are code-complete:
 - Cursor click-through (transparent regions pass events to desktop)
 - System tray with show/hide, sound toggle, settings, about, quit
 - Web Audio API synthesized sounds (no audio files)
-- Birthday mode: April 4 (Juliette), June 23 (Cam) — confetti + speech bubble
+- Birthday mode: April 4 (Juliette), June 23 (Cam) - confetti + speech bubble
 - Settings panel: display size, animation speed, sound, autostart, stats
 - About panel with animated Earl and backstory
 - Config persistence in %APPDATA%/earl/config.json
 
-TypeScript compiles clean. Vite builds clean. Rust is UNCOMPILED — written to Tauri v2
+TypeScript compiles clean. Vite builds clean. Rust is UNCOMPILED - written to Tauri v2
 APIs but never run through cargo yet.
 
 ## Setup on Windows
@@ -115,7 +115,7 @@ src-tauri/                  # Rust backend
 2. Right-click the window > Inspect to open browser console
 3. Rust errors show in the terminal where you ran the command
 4. Frontend errors show in the browser console
-5. If Rust won't compile, paste the full error — it's usually an import or API signature fix
+5. If Rust won't compile, paste the full error - it's usually an import or API signature fix
 
 ## Goal
 

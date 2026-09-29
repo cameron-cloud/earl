@@ -115,7 +115,7 @@ function MainWindow() {
 }
 
 function App() {
-  // Route by window label — Rust sets "settings" or "about" when opening panels
+  // Route by window label - Rust sets "settings" or "about" when opening panels
   const label = getCurrentWindow().label;
   if (label === "settings") return <SettingsPanel />;
   if (label === "about") return <AboutPanel />;

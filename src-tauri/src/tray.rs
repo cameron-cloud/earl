@@ -50,7 +50,7 @@ pub fn create_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
     let _tray = TrayIconBuilder::new()
         .icon(tray_icon)
         .menu(&menu)
-        .tooltip("Earl — Desktop Duckling")
+        .tooltip("Earl - Desktop Duckling")
         .on_menu_event(move |app, event| match event.id().as_ref() {
             "show_hide" => {
                 if let Some(window) = app.get_webview_window("main") {
@@ -115,7 +115,7 @@ fn open_panel_window(app: &tauri::AppHandle, label: &str, title: &str, width: u3
         return;
     }
 
-    // Use App URL — Tauri proxies to Vite in dev, serves dist in prod.
+    // Use App URL - Tauri proxies to Vite in dev, serves dist in prod.
     // This ensures the IPC bridge is injected. Routing is by window label.
     let builder = WebviewWindowBuilder::new(
         app,

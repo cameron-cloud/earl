@@ -1,4 +1,4 @@
-# Earl — Desktop Duckling Companion
+# Earl - Desktop Duckling Companion
 
 ## Project Specification & Claude Code Prompt
 
@@ -6,7 +6,7 @@
 
 ## The Story
 
-Earl is a real stuffed animal duck — a plush yellow duckling that was gifted to me by Juliette. I love him so much that I want to digitize him so he can live forever. This project is a desktop pet application for Windows 11 where a pixel art version of Earl lives on your taskbar, waddles around, and reacts when you interact with him. The finished app is a personal birthday gift — first for Juliette (April 4th), and later for Cam (June 23rd).
+Earl is a real stuffed animal duck - a plush yellow duckling that was gifted to me by Juliette. I love him so much that I want to digitize him so he can live forever. This project is a desktop pet application for Windows 11 where a pixel art version of Earl lives on your taskbar, waddles around, and reacts when you interact with him. The finished app is a personal birthday gift - first for Juliette (April 4th), and later for Cam (June 23rd).
 
 ---
 
@@ -59,7 +59,7 @@ These photos should guide all art generation decisions. Earl's digital version s
 ## Art Specification
 
 ### Style
-High-resolution pixel art. 128x128 pixel sprites where individual pixels are small enough to form smooth curves and subtle shading — similar to modern indie games like Celeste or Eastward. NOT chunky retro 8-bit. Think "pixel art with a lot of pixels."
+High-resolution pixel art. 128x128 pixel sprites where individual pixels are small enough to form smooth curves and subtle shading - similar to modern indie games like Celeste or Eastward. NOT chunky retro 8-bit. Think "pixel art with a lot of pixels."
 
 ### Colors (sampled from reference photos)
 - Body: pale cream yellow (#FFFCE8 to #FAEDB5 range)
@@ -120,7 +120,7 @@ If sprite sheets are not yet available, the app should fall back to a simple col
 - Earl's default position is on the bottom edge of the screen, just above the Windows 11 taskbar
 - He periodically waddles short distances left or right along the taskbar (random intervals, 10-30 seconds idle between walks)
 - He stays within screen bounds (bounces back or turns around at edges)
-- Walking speed is casual — maybe 30-50 pixels per second
+- Walking speed is casual - maybe 30-50 pixels per second
 
 ### Drag & Drop
 - User can click and drag Earl anywhere on screen
@@ -206,7 +206,7 @@ Sound              (toggle, default off)
 
 ## Settings Panel
 
-A small, clean settings window (not a full app — just a compact panel):
+A small, clean settings window (not a full app - just a compact panel):
 
 - **Display Size**: slider or dropdown (48px / 64px / 80px / 96px), default 64px
 - **Sound**: toggle on/off, volume slider
@@ -268,7 +268,7 @@ Stored at `%APPDATA%/earl/config.json`:
 
 ## Security
 
-This is critical — Earl should be safe to install on anyone's machine with zero concerns.
+This is critical - Earl should be safe to install on anyone's machine with zero concerns.
 
 ### Tauri Capabilities (v2 permission system)
 - ALLOW: window management (create, position, resize, always-on-top)

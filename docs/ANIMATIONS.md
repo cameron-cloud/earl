@@ -29,12 +29,12 @@ All sprites are 128x128 PNG with transparency in `assets/sprites/`.
 Earl's default resting state. Mostly still with occasional blinks.
 
 ```
-Frame 1: Earl_Front_Idle.png    (800ms)  — eyes open
-Frame 2: Earl_Front_Idle.png    (800ms)  — eyes open
-Frame 3: Earl_Front_Idle.png    (800ms)  — eyes open
-Frame 4: Earl_Front_Idle.png    (200ms)  — eyes open (pre-blink pause)
-Frame 5: Earl_Front_Blink.png   (150ms)  — eyes closed (the blink)
-Frame 6: Earl_Front_Idle.png    (200ms)  — eyes open (post-blink)
+Frame 1: Earl_Front_Idle.png    (800ms) - eyes open
+Frame 2: Earl_Front_Idle.png    (800ms) - eyes open
+Frame 3: Earl_Front_Idle.png    (800ms) - eyes open
+Frame 4: Earl_Front_Idle.png    (200ms) - eyes open (pre-blink pause)
+Frame 5: Earl_Front_Blink.png   (150ms) - eyes closed (the blink)
+Frame 6: Earl_Front_Idle.png    (200ms) - eyes open (post-blink)
 -> loop back to frame 1
 ```
 
@@ -44,10 +44,10 @@ Total cycle: ~2950ms (~3 seconds per blink cycle)
 Earl waddling to the right.
 
 ```
-Frame 1: walk_side.png          (150ms)  — feet together (passing position)
-Frame 2: Walk_step_1.png        (150ms)  — left foot forward
-Frame 3: walk_side.png          (150ms)  — feet together
-Frame 4: Walk_step_2.png        (150ms)  — right foot forward
+Frame 1: walk_side.png          (150ms) - feet together (passing position)
+Frame 2: Walk_step_1.png        (150ms) - left foot forward
+Frame 3: walk_side.png          (150ms) - feet together
+Frame 4: Walk_step_2.png        (150ms) - right foot forward
 -> loop
 ```
 
@@ -70,12 +70,12 @@ Move Earl 1.5px leftward per frame.
 Happy bounce when clicked.
 
 ```
-Frame 1: Earl_Front_Idle.png    (80ms)   — anticipation
-Frame 2: Hop_Squat.png          (100ms)  — squat down (y offset: +5px)
-Frame 3: Hop_Air.png            (150ms)  — airborne (y offset: -20px)
-Frame 4: Hop_Air.png            (150ms)  — hang time (y offset: -20px)
-Frame 5: Hop_Squat.png          (100ms)  — landing squat (y offset: +5px)
-Frame 6: Earl_Front_Idle.png    (80ms)   — recover
+Frame 1: Earl_Front_Idle.png    (80ms) - anticipation
+Frame 2: Hop_Squat.png          (100ms) - squat down (y offset: +5px)
+Frame 3: Hop_Air.png            (150ms) - airborne (y offset: -20px)
+Frame 4: Hop_Air.png            (150ms) - hang time (y offset: -20px)
+Frame 5: Hop_Squat.png          (100ms) - landing squat (y offset: +5px)
+Frame 6: Earl_Front_Idle.png    (80ms) - recover
 -> return to idle state
 ```
 
@@ -95,10 +95,10 @@ Earl follows the cursor position while in this state.
 After being released from a drag.
 
 ```
-Frame 1: dropped_squish.png     (200ms)  — impact squish
-Frame 2: dropped_squish.png     (200ms)  — hold squish
-Frame 3: Hop_Squat.png          (150ms)  — recovering
-Frame 4: Earl_Front_Idle.png    (100ms)  — back to normal
+Frame 1: dropped_squish.png     (200ms) - impact squish
+Frame 2: dropped_squish.png     (200ms) - hold squish
+Frame 3: Hop_Squat.png          (150ms) - recovering
+Frame 4: Earl_Front_Idle.png    (100ms) - back to normal
 -> return to idle state
 ```
 
@@ -126,7 +126,7 @@ Frame 1: birthday.png           (500ms)
 ```
 
 Replaces idle_front as the default idle animation when birthday mode is active.
-All other animations (walk, hop, etc.) use their normal sprites — only idle swaps.
+All other animations (walk, hop, etc.) use their normal sprites - only idle swaps.
 
 ## Behavior Timing
 

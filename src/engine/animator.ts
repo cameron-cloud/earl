@@ -19,7 +19,7 @@ const imageCache = new Map<string, HTMLImageElement>();
 // Fallback map: if a sprite PNG doesn't exist, use this one instead.
 // When real sprites are added to the folder, they'll be loaded automatically.
 const SPRITE_FALLBACKS: Record<string, string> = {
-  // Sprites not yet created — fall back to similar existing sprites
+  // Sprites not yet created - fall back to similar existing sprites
   "run_step2.png": "Walk_step_2.png",
   "run_step2_left.png": "Walk_step_2_left.png",
   "sitting_to_standing.png": "Earl_Front_Idle.png",
@@ -59,7 +59,7 @@ export function preloadSprites(): Promise<void> {
           resolve();
         };
         img.onerror = () => {
-          // Sprite doesn't exist — fallback will be used at render time
+          // Sprite doesn't exist - fallback will be used at render time
           console.warn(`Sprite not found, will use fallback: ${file}`);
           resolve();
         };

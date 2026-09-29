@@ -1,19 +1,19 @@
-# Claude Code — Kickoff Prompt
+# Claude Code - Kickoff Prompt
 
 Paste this into Claude Code when you start:
 
 ---
 
 ```
-I'm building "Earl" — a desktop pet duckling app for Windows 11 using Tauri v2, React, 
+I'm building "Earl" - a desktop pet duckling app for Windows 11 using Tauri v2, React, 
 and TypeScript. The project has been fully planned and all art assets are ready.
 
 Read the following files in order before writing any code:
 
-1. CLAUDE.md — your working instructions
-2. docs/SPEC.md — complete project specification
-3. docs/TODO.md — task checklist (work through this in order)
-4. docs/ANIMATIONS.md — animation frame definitions and timing
+1. CLAUDE.md - your working instructions
+2. docs/SPEC.md - complete project specification
+3. docs/TODO.md - task checklist (work through this in order)
+4. docs/ANIMATIONS.md - animation frame definitions and timing
 
 The sprite assets are already in assets/sprites/ (128×128 PNGs with transparency).
 The sprites.json manifest defines all animation sequences.
@@ -22,10 +22,10 @@ Start with Phase 1 from the TODO: initialize the Tauri v2 project scaffold with 
 TypeScript + Vite. Then proceed through each phase in order, committing after each section.
 
 Important context:
-- This runs on a Linux server (Hetzner) — code must compile on Windows when pulled
+- This runs on a Linux server (Hetzner) - code must compile on Windows when pulled
 - Target deadline: April 4th, 2026 (8 days)
 - Phases 1-8 are essential, 9-11 are nice-to-have
-- The transparent click-through window (Phase 2) is the hardest part — prioritize getting it right
+- The transparent click-through window (Phase 2) is the hardest part - prioritize getting it right
 - If you hit a Tauri v2 API question, check the latest docs rather than guessing
 
 Begin by reading the docs, then start Phase 1.

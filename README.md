@@ -1,4 +1,4 @@
-# Earl — Desktop Duckling Companion
+# Earl - Desktop Duckling Companion
 
 A desktop pet duckling for Windows 11. Earl lives on your taskbar, waddles around,
 and reacts when you interact with him.
@@ -17,7 +17,7 @@ digitally so he could live forever.
 - Birthday mode with confetti (April 4th & June 23rd)
 - Sound effects (peep! quack!)
 - Customizable display size
-- Fully offline — zero network access
+- Fully offline - zero network access
 
 ## Tech Stack
 
@@ -92,4 +92,4 @@ Output: `src-tauri/target/release/bundle/`
 
 ## License
 
-Personal project — made with love.
+Personal project - made with love.

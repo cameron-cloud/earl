@@ -133,7 +133,7 @@ pub fn write_config(
 
 /// Simple ISO date string without pulling in chrono
 fn chrono_free_now() -> String {
-    // Use std::time — will give epoch seconds, format as basic ISO
+    // Use std::time - will give epoch seconds, format as basic ISO
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()

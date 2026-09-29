@@ -313,7 +313,7 @@ export function updateStateMachine(
 
       const newTimer = sm.timer + event.deltaMs;
 
-      // Walking/running — check duration
+      // Walking/running - check duration
       if (
         sm.current === "WALK_RIGHT" ||
         sm.current === "WALK_LEFT" ||
@@ -332,7 +332,7 @@ export function updateStateMachine(
         return { ...sm, timer: newTimer };
       }
 
-      // Idle — check walk/sleep timers and idle duration
+      // Idle - check walk/sleep timers and idle duration
       const newWalkTimer = sm.walkTimer - event.deltaMs;
       const newSleepTimer = sm.sleepTimer - event.deltaMs;
       const newIdleDuration = sm.idleDuration + event.deltaMs;

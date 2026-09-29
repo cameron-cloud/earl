@@ -11,7 +11,7 @@ export async function checkForUpdates(): Promise<void> {
     await update.downloadAndInstall();
     await relaunch();
   } catch (e) {
-    // Silent fail — don't interrupt Earl if update check fails
+    // Silent fail - don't interrupt Earl if update check fails
     console.warn("Update check failed:", e);
   }
 }
