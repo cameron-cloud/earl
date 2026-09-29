@@ -1,0 +1,41 @@
+// @ts-check
+import { defineConfig, globalIgnores } from "eslint/config";
+import reactHooks from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
+
+export default defineConfig([
+  globalIgnores([
+    "dist/",
+    "coverage/",
+    "playwright-report/",
+    "test-results/",
+    "src-tauri/",
+    "assets/",
+    "src/assets/",
+    // v1 code, deleted by M1.4. Kept out of lint until then so M0 makes no v1 behavior changes.
+    "src/hooks/",
+    "src/engine/",
+    "src/components/",
+    "src/App.tsx",
+    // v1 sprite script, deleted by M0.3.
+    "scripts/fix-sprites.mjs",
+  ]),
+  tseslint.configs.recommended,
+  reactHooks.configs.flat.recommended,
+  {
+    // A few core rules from eslint:recommended that TypeScript does not already cover.
+    rules: {
+      "no-debugger": "error",
+      "no-cond-assign": "error",
+      "no-constant-condition": "error",
+      "no-dupe-keys": "error",
+      "no-duplicate-case": "error",
+      "no-empty": "error",
+      "no-self-assign": "error",
+      "no-sparse-arrays": "error",
+      "no-unsafe-finally": "error",
+      "no-useless-catch": "error",
+      eqeqeq: ["error", "always", { null: "ignore" }],
+    },
+  },
+]);

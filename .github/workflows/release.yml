@@ -6,7 +6,7 @@ name: Release Earl
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: read
@@ -94,8 +94,8 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: 'Earl v__VERSION__'
-          releaseBody: 'Earl desktop duckling update'
+          releaseName: "Earl v__VERSION__"
+          releaseBody: "Earl desktop duckling update"
           releaseDraft: true
           prerelease: false
           includeUpdaterJson: ${{ steps.updater.outputs.enabled == 'true' }}

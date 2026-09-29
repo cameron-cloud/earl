@@ -14,16 +14,16 @@
 //
 // Self test (LF and CRLF checkouts): node --test scripts/bump-version.selftest.mjs
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const files = {
-  packageJson: join(root, 'package.json'),
-  packageLock: join(root, 'package-lock.json'),
-  cargoToml: join(root, 'src-tauri', 'Cargo.toml'),
-  cargoLock: join(root, 'src-tauri', 'Cargo.lock'),
+  packageJson: join(root, "package.json"),
+  packageLock: join(root, "package-lock.json"),
+  cargoToml: join(root, "src-tauri", "Cargo.toml"),
+  cargoLock: join(root, "src-tauri", "Cargo.lock"),
 };
 
 const SEMVER = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
@@ -35,12 +35,12 @@ const CARGO_TOML_VERSION =
   /(^\[package\][ \t]*\r?\n(?:(?!\[)[^\r\n]*\r?\n)*?version\s*=\s*")([^"]+)(")/m;
 const CARGO_LOCK_VERSION = /(\[\[package\]\]\r?\nname = "earl"\r?\nversion = ")([^"]+)(")/;
 
-const read = (path) => readFileSync(path, 'utf8');
+const read = (path) => readFileSync(path, "utf8");
 
 function readJson(path) {
   const text = read(path);
-  const indent = /^[ \t]+(?=")/m.exec(text)?.[0] ?? '  ';
-  const eol = text.includes('\r\n') ? '\r\n' : '\n';
+  const indent = /^[ \t]+(?=")/m.exec(text)?.[0] ?? "  ";
+  const eol = text.includes("\r\n") ? "\r\n" : "\n";
   return { data: JSON.parse(text), indent, eol };
 }
 
@@ -60,23 +60,31 @@ function matchOrThrow(regex, text, what) {
 function currentVersions() {
   const lock = readJson(files.packageLock).data;
   return {
-    'package.json': readJson(files.packageJson).data.version,
-    'package-lock.json': lock.version,
-    'package-lock.json packages[""]': lock.packages?.['']?.version,
-    'src-tauri/Cargo.toml': matchOrThrow(CARGO_TOML_VERSION, read(files.cargoToml), 'Cargo.toml')[2],
-    'src-tauri/Cargo.lock': matchOrThrow(CARGO_LOCK_VERSION, read(files.cargoLock), 'Cargo.lock')[2],
+    "package.json": readJson(files.packageJson).data.version,
+    "package-lock.json": lock.version,
+    'package-lock.json packages[""]': lock.packages?.[""]?.version,
+    "src-tauri/Cargo.toml": matchOrThrow(
+      CARGO_TOML_VERSION,
+      read(files.cargoToml),
+      "Cargo.toml",
+    )[2],
+    "src-tauri/Cargo.lock": matchOrThrow(
+      CARGO_LOCK_VERSION,
+      read(files.cargoLock),
+      "Cargo.lock",
+    )[2],
   };
 }
 
 function check() {
   const versions = currentVersions();
-  const expected = versions['package.json'];
+  const expected = versions["package.json"];
   const wrong = Object.entries(versions).filter(([, version]) => version !== expected);
   if (wrong.length > 0) {
     for (const [file, version] of wrong) {
       console.error(`${file} has ${version}, package.json has ${expected}`);
     }
-    console.error('Run: node scripts/bump-version.mjs <version>');
+    console.error("Run: node scripts/bump-version.mjs <version>");
     return 1;
   }
   console.log(`All version fields agree: ${expected}`);
@@ -94,12 +102,12 @@ function bump(version) {
 
   const lock = readJson(files.packageLock);
   lock.data.version = version;
-  if (lock.data.packages?.['']) lock.data.packages[''].version = version;
+  if (lock.data.packages?.[""]) lock.data.packages[""].version = version;
 
   const cargoToml = read(files.cargoToml);
-  matchOrThrow(CARGO_TOML_VERSION, cargoToml, 'Cargo.toml');
+  matchOrThrow(CARGO_TOML_VERSION, cargoToml, "Cargo.toml");
   const cargoLock = read(files.cargoLock);
-  matchOrThrow(CARGO_LOCK_VERSION, cargoLock, 'Cargo.lock');
+  matchOrThrow(CARGO_LOCK_VERSION, cargoLock, "Cargo.lock");
 
   // Every file is read and matched before any is written, so a failure
   // never leaves the versions half bumped.
@@ -113,12 +121,12 @@ function bump(version) {
 }
 
 const arg = process.argv[2];
-if (!arg || arg === '--help' || arg === '-h') {
-  console.log('Usage: node scripts/bump-version.mjs <version> | --check');
+if (!arg || arg === "--help" || arg === "-h") {
+  console.log("Usage: node scripts/bump-version.mjs <version> | --check");
   process.exitCode = arg ? 0 : 1;
 } else {
   try {
-    process.exitCode = arg === '--check' ? check() : bump(arg);
+    process.exitCode = arg === "--check" ? check() : bump(arg);
   } catch (error) {
     console.error(`bump-version: ${error.message}`);
     process.exitCode = 1;
