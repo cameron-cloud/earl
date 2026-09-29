@@ -55,7 +55,7 @@ jobs:
           git diff > "$RUNNER_TEMP/rustfmt.patch"
       - name: Upload rustfmt patch
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: rustfmt-patch
           path: ${{ runner.temp }}/rustfmt.patch
@@ -167,7 +167,7 @@ jobs:
           }
           "dir=$out" >> $env:GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: earl-windows-${{ github.run_number }}
           path: ${{ steps.collect.outputs.dir }}
