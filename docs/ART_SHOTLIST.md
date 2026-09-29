@@ -474,7 +474,7 @@ Until these arrive, the swarm uses a small tinted Earl.
    - A strip can be saved as `<shot>.png`, e.g. `earl_walk.png`. The pipeline splits it on the magenta gaps and errors if the frame count does not match the table.
    - Anything after a double underscore is ignored, so you can keep several takes side by side: `earl_peek_01__take2.png`.
 3. **Format:** PNG or WebP at 1024 px or larger, on flat #FF00FF. A JPG is accepted with a warning. A painted checkerboard is rejected with "regenerate on #FF00FF".
-4. **Import:** run `npm run art:import` (or ask an agent to). It keys, aligns and scales each image, writes a 512 px master to `art/masters/`, and rebuilds the game atlases.
+4. **Import:** run `npm run art:import` (or ask an agent to). It keys, aligns and scales each image, writes a 512 px master to `art/masters/`, and rebuilds the game atlases. Each raw that imported cleanly then moves to `imported/` inside the drop folder, so the next import does not redo it; one that failed stays put to be fixed.
 5. **Review:** open `art/out/contact.png`. It has:
    - every frame on the dark (#202020) and light (#F3F3F3) Win11 taskbar greys;
    - a red y=240 line, the anchor cross, bounding box, detected eyes and ledge line;

@@ -169,14 +169,23 @@ export declare function coverageLine(c: Coverage): string;
 export declare function build(root: string, all?: All): { all: All };
 export declare function importInbox(
   root: string,
-  opts: { inbox: string; profile?: string | null; log?: (...args: unknown[]) => void },
+  opts: {
+    inbox: string;
+    profile?: string | null;
+    keep?: boolean;
+    log?: (...args: unknown[]) => void;
+  },
 ): Promise<{
   outcomes: { id: string; file: string; ok: boolean; error?: string; warn?: string[] }[];
+  /** Where each imported raw was moved (under <inbox>/imported/); empty with `keep`. */
+  archived: string[];
 }>;
+export declare const OVL_MIN_IOU: number;
 export declare function pack(
   items: { id: string; w: number; h: number }[],
   pad?: number,
 ): { width: number; height: number; rects: Map<string, [number, number, number, number]> };
+export declare function wrapWords(words: string[], max: number): string[];
 export declare function renderContactSheet(
   all: All,
   opts?: { cell?: number; cols?: number; title?: string },

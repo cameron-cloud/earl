@@ -101,7 +101,9 @@ This is the v1 spec as shipped for April 4th 2026. v1 still runs from `src/App.t
 reference for current behavior. **Stale for v2:** the portable exe (v2 ships an NSIS installer),
 "fully offline" (v2 has the updater), a canvas the exact size of Earl (v2 uses one full-monitor
 overlay), sprite sheets under `assets/` (the v1 PNGs now live in `art/reference/v1/`, and the
-app still loads `src/assets/sprites/`), and the V2 wish list at the end (superseded by the plan).
+app still loads `src/assets/sprites/`), the project tree below (`docs/TODO.md` and
+`docs/PROMPT.md` were deleted by M0.3; `docs/ROADMAP.md` tracks the work now), and the V2 wish
+list at the end (superseded by the plan).
 
 ### Tech Stack
 

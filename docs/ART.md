@@ -21,7 +21,10 @@ art/out/contact.png                     contact sheet for review (generated, git
 
 Frames with no master yet fall back to a **placeholder**: the matching v1 sprite from
 `art/reference/v1/`, keyed and aligned by the same code and scaled 2x nearest-neighbour. The
-game never waits on art (plan principle 7).
+game never waits on art (plan principle 7). An `ovl` placeholder is lined up with its base only
+when the v1 drawing really is an edit of it (silhouette overlap 97% or more, as for blink); v1
+pouty and huffy are separate drawings, so they take their base's `gnd` rule instead and keep
+their feet on the ground line (they still WARN `ovl_moved`, which is true of that v1 art).
 
 ## Commands
 
@@ -42,6 +45,12 @@ All commands take `--root <dir>` (default: the repo root).
   `/mnt/HC_Volume_106939637/earl/art-inbox`, where Cameron's exports land. Any other folder
   works with `--inbox <path>`.
 - A missing or empty inbox is not an error: the importer says so and exits 0.
+- **After import:** every raw that imported cleanly, plus any older takes of the same frame,
+  moves to `<inbox>/imported/` (nothing is deleted; a name clash gets a `__2` suffix). This stops
+  the next run from redoing it and silently overwriting a master in `art/masters/` that was
+  cleaned up by hand. A raw that failed stays in the inbox so it can be fixed and re-run. To
+  re-import on purpose (say after the Q2 style pick), move the raws back, or point `--inbox` at
+  `imported/` and add `--keep`, which leaves files where they are.
 - **Naming:** `<shot>_<nn>.png` in lowercase snake_case, exactly as in the shot list
   (`earl_peek_01.png`). A strip can be saved as `<shot>.png` (`earl_walk.png`); it is split on the
   magenta gaps and it is an error if the frame count does not match the shot list. Anything after
@@ -76,8 +85,13 @@ profile is set.
 3. **Framing.** A square raw maps to the shot canvas at the master scale (ducks: a 1024 raw ->
    512 master = the 256 canvas at 2x; props: the raw square maps to the larger side of the prop
    canvas). `icon_app` and `icon_tray` are 1024 masters at scale 1 and are not in any atlas.
-   Strip frames are scaled so the tallest frame matches the base master's height, so the base
-   master must be imported first.
+   A strip is scaled once for all its frames, so they keep their sizes relative to each other.
+   When its frames derive from a master outside the strip (`earl_run` on `earl_walk_02`), the
+   tallest frame is matched to that master's height, so that master must already be imported or
+   be in the same inbox (strips import in shot-list order, after single frames). Any other strip
+   (`earl_walk` and most prop strips have no base; `prop_fan`'s base is its own first frame) is
+   scaled like a single raw: each evenly spaced cell, raw width / frames by raw height, fills the
+   canvas, so a 3072x1024 three-frame strip gives the same size as three 1024 raws.
 4. **Alignment** follows the anchor rules of ART_SHOTLIST section 3 at every level:
    - `gnd`: lowest opaque row on y=240 (512 level: 480), horizontally centred on the eye midpoint
      when two eyes are found, else on the body;
@@ -141,8 +155,8 @@ at v1's 12 missing files have no placeholder.
 
 `art/out/contact.png` (gitignored), written by `art:check` and `art:import`. It shows every
 frame on the dark (#202020) and light (#F3F3F3) Win11 taskbar greys with the y=240 baseline, the
-anchor cross, the bounding box, the detected eyes, the ledge line where there is one, a status
-label with the tier and lint codes, plus a size
+anchor cross, the bounding box, the detected eyes, the ledge line where there is one, and a status
+label with the tier and every lint code (wrapped over as many lines as it needs), plus a size
 ladder of `earl_sit_idle_01` at 48/64/96/128/256. CI uploads it as the `art-contact-sheet`
 artifact of the `web` job.
 

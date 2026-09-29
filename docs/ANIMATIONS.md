@@ -2,7 +2,9 @@
 
 ## Sprite Files
 
-All sprites are 128x128 PNG with transparency in `assets/sprites/`.
+All v1 sprites are 128x128 PNG with transparency. The v1 app loads them from
+`src/assets/sprites/` (until M1.4 replaces it); the reference copies used as v2 placeholders live
+in `art/reference/v1/`. v2 art and its pipeline are described in `docs/ART.md`.
 
 | File | Description |
 |---|---|

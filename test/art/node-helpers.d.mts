@@ -10,3 +10,4 @@ export declare function removeDir(dir: string): void;
 export declare function envFlag(name: string): boolean;
 export declare function writeBytes(file: string, bytes: Uint8Array): void;
 export declare function copy(from: string, to: string): void;
+export declare function listFiles(dir: string): string[];

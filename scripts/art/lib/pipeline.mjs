@@ -84,16 +84,26 @@ export function levelsFromMaster(master, frame, profile) {
   return { l1, l2: master };
 }
 
-/** Placeholder: v1 art keyed (composited on the key, then the same keyer), at 2x, aligned. */
+/** Silhouette overlap below which an expression edit counts as having moved the body. */
+export const OVL_MIN_IOU = 0.97;
+
+/**
+ * Placeholder: v1 art keyed (composited on the key, then the same keyer), at 2x, aligned.
+ * An overlay frame is lined up with its base only when the v1 drawing really is an edit of the
+ * base (blink). Some v1 expressions (pouty, huffy) are separate drawings: overlaying those
+ * lands the feet off the ground line, so they fall back to the base's anchor rules.
+ */
 export function placeholderLevels(v1, frame, byId, baseL1) {
   const keyed = softKey(flatten(v1, KEY), { profile: "v1-faithful" });
   const [cw, ch] = frame.shot.canvas;
   const k = Math.max(1, Math.round(Math.max(cw, ch) / Math.max(v1.width, v1.height)));
   const big = onCanvas(scaleNearest(keyed, k), cw, ch);
-  const l1 =
-    frame.anchor === "ovl" && baseL1
-      ? alignOverlay(big, baseL1).image
-      : alignFrame(big, spec(frame, byId), 1).image;
+  let l1 = null;
+  if (frame.anchor === "ovl" && baseL1) {
+    const ovl = alignOverlay(big, baseL1);
+    if (ovl.iou >= OVL_MIN_IOU) l1 = ovl.image;
+  }
+  l1 ??= alignFrame(big, spec(frame, byId), 1).image;
   return { l1, l2: frame.shot.masterScale === 2 ? scaleNearest(l1, 2) : null };
 }
 
@@ -252,7 +262,7 @@ export function checkFrame(l1, frame, meta, ctx) {
   }
   if (frame.anchor === "ovl" && ctx.baseL1) {
     const iou = A.alphaIoU(l1, ctx.baseL1);
-    if (iou < 0.97)
+    if (iou < OVL_MIN_IOU)
       add(
         "WARN",
         "ovl_moved",
@@ -527,8 +537,11 @@ export function build(root, all = computeAll(root)) {
       writeIfChanged(path.join(atlasDir, name), encodePng(levels[l].img));
     }
   }
+  // Drops stale atlas pages only: anything else someone put here (a folder, a note) is left alone.
   if (fs.existsSync(atlasDir))
-    for (const f of fs.readdirSync(atlasDir)) if (!wanted.has(f)) fs.rmSync(path.join(atlasDir, f));
+    for (const d of fs.readdirSync(atlasDir, { withFileTypes: true }))
+      if (d.isFile() && /_(256|512)\.png$/.test(d.name) && !wanted.has(d.name))
+        fs.rmSync(path.join(atlasDir, d.name));
   writeIfChanged(path.join(root, PATHS.gen), renderGen(all, atlases));
   return { all, atlases };
 }
@@ -569,7 +582,12 @@ export function scanInbox(inbox, all) {
         used: path.basename(g.files[0].file),
         ignored: g.files.slice(1).map((f) => path.basename(f.file)),
       });
-    report.targets.push({ kind: g.kind, id: g.id, file: g.files[0].file });
+    report.targets.push({
+      kind: g.kind,
+      id: g.id,
+      file: g.files[0].file,
+      files: g.files.map((f) => f.file),
+    });
   }
   const order = (t) => (t.kind === "strip" ? 2 : all.byId.get(t.id).anchor === "ovl" ? 1 : 0);
   const idx = new Map(all.frames.map((f, i) => [f.shot.id, i]));
@@ -582,21 +600,26 @@ export function scanInbox(inbox, all) {
   return report;
 }
 
-/** art:import: every inbox file becomes a 512 master in art/masters/. Returns per-frame outcomes. */
-export async function importInbox(root, { inbox, profile, log = console.log }) {
+/**
+ * art:import: every inbox file becomes a 512 master in art/masters/. Returns per-frame outcomes.
+ * Raws that imported cleanly (with any older takes of the same frame) move to <inbox>/imported/
+ * unless `keep` is set; a raw that failed stays in the inbox to be fixed and re-run.
+ */
+export async function importInbox(root, { inbox, profile, keep = false, log = console.log }) {
   const all = computeAll(root);
   const prof = profile || all.doc.profile;
   const scan = scanInbox(inbox, all);
   const outcomes = [];
+  const moved = [];
   if (scan.missing) {
     log(`art:import: no inbox at ${inbox}, nothing to import`);
-    return { outcomes, scan };
+    return { outcomes, scan, archived: [] };
   }
   if (!scan.targets.length) {
     log(`art:import: inbox ${inbox} is empty, nothing to import`);
     for (const u of scan.unknown)
       log(`  WARN skipped ${u}: not a shot or frame id from the shot list`);
-    return { outcomes, scan };
+    return { outcomes, scan, archived: [] };
   }
   if (!prof)
     throw new Error(
@@ -637,31 +660,68 @@ export async function importInbox(root, { inbox, profile, log = console.log }) {
         if (!bg.ok) throw new Error(bg.message);
         const keyed = softKey(raw, { profile: prof, fringy: shot.fringy });
         const segs = splitStrip(keyed, shot.frames);
-        const first = all.byId.get(`${shot.id}_01`);
-        const baseMaster = first.base ? masterOf(first.base) : null;
-        if (!baseMaster)
-          throw new Error(
-            `strips are scaled to their base master: import ${first.base || "the base"} first`,
-          );
-        const baseH = A.alphaBBox(baseMaster).h;
-        const tallest = Math.max(...segs.map((s) => A.alphaBBox(s)?.h || 1));
-        segs.forEach((seg, k) => {
-          const frame = all.byId.get(`${shot.id}_${String(k + 1).padStart(2, "0")}`);
+        const frames = segs.map((_, k) =>
+          all.byId.get(`${shot.id}_${String(k + 1).padStart(2, "0")}`),
+        );
+        const stripScale = stripScaleFor(shot, frames, segs, raw, masterOf);
+        for (const [k, seg] of segs.entries()) {
+          const frame = frames[k];
           const master = processRaw(seg, frame, all.byId, {
             profile: prof,
             prekeyed: true,
-            stripScale: baseH / tallest,
-            baseMaster,
+            stripScale,
+            baseMaster: frame.base ? masterOf(frame.base) : null,
           });
           writePng(path.join(masterDir, `${frame.id}.png`), master);
           outcomes.push({ id: frame.id, file: name, ok: true, warn });
-        });
+        }
       }
+      if (!keep) moved.push(...t.files);
     } catch (e) {
       outcomes.push({ id: t.id, file: name, ok: false, error: e.message });
     }
   }
-  return { outcomes, scan };
+  const archived = moved.map((file) => archiveRaw(inbox, file));
+  return { outcomes, scan, archived };
+}
+
+/**
+ * The scale for every frame of a strip, so the frames keep their sizes relative to each other.
+ * A strip whose frames derive from a master outside the strip (earl_run on earl_walk_02) is
+ * scaled so its tallest frame matches that master. Any other strip (earl_walk and the prop
+ * strips have no base; prop_fan's base is its own first frame) is scaled the way a single raw
+ * is: each evenly spaced cell, raw width / frames by raw height, fills the shot's canvas.
+ */
+export function stripScaleFor(shot, frames, segs, raw, masterOf) {
+  const own = new Set(frames.map((f) => f.id));
+  const base = frames.map((f) => f.base).find((b) => b && !own.has(b));
+  if (!base) {
+    const side = Math.max(...shot.canvas) * shot.masterScale;
+    return side / Math.max(raw.width / shot.frames, raw.height);
+  }
+  const baseMaster = masterOf(base);
+  if (!baseMaster)
+    throw new Error(
+      `${shot.id} is scaled to match its base ${base}: import ${base} first (or put both in the inbox together)`,
+    );
+  const tallest = Math.max(...segs.map((s) => A.alphaBBox(s)?.h || 1));
+  return A.alphaBBox(baseMaster).h / tallest;
+}
+
+/**
+ * Moves an imported raw into <inbox>/imported/ so the next import does not redo it and overwrite a
+ * master that was cleaned up by hand. Nothing is deleted; a name clash gets a __N suffix, which
+ * the importer reads as another take of the same frame.
+ */
+function archiveRaw(inbox, file) {
+  const dir = path.join(inbox, "imported");
+  fs.mkdirSync(dir, { recursive: true });
+  const ext = path.extname(file);
+  const stem = path.basename(file, ext);
+  let dest = path.join(dir, `${stem}${ext}`);
+  for (let n = 2; fs.existsSync(dest); n++) dest = path.join(dir, `${stem}__${n}${ext}`);
+  fs.renameSync(file, dest);
+  return dest;
 }
 
 /** art:templates: 1024 px references on magenta for each frame that has something to show. */

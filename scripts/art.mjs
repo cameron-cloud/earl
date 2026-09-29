@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Earl art pipeline CLI (plan D19, docs/ART.md).
-//   node scripts/art.mjs import [--inbox <dir>] [--profile v1-faithful|smooth]
+//   node scripts/art.mjs import [--inbox <dir>] [--profile v1-faithful|smooth] [--keep]
 //   node scripts/art.mjs build | check | status | templates | shots   [--root <dir>]
 import fs from "node:fs";
 import path from "node:path";
@@ -22,6 +22,9 @@ import {
   writeTemplates,
 } from "./art/lib/index.mjs";
 
+// Flags that never take a value, so they cannot swallow the argument after them.
+const SWITCHES = new Set(["keep", "quiet"]);
+
 function parseArgs(argv) {
   const flags = {};
   const rest = [];
@@ -29,7 +32,8 @@ function parseArgs(argv) {
     const a = argv[i];
     if (a.startsWith("--")) {
       const [k, v] = a.slice(2).split("=");
-      flags[k] = v ?? (argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[++i] : true);
+      const takesValue = !SWITCHES.has(k) && argv[i + 1] && !argv[i + 1].startsWith("--");
+      flags[k] = v ?? (takesValue ? argv[++i] : true);
     } else rest.push(a);
   }
   return { cmd: rest[0], flags };
@@ -102,9 +106,10 @@ async function main() {
     }
     case "import": {
       const inbox = path.resolve(root, flags.inbox || PATHS.inbox);
-      const { outcomes } = await importInbox(root, {
+      const { outcomes, archived } = await importInbox(root, {
         inbox,
         profile: typeof flags.profile === "string" ? flags.profile : null,
+        keep: Boolean(flags.keep),
         log,
       });
       const { all } = build(root);
@@ -121,6 +126,10 @@ async function main() {
           `  ${status.padEnd(11)} ${o.id.padEnd(28)} <- ${o.file}${detail ? `  ${detail}` : ""}`,
         );
       }
+      if (archived.length)
+        console.log(
+          `Moved ${archived.length} imported raw(s) to ${path.join(inbox, "imported")} (--keep leaves them in place)`,
+        );
       if (outcomes.length) console.log(`Contact sheet: ${writeContact(all)}`);
       printCoverage(all);
       return outcomes.some((o) => !o.ok) ? 1 : 0;
@@ -164,7 +173,7 @@ async function main() {
     }
     default:
       console.error(
-        "usage: node scripts/art.mjs <import|build|check|status|templates|shots> [--root dir] [--inbox dir] [--profile v1-faithful|smooth]",
+        "usage: node scripts/art.mjs <import|build|check|status|templates|shots> [--root dir] [--inbox dir] [--profile v1-faithful|smooth] [--keep]",
       );
       return 2;
   }

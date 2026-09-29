@@ -129,11 +129,34 @@ function panel(img, x, y, size, bg, res) {
   }
 }
 
+/** Word-wraps `words` (joined by spaces) into lines of at most `max` characters, never mid-word. */
+export function wrapWords(words, max) {
+  const lines = [];
+  for (const w of words) {
+    const last = lines.length ? lines[lines.length - 1] : null;
+    if (last !== null && last.length + 1 + w.length <= max)
+      lines[lines.length - 1] = `${last} ${w}`;
+    else lines.push(w);
+  }
+  return lines;
+}
+
+/** The status line under a cell, as words: status, tier, then each lint code (comma-separated). */
+function noteWords(res, f) {
+  const status = res.final ? "FINAL" : res.status;
+  const codes = res.issues.map((is, i, a) => (i < a.length - 1 ? `${is.code},` : is.code));
+  return [status, f.tier, ...codes];
+}
+
 /** Renders the whole sheet. `all` comes from computeAll(). */
 export function renderContactSheet(all, { cell = 128, cols = 4, title = "" } = {}) {
   const pad = 8;
-  const labelH = 28;
+  const lineH = 13;
   const cellW = cell * 2 + pad * 3;
+  // Text starts 14 px into the cell after the status swatch; glyphs advance 8 px at scale 2.
+  const maxChars = Math.floor((cellW - pad * 2 - 14) / 8);
+  const notes = all.frames.map((f) => wrapWords(noteWords(all.results.get(f.id), f), maxChars));
+  const labelH = 2 + lineH * (1 + Math.max(1, ...notes.map((n) => n.length)));
   const cellH = cell + labelH + pad;
   const ladder = [48, 64, 96, 128, 256];
   const headerH = 30 + 256 + pad * 2;
@@ -165,10 +188,9 @@ export function renderContactSheet(all, { cell = 128, cols = 4, title = "" } = {
     const status = res.final ? "FINAL" : res.status;
     fillRect(img, x + pad, y + cell + 2, 10, 10, STATUS_COLOUR[status]);
     drawText(img, x + pad + 14, y + cell + 2, f.id, [235, 235, 235, 255]);
-    const note = res.issues.length
-      ? `${status} ${f.tier} ${res.issues.map((is) => is.code).join(",")}`
-      : `${status} ${f.tier}`;
-    drawText(img, x + pad + 14, y + cell + 15, note.slice(0, 30), STATUS_COLOUR[status]);
+    notes[i].forEach((line, k) =>
+      drawText(img, x + pad + 14, y + cell + 2 + lineH * (k + 1), line, STATUS_COLOUR[status]),
+    );
   });
   return img;
 }

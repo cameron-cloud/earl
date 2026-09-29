@@ -31,6 +31,7 @@ import {
   softKey,
   splitStrip,
   stringifyDoc,
+  wrapWords,
   writePng,
   type Frame,
   type Img,
@@ -41,6 +42,7 @@ import {
   envFlag,
   exists,
   join,
+  listFiles,
   makeTempDir,
   mkdirp,
   readBytes,
@@ -106,6 +108,14 @@ function groundDisc(rim?: { colour: RGB; width: number }) {
   );
   const keyed = softKey(paint(256, 256, MAGENTA, discs).img);
   return alignFrame(keyed, { anchorType: "gnd", facing: "front", canvas: [256, 256] }, 1).image;
+}
+
+/** A raw strip of `n` duck frames side by side, each in a `cell` px square, bobbing by `bob`. */
+function duckStrip(n: number, cell: number, bob: number[] = []) {
+  const discs = Array.from({ length: n }, (_, k) =>
+    duck(cell, cell, 0, bob[k] ?? 0).map((d) => ({ ...d, cx: d.cx + k * cell })),
+  ).flat();
+  return encodePng(paint(n * cell, cell, MAGENTA, discs, 2).img);
 }
 
 // These suites push real images through the pipeline. They take about a second each, but v8
@@ -360,6 +370,16 @@ describe("pipeline", HEAVY, () => {
     expect([idle.l1!.width, idle.l2!.width]).toEqual([256, 512]);
     expect(idle.meta!.bbox!.y1).toBe(240);
     expect(idle.issues.filter((i) => i.level === "ERR")).toEqual([]);
+    // v1 pouty and huffy are separate drawings, not edits of sit_idle: they keep the ground line.
+    for (const id of ["earl_sit_pouty_01", "earl_sit_huffy_01"]) {
+      const r = all.results.get(id)!;
+      expect(r.meta!.bbox!.y1).toBe(240);
+      expect(r.issues.map((i) => i.code)).not.toContain("baseline");
+    }
+    // v1 blink really is an edit of sit_idle, so it still lines up with it.
+    expect(all.results.get("earl_sit_blink_01")!.issues.map((i) => i.code)).not.toContain(
+      "ovl_moved",
+    );
   });
 
   it("packs atlas rects without overlap, deterministically", () => {
@@ -407,10 +427,18 @@ describe("pipeline", HEAVY, () => {
         log: quiet,
       });
       expect(outcomes.map((o) => [o.id, o.ok])).toEqual([["earl_sit_idle_01", true]]);
+      expect(listFiles(join(tmp, "art/inbox"))).toEqual(["not_a_shot.png"]);
+      expect(listFiles(join(tmp, "art/inbox/imported"))).toEqual(["earl_sit_idle__take1.png"]);
       const master = decodePng(readBytes(join(tmp, "art/masters/earl_sit_idle_01.png")));
       expect([master.width, master.height]).toEqual([512, 512]);
       expect(alphaBBox(master)?.y1).toBe(481);
+      // A stale atlas page is dropped; anything else in the atlas folder is left alone.
+      const atlas = join(tmp, "src/assets/atlas");
+      mkdirp(join(atlas, "notes"));
+      writeBytes(join(atlas, "old_256.png"), encodePng(createImage(4, 4)));
       const { all } = build(tmp, computeAll(tmp, { ...loadDoc(tmp), profile: "smooth" }));
+      expect(exists(join(atlas, "old_256.png"))).toBe(false);
+      expect(exists(join(atlas, "notes"))).toBe(true);
       expect(all.results.get("earl_sit_idle_01")!.status).toMatch(/^(OK|WARN)$/);
       const gen = readText(join(tmp, "src/sim/anim/sprites.gen.ts"));
       expect(gen).toMatch(/export type FrameId =/);
@@ -419,5 +447,80 @@ describe("pipeline", HEAVY, () => {
     } finally {
       removeDir(tmp);
     }
+  });
+
+  it("imports strips: baseless ones fill the canvas, based ones match their base", async () => {
+    const tmp = makeTempDir("earl-art-");
+    try {
+      const inbox = join(tmp, "art/inbox");
+      mkdirp(inbox);
+      mkdirp(join(tmp, "docs"));
+      copy(join(ROOT, "art/shots.json"), join(tmp, "art/shots.json"));
+      copy(join(ROOT, "docs/ART_SHOTLIST.md"), join(tmp, "docs/ART_SHOTLIST.md"));
+      const run = () => importInbox(tmp, { inbox, profile: "smooth", log: () => {} });
+      const bbox = (id: string) =>
+        alphaBBox(decodePng(readBytes(join(tmp, `art/masters/${id}.png`))))!;
+
+      // earl_run is scaled to match earl_walk_02: on its own it fails and stays in the inbox.
+      writeBytes(join(inbox, "earl_run.png"), duckStrip(4, 256));
+      const first = await run();
+      expect(first.outcomes).toHaveLength(1);
+      expect(first.outcomes[0]).toMatchObject({ id: "earl_run", ok: false });
+      expect(first.outcomes[0].error).toMatch(/import earl_walk_02 first/);
+      expect(listFiles(inbox)).toEqual(["earl_run.png"]);
+
+      // earl_walk (the docs' strip example) and the prop strips have no base; prop_fan's base
+      // is its own first frame. All of them scale like a single raw of the same cell size.
+      writeBytes(join(inbox, "earl_walk.png"), duckStrip(3, 512, [0, -6, 0]));
+      writeBytes(join(inbox, "prop_fan.png"), duckStrip(3, 512));
+      const second = await run();
+      const ids = (shot: string, n: number) =>
+        Array.from({ length: n }, (_, k) => `${shot}_0${k + 1}`);
+      expect(second.outcomes.filter((o) => !o.ok)).toEqual([]);
+      expect(second.outcomes.map((o) => o.id)).toEqual([
+        ...ids("earl_walk", 3),
+        ...ids("earl_run", 4),
+        ...ids("prop_fan", 3),
+      ]);
+      for (const id of ids("earl_walk", 3)) {
+        const bb = bbox(id);
+        expect(bb.y1).toBe(481);
+        // A 512 px cell fills the 512 master 1:1, as a 1024 px single raw does at half scale.
+        expect(Math.abs(bb.h - 360)).toBeLessThanOrEqual(3);
+      }
+      for (const id of ids("prop_fan", 3))
+        expect(Math.abs(bbox(id).h - 360)).toBeLessThanOrEqual(3);
+      const walkH = bbox("earl_walk_02").h;
+      for (const id of ids("earl_run", 4))
+        expect(Math.abs(bbox(id).h - walkH)).toBeLessThanOrEqual(2);
+
+      // Imported raws move aside, so the next import has nothing to redo.
+      expect(listFiles(inbox)).toEqual([]);
+      expect(listFiles(join(inbox, "imported"))).toEqual([
+        "earl_run.png",
+        "earl_walk.png",
+        "prop_fan.png",
+      ]);
+      expect((await run()).outcomes).toEqual([]);
+    } finally {
+      removeDir(tmp);
+    }
+  });
+});
+
+describe("contact sheet", () => {
+  it("wraps the status line at word boundaries instead of cutting codes off", () => {
+    const words = [
+      "PLACEHOLDER",
+      "P0",
+      "baseline,",
+      "holes,",
+      "dark_rim,",
+      "eye_size,",
+      "body_colour",
+    ];
+    const lines = wrapWords(words, 31);
+    expect(lines).toEqual(["PLACEHOLDER P0 baseline, holes,", "dark_rim, eye_size, body_colour"]);
+    expect(wrapWords(["OK", "P1"], 31)).toEqual(["OK P1"]);
   });
 });

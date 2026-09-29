@@ -24,3 +24,10 @@ export function copy(from, to) {
   fs.mkdirSync(path.dirname(to), { recursive: true });
   fs.copyFileSync(from, to);
 }
+/** Sorted names of the plain files directly in `dir` (not folders). */
+export const listFiles = (dir) =>
+  fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isFile())
+    .map((d) => d.name)
+    .sort();
