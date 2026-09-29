@@ -4,16 +4,20 @@
 
 Earl is a desktop pet duckling for Windows 11, built with Tauri v2 + React + TypeScript.
 Earl lives on the taskbar, waddles around, and reacts to user interaction. This is a
-personal birthday gift - the deadline is April 4th, 2026.
+personal birthday gift. v1 shipped for April 4th, 2026; v2 (the rebuild on the `v2` branch)
+follows `docs/V2_PLAN.md` and has no hard date.
 
 ## Key Files
 
-- `docs/SPEC.md` - Complete project specification (read this FIRST)
-- `docs/TODO.md` - Task checklist, work through this in order
-- `docs/ANIMATIONS.md` - Animation definitions and timing
-- `assets/sprites/` - All 128×128 sprite PNGs (ready to use)
-- `assets/sprites/sprites.json` - Animation frame manifest
-- `assets/icons/tray_icon_32.png` - System tray icon
+- `docs/V2_PLAN.md` - The approved v2 plan, the source of truth (read your unit in section 13 FIRST)
+- `docs/ROADMAP.md` - Milestones and the status of every work unit
+- `docs/SPEC.md` - Short product spec, plus the v1 spec for reference
+- `docs/ART.md` - The art pipeline (`npm run art:*`); `docs/ART_SHOTLIST.md` - what to draw
+- `docs/TESTING.md` - Local checks, CI and the Windows checklist
+- `docs/ANIMATIONS.md` - v1 animation definitions and timing
+- `art/shots.json` - Shot and frame table generated from `docs/ART_SHOTLIST.md`
+- `art/reference/v1/` - The v1 sprite PNGs (placeholders for v2) and the v1 tray icon
+- `src/assets/sprites/` - The sprites the v1 app still loads (until M1.4)
 
 ## Tech Stack
 
@@ -28,9 +32,10 @@ personal birthday gift - the deadline is April 4th, 2026.
 
 1. **Transparent frameless always-on-top window** - this is the hardest part, get it working first
 2. **Click-through transparency** - transparent regions must pass mouse events to desktop below
-3. **Fully offline** - zero network access, no external resources, no CDN imports
+3. **Offline except the updater** - no external resources, no CDN imports; the only network
+   access is the v2 updater check (plan 4.12)
 4. **Windows 11 only** - no need for macOS/Linux compat
-5. **Portable .exe** - no installer for V1
+5. **NSIS per-user installer** for v2 (v1 was a portable .exe)
 
 ## Build Note
 
@@ -40,13 +45,11 @@ Windows. Use `cargo tauri dev` for development and `cargo tauri build` for produ
 
 ## Sprite Assets
 
-All sprites are 128×128 PNG with transparency, stored in `assets/sprites/`.
-The app should display them at a user-configurable size (default 64px) using
-high-quality downscaling on the Canvas. Walk-left sprites are pre-mirrored.
-
-Some sprites may have checkerboard transparency artifacts from AI generation.
-If detected during development, clean these programmatically (detect and remove
-the gray/white checkerboard pattern in the semi-transparent edge pixels).
+v1 sprites are 128×128 PNG with transparency: the app loads them from `src/assets/sprites/`
+and the originals live in `art/reference/v1/`. v2 art goes through the pipeline in
+`docs/ART.md`: raw exports on #FF00FF are keyed, aligned and packed into atlases, and
+`src/sim/anim/sprites.gen.ts` is generated at build time (never committed). Checkerboard
+backgrounds are rejected by the importer, not cleaned.
 
 ## Animation Timing
 
@@ -55,7 +58,7 @@ Use `requestAnimationFrame` with delta time, NOT `setInterval`.
 
 ## Working Style
 
-- Work through `docs/TODO.md` in order
+- Work through the units in `docs/V2_PLAN.md` section 13, tracked in `docs/ROADMAP.md`
 - Commit after each major task is complete
 - Test what you can on Linux (TypeScript compilation, linting)
 - Flag anything that can only be verified on Windows

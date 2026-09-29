@@ -27,14 +27,26 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # Art codegen, art:check and the test.fails-vs-ROADMAP check join this job when
-      # their owning units (M0.3, M2.6) land; CI only calls scripts that are implemented.
+      # The test.fails-vs-ROADMAP check joins this job when its owning unit (M2.6) lands;
+      # CI only calls scripts that are implemented.
+      - name: Art codegen (atlases and sprites.gen.ts)
+        run: npm run art:build
       - name: Lint (ESLint, Prettier, check-dashes)
         run: npm run lint
       - name: Typecheck
         run: npm run typecheck
       - name: Unit tests with coverage
         run: npm run test:coverage
+      - name: Art check
+        run: npm run art:check
+      - name: Upload art contact sheet
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: art-contact-sheet
+          path: art/out/contact.png
+          retention-days: 14
+          if-no-files-found: ignore
       - name: bump-version self test
         run: npm run version:selftest
       - name: Build

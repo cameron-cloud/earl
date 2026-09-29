@@ -1,0 +1,12 @@
+# LF everywhere, so generated files (art/SHOTLIST.md) compare byte for byte on Windows too.
+* text=auto eol=lf
+*.bat text eol=crlf
+
+# Binary assets (plan D19: masters and references are committed PNGs).
+*.png binary
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.icns binary
+*.docx binary

@@ -10,6 +10,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}", "scripts/**/*.mjs"],
+      exclude: ["src/sim/anim/sprites.gen.ts"],
       reporter: ["text-summary", "html", "lcov"],
       reportsDirectory: "coverage",
     },

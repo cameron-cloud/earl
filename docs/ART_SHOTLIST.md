@@ -186,6 +186,16 @@ BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edg
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
 ```
 
+### BABY STYLE LOCK (paste at the end of every baby_* prompt, instead of the STYLE LOCK)
+
+The STYLE LOCK describes Earl's pale cream body, which contradicts the butter-yellow baby. Every `baby_*` prompt (T5, and T4 strips of babies) ends with this block instead.
+
+```
+BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
+BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
+FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
+```
+
 ### T1: Master or v1 redraw
 
 Attach `art/templates/<shot>.png`. For the very first master, also attach photos of the real plush.
@@ -214,7 +224,7 @@ Edit this image. Change ONLY his face: <EYES / LIDS / BROWS / BILL>. Do not move
 
 ### T4: Cycle strip (walk, run, climb)
 
-Attach the master and ask for a wide 16:9 image.
+Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`.
 
 ```
 Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
@@ -227,7 +237,7 @@ Attach `earl_sit_idle_01`.
 
 ```
 Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: <POSE>. Place it small on the canvas with its feet on the same ground line as the reference duck.
-<STYLE LOCK>
+<BABY STYLE LOCK>
 ```
 
 ### T6: Prop
@@ -458,13 +468,13 @@ Until these arrive, the swarm uses a small tinted Earl.
 
 ## 7. Delivery instructions
 
-1. **Drop folder:** save raw exports to `/home/cameron/mini-earl/art/inbox/`. The folder is gitignored; keep your own originals in OneDrive.
+1. **Drop folder:** save raw exports to `/mnt/HC_Volume_106939637/earl/art-inbox/` (the main checkout's `art/inbox/` points there; `npm run art:import -- --inbox <dir>` reads any other folder). The folder is gitignored; keep your own originals in OneDrive. The pipeline itself is described in `docs/ART.md`.
 2. **Naming:**
    - Use `<shot>_<nn>.png` with lowercase snake_case, exactly as in the table, e.g. `earl_peek_01.png`, `prop_bread_03.png`.
    - A strip can be saved as `<shot>.png`, e.g. `earl_walk.png`. The pipeline splits it on the magenta gaps and errors if the frame count does not match the table.
    - Anything after a double underscore is ignored, so you can keep several takes side by side: `earl_peek_01__take2.png`.
 3. **Format:** PNG or WebP at 1024 px or larger, on flat #FF00FF. A JPG is accepted with a warning. A painted checkerboard is rejected with "regenerate on #FF00FF".
-4. **Import:** run `npm run art:import` (or ask an agent to). It keys, aligns and scales each image, writes a 512 px master to `art/masters/`, and rebuilds the game atlases.
+4. **Import:** run `npm run art:import` (or ask an agent to). It keys, aligns and scales each image, writes a 512 px master to `art/masters/`, and rebuilds the game atlases. Each raw that imported cleanly then moves to `imported/` inside the drop folder, so the next import does not redo it; one that failed stays put to be fixed.
 5. **Review:** open `art/out/contact.png`. It has:
    - every frame on the dark (#202020) and light (#F3F3F3) Win11 taskbar greys;
    - a red y=240 line, the anchor cross, bounding box, detected eyes and ledge line;
