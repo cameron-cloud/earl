@@ -35,6 +35,8 @@ jobs:
         run: npm run typecheck
       - name: Unit tests with coverage
         run: npm run test:coverage
+      - name: bump-version self test
+        run: npm run version:selftest
       - name: Build
         run: npm run build
 

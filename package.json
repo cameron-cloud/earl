@@ -21,6 +21,8 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "check:dashes": "node scripts/check-dashes.mjs",
+    "version:bump": "node scripts/bump-version.mjs",
+    "version:selftest": "node --test scripts/bump-version.selftest.mjs",
     "art:import": "node -e \"console.error('art:import: not implemented until M0.3'); process.exit(1)\"",
     "art:build": "node -e \"console.error('art:build: not implemented until M0.3'); process.exit(1)\"",
     "art:check": "node -e \"console.error('art:check: not implemented until M0.3'); process.exit(1)\"",
