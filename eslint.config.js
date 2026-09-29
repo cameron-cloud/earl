@@ -10,7 +10,6 @@ export default defineConfig([
     "playwright-report/",
     "test-results/",
     "src-tauri/",
-    "assets/",
     "src/assets/",
     // v1 code, deleted by M1.4. Kept out of lint until then so M0 makes no v1 behavior changes.
     "src/hooks/",
@@ -18,7 +17,7 @@ export default defineConfig([
     "src/components/",
     "src/App.tsx",
     // v1 sprite script, deleted by M0.3.
-    "scripts/fix-sprites.mjs",
+    "src/sim/anim/sprites.gen.ts",
   ]),
   tseslint.configs.recommended,
   reactHooks.configs.flat.recommended,

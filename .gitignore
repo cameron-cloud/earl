@@ -17,3 +17,7 @@ src/sim/anim/sprites.gen.ts
 coverage/
 test-results/
 playwright-report/
+# Art pipeline (docs/ART.md): raw exports, generated templates and review output
+art/inbox/
+art/templates/
+art/out/

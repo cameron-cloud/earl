@@ -1,0 +1,5499 @@
+{
+  "$comment": "Machine-written by `npm run art:shots` from docs/ART_SHOTLIST.md. Hand-kept per shot: approved, attach, lint, fringy, fallback, proc, pose (delete a field to regenerate its default). The rest is regenerated.",
+  "version": 1,
+  "profile": null,
+  "source": "docs/ART_SHOTLIST.md",
+  "templates": [
+    {
+      "key": "STYLE_LOCK",
+      "heading": "STYLE LOCK (paste at the end of every duck prompt)",
+      "intro": "",
+      "body": "STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = \"crisp sprite edges like the reference, no soft blur\" | smooth = \"smooth clean anti-aliased edges\">.\nBACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.\nFRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line."
+    },
+    {
+      "key": "BABY_STYLE_LOCK",
+      "heading": "BABY STYLE LOCK (paste at the end of every baby_* prompt, instead of the STYLE LOCK)",
+      "intro": "The STYLE LOCK describes Earl's pale cream body, which contradicts the butter-yellow baby. Every `baby_*` prompt (T5, and T4 strips of babies) ends with this block instead.",
+      "body": "BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = \"crisp sprite edges like the reference, no soft blur\" | smooth = \"smooth clean anti-aliased edges\">.\nBACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.\nFRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line."
+    },
+    {
+      "key": "T1",
+      "heading": "T1: Master or v1 redraw",
+      "intro": "Attach `art/templates/<shot>.png`. For the very first master, also attach photos of the real plush.",
+      "body": "Redraw this duck sprite as a clean, high-resolution illustration. Keep the exact pose, facing, expression, size and position on the canvas: <POSE NOTE>. <EDGES: v1-faithful = \"Keep the crisp sprite look, just at higher resolution\" | smooth = \"Replace the pixelated edges with smooth clean shapes\">. Do not add anything.\n<STYLE LOCK>"
+    },
+    {
+      "key": "T2",
+      "heading": "T2: New pose",
+      "intro": "Attach the base master.",
+      "body": "Edit this image. Keep the same duck, same size, same art style and colors, same magenta background. Change ONLY his pose to: <POSE>. Facing: <right | front | back>. Expression: <EXPRESSION>. Keep his feet on the same ground line and his body centered.\n<STYLE LOCK>"
+    },
+    {
+      "key": "T3",
+      "heading": "T3: Expression only (`ovl`)",
+      "intro": "Attach the base.",
+      "body": "Edit this image. Change ONLY his face: <EYES / LIDS / BROWS / BILL>. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical."
+    },
+    {
+      "key": "T4",
+      "heading": "T4: Cycle strip (walk, run, climb)",
+      "intro": "Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`.",
+      "body": "Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.\n<STYLE LOCK>"
+    },
+    {
+      "key": "T5",
+      "heading": "T5: Baby duckling",
+      "intro": "Attach `earl_sit_idle_01`.",
+      "body": "Draw Earl's baby sibling in the same art style: about half his height, brighter butter-yellow fluff (#FFE68A base, #F2CF6A shade), a three-feather tuft on top of the head, slightly bigger eyes relative to the head, a tiny bill, same eye style, same feet. Pose: <POSE>. Place it small on the canvas with its feet on the same ground line as the reference duck.\n<BABY STYLE LOCK>"
+    },
+    {
+      "key": "T6",
+      "heading": "T6: Prop",
+      "intro": "Attach `earl_sit_idle_01` as the style and scale reference.",
+      "body": "Using the attached duck ONLY as a style and scale reference (do NOT draw the duck), draw <PROP> alone, centered, on a flat pure magenta #FF00FF background. View: <VIEW>. Size: <SIZE vs duck>. Colors: <PALETTE>. Same art style as the duck: soft cel shading, light from above-front, edges defined by a slightly darker rim of each object's own color, NO black outlines, no cast shadow, no text, no effects, nothing semi-transparent. Do not use any pink, purple or magenta in the object."
+    },
+    {
+      "key": "T7",
+      "heading": "T7: Prop state",
+      "intro": "Attach frame 01 of the prop.",
+      "body": "Edit this image. Change ONLY: <STATE CHANGE>. Everything else identical - size, position, colors, background."
+    },
+    {
+      "key": "T8",
+      "heading": "T8: Icon",
+      "intro": "Attach `earl_sit_idle_01`.",
+      "body": "App icon of this duck: <CROP>. Front view, centered, filling about 88% of a square canvas, flat magenta #FF00FF background. Same art style, BUT add a clean medium-brown rim (#9C7443) about 2% of the image width around the whole silhouette so it reads on light and dark taskbars. Bold simple shapes, oversized eyes and bill, no text."
+    }
+  ],
+  "intro": "**How to read the table:**\n- **Frames** is the number of images.\n- **Files** are named `<shot>_<nn>.png`, for example `earl_walk_01.png`, `earl_walk_02.png`, `earl_walk_03.png`.\n- **Base** is the image to attach.\n- **T** is the prompt template.\n- **Tier:** P0 = needed for the default experience (standing on the taskbar and the occasional slip behind it, basic moods, the first-meeting stare, sitting and standing up, looking around, night sleepiness, throwing, the parachute, petting, the needs loop, the birthday); P1 = the full v2; P2 = nice to have.\n- **Numbers with a letter** (2a, 33a...) are shots added in revision 2; they sit next to the shot they belong with.\n- A shot can have a different tier per frame (dizzy, parachute); `art:status` reports per frame.",
+  "sections": [
+    {
+      "id": "6.1",
+      "title": "Earl: core poses",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.2",
+      "title": "Earl: held, falling, crashing",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.3",
+      "title": "Earl: moods and expressions",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.4",
+      "title": "Earl: fidgets and habits",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.5",
+      "title": "Earl: food, items, water",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.6",
+      "title": "Earl: taskbar, windows, walls, air",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.7",
+      "title": "Baby ducklings (duck swarm)",
+      "intro": "Until these arrive, the swarm uses a small tinted Earl.",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Anchor",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.8",
+      "title": "Props and accessories",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Canvas",
+        "Tier"
+      ],
+      "outro": ""
+    },
+    {
+      "id": "6.9",
+      "title": "Icons",
+      "intro": "",
+      "columns": [
+        "#",
+        "Shot",
+        "Facing",
+        "Frames",
+        "Depicts / key details",
+        "Base",
+        "T",
+        "Canvas",
+        "Tier"
+      ],
+      "outro": "**Code-only behaviors (no art needed):** zoomies, physics party, hiding behind windows and the taskbar (clipping plus the peek poses), running from the cursor, bouncing off walls, the fan pushing the parachute, tub bubbles and ripples.\n\n**Code-drawn effects:** Zzz, dizzy stars, sweat and water drops, splash, crumbs, dust puffs, wind streaks, speed lines, hearts, \"!\" and \"?\", confetti, steam, parachute strings, ground shadow, speech and thought bubbles.",
+      "extraRows": [
+        [
+          "-",
+          "*(automatic)* toolbox item icons",
+          "I",
+          "0",
+          "The pipeline makes the 9 drawer icons (trampoline, bed, bread, seeds, tub, ball, rubber duck, fan, umbrella) from frame 01 of each prop. No drawing needed.",
+          "-",
+          "-",
+          "64/128",
+          "-"
+        ]
+      ]
+    },
+    {
+      "id": "6.10",
+      "title": "Where every v1 sprite ends up",
+      "intro": "",
+      "columns": [
+        "v1 file(s)",
+        "v2 shot"
+      ],
+      "rows": [
+        [
+          "Earl_Front_Idle",
+          "earl_sit_idle_01"
+        ],
+        [
+          "Earl_Front_Blink",
+          "earl_sit_blink_01"
+        ],
+        [
+          "Idle_Side",
+          "earl_sit_side_01"
+        ],
+        [
+          "Walk_step_1",
+          "earl_walk_01"
+        ],
+        [
+          "walk_side",
+          "earl_walk_02"
+        ],
+        [
+          "Walk_step_2",
+          "earl_walk_03"
+        ],
+        [
+          "all `*_left` files",
+          "deleted; the game flips instead"
+        ],
+        [
+          "Hop_Squat",
+          "earl_hop_squat_01"
+        ],
+        [
+          "Hop_Air",
+          "earl_hop_air_01"
+        ],
+        [
+          "Picked_up",
+          "earl_held_01"
+        ],
+        [
+          "dropped_squish",
+          "earl_land_squish_01"
+        ],
+        [
+          "sleep",
+          "earl_sleep_sit_01"
+        ],
+        [
+          "birthday",
+          "earl_sit_idle_01 + acc_party_hat_01"
+        ],
+        [
+          "tray_icon",
+          "icon_app_01"
+        ],
+        [
+          "tray_icon_32",
+          "icon_tray_01"
+        ],
+        [
+          "run_step1 (April)",
+          "earl_run_01"
+        ],
+        [
+          "tumble (April)",
+          "earl_tumble_01"
+        ],
+        [
+          "wall_bump (April)",
+          "earl_wall_bump_01"
+        ],
+        [
+          "dizzy (April)",
+          "earl_dizzy_01"
+        ],
+        [
+          "pouty (April)",
+          "earl_sit_pouty_01"
+        ],
+        [
+          "huffy (April)",
+          "earl_sit_huffy_01"
+        ],
+        [
+          "puffed_up (April)",
+          "earl_puffed_up_01"
+        ],
+        [
+          "tantrum_stomp (April)",
+          "earl_tantrum_01"
+        ],
+        [
+          "v1's 12 missing files: run_step2 (+left)",
+          "earl_run_03"
+        ],
+        [
+          "sitting_to_standing, standing_to_sitting",
+          "earl_sit_to_stand_01 (forward and reversed)"
+        ],
+        [
+          "standing_idle",
+          "earl_stand_front_01"
+        ],
+        [
+          "plop_down",
+          "earl_plop_01"
+        ],
+        [
+          "stretch",
+          "earl_stretch_01"
+        ],
+        [
+          "drag_left, drag_right",
+          "earl_held_side_01"
+        ],
+        [
+          "drag_up",
+          "earl_held_01 (stretched in code)"
+        ],
+        [
+          "drag_down, drag_fast",
+          "earl_flail_01..02"
+        ]
+      ],
+      "outro": ""
+    }
+  ],
+  "shots": [
+    {
+      "no": "1",
+      "id": "earl_sit_idle",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/Earl_Front_Idle.png"
+      },
+      "fallback": [],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "1",
+        "earl_sit_idle",
+        "F",
+        "1",
+        "Redraw of Earl_Front_Idle: sits facing front, soles forward, wing nubs down, neutral open eyes, closed bill smile. **Master #1.**",
+        "v1 + plush photos",
+        "T1",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "2",
+      "id": "earl_sit_blink",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/Earl_Front_Blink.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "2",
+        "earl_sit_blink",
+        "F",
+        "1",
+        "Eyes closed as soft downward arcs (redraw of Front_Blink).",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "2a",
+      "id": "earl_sit_quack",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "2a",
+        "earl_sit_quack",
+        "F",
+        "1",
+        "Neutral eyes, bill open mid-quack (the mouth frame for quacks and speech while he faces front).",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "3",
+      "id": "earl_sit_side",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {
+        "01": "art/reference/v1/Idle_Side.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "3",
+        "earl_sit_side",
+        "R",
+        "1",
+        "Redraw of Idle_Side: sitting side view, feet poking forward. **Master #4.**",
+        "v1",
+        "T1",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "4",
+      "id": "earl_sit_side_blink",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_side_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_side_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "4",
+        "earl_sit_side_blink",
+        "R",
+        "1",
+        "Side view, eye closed as an arc.",
+        "sit_side",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "5",
+      "id": "earl_stand_front",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "5",
+        "earl_stand_front",
+        "F",
+        "1",
+        "Standing front, feet under body, toes forward. **Master #3.**",
+        "sit_idle",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "5a",
+      "id": "earl_stand_blink",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "5a",
+        "earl_stand_blink",
+        "F",
+        "1",
+        "Standing front, eyes closed as soft arcs. (Until it exists the game draws a blink over the open eyes.)",
+        "stand_front",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "6",
+      "id": "earl_walk",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "right",
+      "frames": 3,
+      "tiers": [
+        "P0",
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        null,
+        null,
+        null
+      ],
+      "templates": [
+        "T1/T4",
+        "T1/T4",
+        "T1/T4"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {
+        "01": "art/reference/v1/Walk_step_1.png",
+        "02": "art/reference/v1/walk_side.png",
+        "03": "art/reference/v1/Walk_step_2.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "6",
+        "earl_walk",
+        "R",
+        "3",
+        "01: near foot forward (Walk_step_1). 02: feet together, passing (walk_side), **Master #2**. 03: far foot forward (Walk_step_2). Bob and waddle rock are added in code.",
+        "v1",
+        "T1/T4",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "7",
+      "id": "earl_run",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "right",
+      "frames": 4,
+      "tiers": [
+        "P0",
+        "P0",
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd",
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02",
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T4",
+        "T4",
+        "T4",
+        "T4"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {
+        "01": "art/reference/v1/run_step1.png"
+      },
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "7",
+        "earl_run",
+        "R",
+        "4",
+        "Leaning forward 12°, wings flared back. 01: near foot reaching (run_step1 redraw, **no speed lines**). 02: airborne, feet tucked. 03: far foot reaching. 04: airborne, feet trailing. Also used for sprint, zoomies and chases.",
+        "walk_02",
+        "T4",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "8",
+      "id": "earl_turn",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "three_quarter",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "8",
+        "earl_turn",
+        "3/4 R",
+        "1",
+        "Three-quarter standing view, front-right, so he stops snapping between front and side.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "9",
+      "id": "earl_sit_to_stand",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "9",
+        "earl_sit_to_stand",
+        "F",
+        "1",
+        "Halfway up: bottom lifting, feet planted under him, wings out for balance. Played forward and reversed on every sit and stand.",
+        "sit_idle",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "10",
+      "id": "earl_plop",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "scaleX": 1.1,
+        "scaleY": 0.9
+      },
+      "lint": {
+        "headWidthTolerance": 0.15
+      },
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "10",
+        "earl_plop",
+        "F",
+        "1",
+        "Sit impact: body squashed about 10% shorter and wider, feet flung up, eyes squeezed.",
+        "sit_idle",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "11",
+      "id": "earl_hop_squat",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {
+        "01": "art/reference/v1/Hop_Squat.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "11",
+        "earl_hop_squat",
+        "F",
+        "1",
+        "Redraw of Hop_Squat: crouched, ready to spring.",
+        "v1",
+        "T1",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "12",
+      "id": "earl_hop_air",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {
+        "01": "art/reference/v1/Hop_Air.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "12",
+        "earl_hop_air",
+        "F",
+        "1",
+        "Redraw of Hop_Air: wings up, feet dangling, happy.",
+        "v1",
+        "T1",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "13",
+      "id": "earl_land_squish",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/dropped_squish.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": {
+        "headWidthTolerance": 0.15
+      },
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "13",
+        "earl_land_squish",
+        "F",
+        "1",
+        "Redraw of dropped_squish: pancake, eyes wide, feet splayed.",
+        "v1",
+        "T1",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "14",
+      "id": "earl_stretch",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "scaleY": 1.08
+      },
+      "lint": {
+        "headWidthTolerance": 0.15
+      },
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "14",
+        "earl_stretch",
+        "F",
+        "1",
+        "On tiptoes, wings high, body about 8% taller, eyes shut, bill slightly open.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "15",
+      "id": "earl_yawn",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01",
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "15",
+        "earl_yawn",
+        "F",
+        "2",
+        "01: bill opening, eyes half shut. 02: bill wide open, eyes squeezed, wings lifted.",
+        "sit_idle",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "16",
+      "id": "earl_tada",
+      "kind": "earl",
+      "section": "6.1",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P2"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "16",
+        "earl_tada",
+        "F",
+        "1",
+        "Standing proudly, wings flung wide, chest out, smug closed-eye smile (\"ta-da\").",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P2"
+      ]
+    },
+    {
+      "no": "17",
+      "id": "earl_held",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "grip"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {
+        "01": "art/reference/v1/Picked_up.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "17",
+        "earl_held",
+        "F",
+        "1",
+        "Redraw of Picked_up: dangling by the scruff, big surprised eyes, feet hanging, wings slightly out.",
+        "v1",
+        "T1",
+        "grip",
+        "P0"
+      ]
+    },
+    {
+      "no": "18",
+      "id": "earl_held_grumpy",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_held_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "18",
+        "earl_held_grumpy",
+        "F",
+        "1",
+        "Same pose, flat unimpressed lids, pouting bill.",
+        "held",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "19",
+      "id": "earl_held_side",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "grip"
+      ],
+      "bases": [
+        "earl_held_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "rotate": -20
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "19",
+        "earl_held_side",
+        "R",
+        "1",
+        "Dragged sideways fast: body trailing, feet and wings streaming back, eyes squeezed, bill open.",
+        "held",
+        "T2",
+        "grip",
+        "P1"
+      ]
+    },
+    {
+      "no": "20",
+      "id": "earl_flail",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 2,
+      "tiers": [
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "ctr",
+        "ctr"
+      ],
+      "bases": [
+        "earl_held_01",
+        "earl_held_01"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "20",
+        "earl_flail",
+        "F",
+        "2",
+        "Panic: wings up (01) and down (02), feet kicking, bill open, eyes wide. Free fall, throws, falling off windows.",
+        "held",
+        "T2",
+        "ctr",
+        "P0"
+      ]
+    },
+    {
+      "no": "21",
+      "id": "earl_tumble",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ctr"
+      ],
+      "bases": [
+        "earl_held_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {
+        "01": "art/reference/v1/tumble.png"
+      },
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "21",
+        "earl_tumble",
+        "F",
+        "1",
+        "Curled into a ball, eyes squeezed, feet tucked; the game spins it. Redraw of tumble **without motion lines**.",
+        "held",
+        "T2",
+        "ctr",
+        "P0"
+      ]
+    },
+    {
+      "no": "22",
+      "id": "earl_wall_bump",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {
+        "01": "art/reference/v1/wall_bump.png"
+      },
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "22",
+        "earl_wall_bump",
+        "R",
+        "1",
+        "April redraw as a side view: hits a wall at the right edge face-first, bill and face flattened, body squashed sideways, eyes squeezed.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "23",
+      "id": "earl_dizzy",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 2,
+      "tiers": [
+        "P0",
+        "P2"
+      ],
+      "anchors": [
+        "gnd",
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01",
+        "earl_dizzy_01"
+      ],
+      "templates": [
+        "T2",
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/dizzy.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "23",
+        "earl_dizzy",
+        "F",
+        "2",
+        "April redraw. 01: sitting lopsided, spiral eyes, slack bill. 02 (P2 frame): spirals turned 90° so the spin animates. Stars are drawn in code.",
+        "sit_idle (02: dizzy_01)",
+        "01 T2, 02 T3",
+        "01 gnd, 02 ovl",
+        "01 P0, 02 P2"
+      ]
+    },
+    {
+      "no": "24",
+      "id": "earl_sit_pouty",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/pouty.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "24",
+        "earl_sit_pouty",
+        "F",
+        "1",
+        "April redraw: lower bill pushed out, brows tilted up at the middle, glossy eyes.",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "25",
+      "id": "earl_sit_huffy",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/huffy.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "25",
+        "earl_sit_huffy",
+        "F",
+        "1",
+        "April redraw: heavy flat lids, brows angled down, bill clamped shut.",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "26",
+      "id": "earl_puffed_up",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {
+        "01": "art/reference/v1/puffed_up.png"
+      },
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": {
+        "headWidthTolerance": 0.15
+      },
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "26",
+        "earl_puffed_up",
+        "F",
+        "1",
+        "April redraw: standing, every feather fluffed (bumpy fuzzy silhouette about 12% wider), angry brows, wings out. Also the fluffy look after a bath shake.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "27",
+      "id": "earl_tantrum",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {
+        "01": "art/reference/v1/tantrum_stomp.png"
+      },
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "27",
+        "earl_tantrum",
+        "F",
+        "1",
+        "April redraw: standing, one foot raised to stomp, wings flailing down, eyes squeezed, bill wide open squawking. Mirrored for the other foot.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "28",
+      "id": "earl_tilt",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "28",
+        "earl_tilt",
+        "F",
+        "1",
+        "Curious head tilt about 18° to his left, eyes extra glossy, bill slightly open.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "29",
+      "id": "earl_petted",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "29",
+        "earl_petted",
+        "F",
+        "1",
+        "Happy closed-eye arcs, head pressed down into the hand, blush, wings relaxed out.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "30",
+      "id": "earl_petted_grumpy",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "30",
+        "earl_petted_grumpy",
+        "F",
+        "1",
+        "Eyes closed but brows flat, pouting bill, faint blush (\"fine. you may.\").",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "31",
+      "id": "earl_sit_sleepy",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "31",
+        "earl_sit_sleepy",
+        "F",
+        "1",
+        "Drowsy: lids half closed and heavy, head drooping slightly, bill relaxed. His resting look every night.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "32",
+      "id": "earl_sit_happy",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "32",
+        "earl_sit_happy",
+        "F",
+        "1",
+        "Content: eyes open and bright, a wider bill smile, faint blush.",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "33",
+      "id": "earl_look",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "33",
+        "earl_look",
+        "F",
+        "1",
+        "Sitting, head turned three-quarters to the viewer's right, looking off-screen. Mirrored to look left.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "33a",
+      "id": "earl_stand_look",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "33a",
+        "earl_stand_look",
+        "R",
+        "1",
+        "Standing side view, head turned back over his shoulder toward the viewer (the \"turn-back\" look while walking, investigating or being chased).",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "34",
+      "id": "earl_look_up",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "34",
+        "earl_look_up",
+        "F",
+        "1",
+        "Sitting, head tipped back, looking up at a window top or a parachute.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "34a",
+      "id": "earl_stand_look_up",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "34a",
+        "earl_stand_look_up",
+        "R",
+        "1",
+        "Standing side view, head tipped back looking up (before jumping to a window, while eating).",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "35",
+      "id": "earl_stare",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "35",
+        "earl_stare",
+        "F",
+        "1",
+        "Deadpan half-lidded stare straight at you, flat bill. His first reaction to a stranger's click.",
+        "sit_idle",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "36",
+      "id": "earl_side_eye",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "36",
+        "earl_side_eye",
+        "F",
+        "1",
+        "Jealous side-eye: head turned 15°, heavy lids, eyes pushed to one side, pout.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "37",
+      "id": "earl_sad",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "37",
+        "earl_sad",
+        "F",
+        "1",
+        "Droopy head, big wet eyes (bigger sparkles, one tiny tear), bill down, wings limp.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "38",
+      "id": "earl_angry",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "38",
+        "earl_angry",
+        "F",
+        "1",
+        "Standing and squawking: bill wide, sharp brows, wings raised like tiny fists.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "39",
+      "id": "earl_startle",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": {
+        "headWidthTolerance": 0.15
+      },
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "39",
+        "earl_startle",
+        "F",
+        "1",
+        "Jump-scare: feathers bristled, eyes wide, both wings flung up, feet just off the ground.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "40",
+      "id": "earl_wiggle",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "40",
+        "earl_wiggle",
+        "F",
+        "1",
+        "Happy closed-eye arcs, open-bill smile, blush, wings out, leaning to one side. Mirrored on alternate frames.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "41",
+      "id": "earl_sulk",
+      "kind": "earl",
+      "section": "6.3",
+      "facing": "back",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "41",
+        "earl_sulk",
+        "B",
+        "1",
+        "Back view, sitting, head down, slumped, small tail tuft. Turned away from you.",
+        "sit_idle",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "42",
+      "id": "earl_sneeze",
+      "kind": "earl",
+      "section": "6.4",
+      "facing": "front",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "ovl",
+        "ovl"
+      ],
+      "bases": [
+        "earl_sit_idle_01",
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "42",
+        "earl_sneeze",
+        "F",
+        "2",
+        "01 wind-up: head back, eyes squinting, bill parted. 02: head snapped forward and down, eyes shut, bill open.",
+        "sit_idle",
+        "T2",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "43",
+      "id": "earl_preen",
+      "kind": "earl",
+      "section": "6.4",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_side_01",
+        "earl_sit_side_01"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_side_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "43",
+        "earl_preen",
+        "R",
+        "2",
+        "Sitting side view, head twisted back into the wing feathers. 02: tugging, one feather tuft sticking up.",
+        "sit_side",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "44",
+      "id": "earl_scratch",
+      "kind": "earl",
+      "section": "6.4",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P2",
+        "P2"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_side_01",
+        "earl_sit_side_01"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_side_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "44",
+        "earl_scratch",
+        "R",
+        "2",
+        "Sitting side view, one foot raised scratching his cheek, blissful shut eyes. 01 foot up, 02 foot lower.",
+        "sit_side",
+        "T2",
+        "gnd",
+        "P2"
+      ]
+    },
+    {
+      "no": "45",
+      "id": "earl_honk",
+      "kind": "earl",
+      "section": "6.4",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "45",
+        "earl_honk",
+        "R",
+        "2",
+        "01 wind-up: neck pulled back, chest puffed. 02: neck thrust forward, bill wide, eyes shut.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "46",
+      "id": "earl_sniff",
+      "kind": "earl",
+      "section": "6.4",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "46",
+        "earl_sniff",
+        "R",
+        "1",
+        "Inspecting: leaning forward, neck stretched, bill near the ground, eye wide. Also peering down off a ledge.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "47",
+      "id": "earl_peck",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "47",
+        "earl_peck",
+        "R",
+        "2",
+        "Eating: 01 bill down at ground level, 02 head up chewing. A grumpy nibble plays the same frames slower.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "48",
+      "id": "earl_chew",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P2"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_side_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_side_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "48",
+        "earl_chew",
+        "R",
+        "1",
+        "Sitting side view, cheeks puffed, content shut eyes.",
+        "sit_side",
+        "T2",
+        "gnd",
+        "P2"
+      ]
+    },
+    {
+      "no": "49",
+      "id": "earl_kick",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "49",
+        "earl_kick",
+        "R",
+        "2",
+        "Ball: 01 wind-up, leg back, wing out for balance. 02 kick-through, foot high forward, bill open.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "50",
+      "id": "earl_push",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "50",
+        "earl_push",
+        "R",
+        "2",
+        "Shoving something on the right with his chest and head down, feet braced. 02: bigger shove, one foot sliding back.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "51",
+      "id": "earl_sleep_sit",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T1"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {
+        "01": "art/reference/v1/sleep.png"
+      },
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "51",
+        "earl_sleep_sit",
+        "F",
+        "1",
+        "Redraw of sleep: slumped, head drooped to one side, eyes closed, bill tucked. Breathing and Zzz are added in code.",
+        "v1",
+        "T1",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "52",
+      "id": "earl_sleep_lie",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_side_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "lie",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_side_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "52",
+        "earl_sleep_lie",
+        "R",
+        "1",
+        "Lying on his side curled up, head resting, eyes closed. Drawn between the bed and the blanket.",
+        "sit_side",
+        "T2",
+        "gnd",
+        "P0"
+      ]
+    },
+    {
+      "no": "53",
+      "id": "earl_bounce_star",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ctr"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "53",
+        "earl_bounce_star",
+        "F",
+        "1",
+        "Top of a trampoline bounce, star jump: wings and feet spread wide, happy eyes, laughing.",
+        "stand_front",
+        "T2",
+        "ctr",
+        "P1"
+      ]
+    },
+    {
+      "no": "54",
+      "id": "earl_bounce_tuck",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ctr"
+      ],
+      "bases": [
+        "earl_tumble_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_tumble_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "54",
+        "earl_bounce_tuck",
+        "F",
+        "1",
+        "Cannonball tuck with a gleeful grin; the game spins it for flips.",
+        "tumble",
+        "T2",
+        "ctr",
+        "P1"
+      ]
+    },
+    {
+      "no": "55",
+      "id": "earl_splash",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "55",
+        "earl_splash",
+        "F",
+        "1",
+        "Sitting in the tub: one wing high flinging water, the other low, happy squeezed eyes, laughing. Mirrored on alternate frames. The tub's front layer hides his lower body.",
+        "sit_idle",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "56",
+      "id": "earl_shake",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "56",
+        "earl_shake",
+        "F",
+        "1",
+        "Shaking dry: head twisted one way, body the other, feathers ruffled out, eyes shut. Mirrored plus fast wobble in code.",
+        "stand_front",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "57",
+      "id": "earl_windblown",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "57",
+        "earl_windblown",
+        "R",
+        "1",
+        "Facing into the wind (fan on the right): leaning hard forward, eyes squeezed, head fluff swept back, feet braced and skidding.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "58",
+      "id": "earl_suspicious",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "58",
+        "earl_suspicious",
+        "R",
+        "1",
+        "Leaning back and away, visible eye narrowed, one wing half-raised defensively (the rubber duck).",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "59",
+      "id": "earl_nuzzle",
+      "kind": "earl",
+      "section": "6.5",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "59",
+        "earl_nuzzle",
+        "R",
+        "1",
+        "Leaning forward, cheek pressed against something on the right, happy shut eyes, blush.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "60",
+      "id": "earl_peek",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ledge"
+      ],
+      "bases": [
+        "earl_stand_front_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_stand_front_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "60",
+        "earl_peek",
+        "F",
+        "1",
+        "Peeking over a ledge: chin resting on the ledge line, wing tips resting **on** the line (nothing that should be seen goes below y=124), wide curious eyes. **Full body drawn**; the game hides everything below the taskbar line. His chin-on-the-edge rest when he slips behind the taskbar.",
+        "stand_front",
+        "T2",
+        "ledge",
+        "P0"
+      ]
+    },
+    {
+      "no": "60a",
+      "id": "earl_peek_blink",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_peek_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_peek_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "60a",
+        "earl_peek_blink",
+        "F",
+        "1",
+        "Same, eyes closed as soft arcs (a blink, not sleep: chin still up).",
+        "peek",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "60b",
+      "id": "earl_peek_look",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "three_quarter",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_peek_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_peek_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "60b",
+        "earl_peek_look",
+        "3/4 R",
+        "1",
+        "Same ledge pose, head turned three-quarters to the right, looking along the taskbar. Mirrored to look left.",
+        "peek",
+        "T2",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "61",
+      "id": "earl_peek_grumpy",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_peek_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_peek_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "61",
+        "earl_peek_grumpy",
+        "F",
+        "1",
+        "Same, half-lidded sulky eyes, flat brows. When sulking, the game sinks him until only his eyes show.",
+        "peek",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "62",
+      "id": "earl_peek_sleep",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_peek_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_peek_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "62",
+        "earl_peek_sleep",
+        "F",
+        "1",
+        "Same, eyes closed as soft arcs, chin drooped onto the ledge, content. Napping behind the taskbar.",
+        "peek",
+        "T3",
+        "ovl",
+        "P0"
+      ]
+    },
+    {
+      "no": "62a",
+      "id": "earl_peek_happy",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_peek_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_peek_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "62a",
+        "earl_peek_happy",
+        "F",
+        "1",
+        "Same, bright eyes, wider bill smile, faint blush.",
+        "peek",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "62b",
+      "id": "earl_peek_quack",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_peek_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "ledge",
+      "placeholders": {},
+      "fallback": [
+        "earl_peek_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "62b",
+        "earl_peek_quack",
+        "F",
+        "1",
+        "Same, bill open mid-quack.",
+        "peek",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "63",
+      "id": "earl_jump_up",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "right",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "63",
+        "earl_jump_up",
+        "R",
+        "1",
+        "Launching up onto a window top: stretched tall, wings swept down and back, feet trailing, bill up.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "64",
+      "id": "earl_teeter",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P2",
+        "P2"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "64",
+        "earl_teeter",
+        "R",
+        "2",
+        "At a ledge edge leaning over, wings windmilling (01 forward, 02 back), eyes wide.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P2"
+      ]
+    },
+    {
+      "no": "65",
+      "id": "earl_climb",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "wall",
+        "wall"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T4",
+        "T4"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "65",
+        "earl_climb",
+        "R",
+        "2",
+        "Climbing a screen edge on the right: upright against the wall, wings gripping high, feet scrabbling alternately, determined squint. Seen in Wild Earl, or anytime if \"Climb the screen edges\" is set to Anytime (plan D35).",
+        "walk_02",
+        "T4",
+        "wall",
+        "P1"
+      ]
+    },
+    {
+      "no": "66",
+      "id": "earl_hang",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "hang"
+      ],
+      "bases": [
+        "earl_held_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "66",
+        "earl_hang",
+        "F",
+        "1",
+        "Hanging: both wings raised overhead gripping something, feet dangling, smug and content. **One pose for both the parachute and the umbrella ride.** Wing-tip attach points are stored.",
+        "held",
+        "T2",
+        "hang",
+        "P0"
+      ]
+    },
+    {
+      "no": "67",
+      "id": "earl_hang_alarm",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "ovl"
+      ],
+      "bases": [
+        "earl_hang_01"
+      ],
+      "templates": [
+        "T3"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_hang_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "67",
+        "earl_hang_alarm",
+        "F",
+        "1",
+        "Same, eyes wide, bill open (parachute yank, fan gust).",
+        "hang",
+        "T3",
+        "ovl",
+        "P1"
+      ]
+    },
+    {
+      "no": "68",
+      "id": "earl_tug",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T2",
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "68",
+        "earl_tug",
+        "R",
+        "2",
+        "Cursor tug-of-war: bill clamped on a point (the bill attach point, where the cursor goes), leaning back, feet braced and sliding. 02: a bigger heave.",
+        "walk_02",
+        "T2",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "68a",
+      "id": "earl_carry_overhead",
+      "kind": "earl",
+      "section": "6.6",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P2",
+        "P2"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "earl_walk_02",
+        "earl_walk_02"
+      ],
+      "templates": [
+        "T4",
+        "T4"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_walk_02",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "68a",
+        "earl_carry_overhead",
+        "R",
+        "2",
+        "Walking while holding something over his head: near wing raised high gripping it (a `grip` attach point at the wing tip), 2-frame waddle. For carrying the umbrella; until it exists he only grabs the umbrella when jumping down next to it.",
+        "walk_02",
+        "T4",
+        "gnd",
+        "P2"
+      ]
+    },
+    {
+      "no": "69",
+      "id": "baby_sit",
+      "kind": "baby",
+      "section": "6.7",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T5"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "sit",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "tint": "#FFE68A",
+        "scale": 0.55
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "69",
+        "baby_sit",
+        "F",
+        "1",
+        "Earl's baby sibling sitting: about 55% of his height, butter yellow, head tuft.",
+        "sit_idle",
+        "T5",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "70",
+      "id": "baby_walk",
+      "kind": "baby",
+      "section": "6.7",
+      "facing": "right",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "gnd",
+        "gnd"
+      ],
+      "bases": [
+        "baby_sit_01",
+        "baby_sit_01"
+      ],
+      "templates": [
+        "T5/T4",
+        "T5/T4"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "side",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "tint": "#FFE68A",
+        "scale": 0.55
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "70",
+        "baby_walk",
+        "R",
+        "2",
+        "Two-frame waddle; the bob is added in code.",
+        "baby_sit",
+        "T5/T4",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "71",
+      "id": "baby_peep",
+      "kind": "baby",
+      "section": "6.7",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "baby_sit_01"
+      ],
+      "templates": [
+        "T5"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "stand",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "tint": "#FFE68A",
+        "scale": 0.55
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "71",
+        "baby_peep",
+        "F",
+        "1",
+        "Bill open peeping, wings up.",
+        "baby_sit",
+        "T5",
+        "gnd",
+        "P1"
+      ]
+    },
+    {
+      "no": "72",
+      "id": "baby_sleep",
+      "kind": "baby",
+      "section": "6.7",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P2"
+      ],
+      "anchors": [
+        "gnd"
+      ],
+      "bases": [
+        "baby_sit_01"
+      ],
+      "templates": [
+        "T5"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "lie",
+      "placeholders": {},
+      "fallback": [
+        "earl_sit_idle_01"
+      ],
+      "proc": {
+        "tint": "#FFE68A",
+        "scale": 0.55
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "72",
+        "baby_sleep",
+        "F",
+        "1",
+        "Curled up asleep.",
+        "baby_sit",
+        "T5",
+        "gnd",
+        "P2"
+      ]
+    },
+    {
+      "no": "73",
+      "id": "prop_parachute",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 5,
+      "tiers": [
+        "P0",
+        "P0",
+        "P0",
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "prop",
+        "prop",
+        "prop",
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        null,
+        null,
+        null,
+        "prop_parachute_03",
+        "prop_parachute_03"
+      ],
+      "templates": [
+        "T6/T7",
+        "T6/T7",
+        "T6/T7",
+        "T6/T7",
+        "T6/T7"
+      ],
+      "canvas": [
+        384,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [
+        "hemL",
+        "hemR"
+      ],
+      "attach": {},
+      "target": {
+        "w": 320
+      },
+      "approved": [],
+      "row": [
+        "73",
+        "prop_parachute",
+        "P",
+        "5",
+        "01: crumpled fabric bursting out. 02: half open, stretched tall, rippled. 03: fully open dome with red (#D9483B) and cream (#FBF3DD) panels, about 320 wide. 04: deflating, sides sagging. 05: collapsed heap on the ground (he wriggles out from under it). **No strings** (drawn in code). Attach points: `hemL`, `hemR` (set in the lineup).",
+        "- (04-05: parachute_03)",
+        "T6/T7",
+        "384x256",
+        "01-03 P0, 04-05 P1"
+      ]
+    },
+    {
+      "no": "75",
+      "id": "prop_bed",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        384,
+        192
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [
+        "mattress"
+      ],
+      "attach": {},
+      "target": {
+        "w": 340
+      },
+      "approved": [],
+      "row": [
+        "75",
+        "prop_bed",
+        "P",
+        "1",
+        "Small light-wood bed (#C89B6D), headboard on the left, mattress, white pillow. About 340 long. Back layer. Attach line: `mattress` (where he lies).",
+        "-",
+        "T6",
+        "384x192",
+        "P0"
+      ]
+    },
+    {
+      "no": "76",
+      "id": "prop_blanket",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 2,
+      "tiers": [
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        "prop_bed_01",
+        "prop_bed_01"
+      ],
+      "templates": [
+        "T7",
+        "T7"
+      ],
+      "canvas": [
+        384,
+        192
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "76",
+        "prop_blanket",
+        "P",
+        "2",
+        "Same canvas as the bed. Blue gingham (#8DB6E0 / #F8F4EA). 01: flat on the empty bed. 02: tucked over a duckling-shaped bump, pillow area left open. Front layer.",
+        "bed_01",
+        "T7",
+        "384x192",
+        "P0"
+      ]
+    },
+    {
+      "no": "77",
+      "id": "prop_bread",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 4,
+      "tiers": [
+        "P0",
+        "P0",
+        "P0",
+        "P0"
+      ],
+      "anchors": [
+        "prop",
+        "prop",
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "templates": [
+        "T6/T7",
+        "T6/T7",
+        "T6/T7",
+        "T6/T7"
+      ],
+      "canvas": [
+        128,
+        128
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": {
+        "w": 96
+      },
+      "approved": [],
+      "row": [
+        "77",
+        "prop_bread",
+        "P",
+        "4",
+        "Bread slice (crust #C98A43, crumb #F2DDB0), about 96 wide. 01 whole, 02 one bite, 03 half, 04 crust scraps. Crumbs are drawn in code.",
+        "-",
+        "T6/T7",
+        "128x128",
+        "P0"
+      ]
+    },
+    {
+      "no": "78",
+      "id": "prop_ball",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        128,
+        128
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": {
+        "w": 84
+      },
+      "approved": [],
+      "row": [
+        "78",
+        "prop_ball",
+        "P",
+        "1",
+        "Rubber ball, teal (#3FA7A0) with a cream stripe so the spin reads, about 84 across. The game rotates and squashes it.",
+        "-",
+        "T6",
+        "128x128",
+        "P0"
+      ]
+    },
+    {
+      "no": "79",
+      "id": "prop_seeds",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 3,
+      "tiers": [
+        "P1",
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "prop",
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        null,
+        null,
+        null
+      ],
+      "templates": [
+        "T6/T7",
+        "T6/T7",
+        "T6/T7"
+      ],
+      "canvas": [
+        128,
+        64
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "79",
+        "prop_seeds",
+        "P",
+        "3",
+        "Small pile of mixed brown and tan seeds. 01 full, 02 half, 03 a few scattered.",
+        "-",
+        "T6/T7",
+        "128x64",
+        "P1"
+      ]
+    },
+    {
+      "no": "80",
+      "id": "prop_trampoline",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        null,
+        null
+      ],
+      "templates": [
+        "T6/T7",
+        "T6/T7"
+      ],
+      "canvas": [
+        320,
+        128
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [
+        "mat"
+      ],
+      "attach": {},
+      "target": {
+        "w": 290
+      },
+      "approved": [],
+      "row": [
+        "80",
+        "prop_trampoline",
+        "P",
+        "2",
+        "Mini trampoline, three-quarter front view: navy mat (#2F3E57), red padded rim, silver legs, about 290 wide. 01 at rest, 02 mat pressed down. Attach line: `mat`.",
+        "-",
+        "T6/T7",
+        "320x128",
+        "P1"
+      ]
+    },
+    {
+      "no": "81a",
+      "id": "prop_tub_back",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        320,
+        192
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [
+        "waterline"
+      ],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "81a",
+        "prop_tub_back",
+        "P",
+        "1",
+        "Small galvanized washtub (#9AA9B5): the rear rim and the opaque water surface (#8FD3F0), a few white bubbles. Earl sits in front of this layer. Attach line: `waterline`.",
+        "-",
+        "T6",
+        "320x192",
+        "P1"
+      ]
+    },
+    {
+      "no": "81b",
+      "id": "prop_tub_front",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        "prop_tub_back_01"
+      ],
+      "templates": [
+        "T7"
+      ],
+      "canvas": [
+        320,
+        192
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "81b",
+        "prop_tub_front",
+        "P",
+        "1",
+        "The same tub's front wall and front rim only, lined up exactly with `prop_tub_back_01` (draw it as an edit of the back layer). It covers Earl's lower body.",
+        "tub_back",
+        "T7",
+        "320x192",
+        "P1"
+      ]
+    },
+    {
+      "no": "82",
+      "id": "prop_rubber_duck",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 2,
+      "tiers": [
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        null,
+        null
+      ],
+      "templates": [
+        "T6/T7",
+        "T6/T7"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "82",
+        "prop_rubber_duck",
+        "P (R)",
+        "2",
+        "Classic glossy vinyl rubber duck, saturated #FFD21F (contrasts with Earl's cream), orange bill #FF7A1A, painted dot eye, about 75% of Earl's height, duck framing (ground line 240). 02: squeezed mid-squeak, bill open.",
+        "-",
+        "T6/T7",
+        "256x256",
+        "P1"
+      ]
+    },
+    {
+      "no": "83",
+      "id": "prop_fan",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 3,
+      "tiers": [
+        "P1",
+        "P1",
+        "P1"
+      ],
+      "anchors": [
+        "prop",
+        "prop",
+        "prop"
+      ],
+      "bases": [
+        "prop_fan_01",
+        "prop_fan_01",
+        "prop_fan_01"
+      ],
+      "templates": [
+        "T6/T7",
+        "T6/T7",
+        "T6/T7"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": {
+        "skip": [
+          "holes"
+        ]
+      },
+      "fringy": false,
+      "attachRequired": [
+        "hub"
+      ],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "83",
+        "prop_fan",
+        "P (R)",
+        "3",
+        "Small retro desk fan, mint body (#9ED9C3), silver cage, three-quarter view facing right, about Earl's height. Three blade positions, opaque (the blur is added in code). Attach point: `hub`.",
+        "fan_01",
+        "T6/T7",
+        "256x256",
+        "P1"
+      ]
+    },
+    {
+      "no": "84",
+      "id": "prop_umbrella_open",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        384,
+        384
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [
+        "handle"
+      ],
+      "attach": {},
+      "target": {
+        "w": 300
+      },
+      "approved": [],
+      "row": [
+        "84",
+        "prop_umbrella_open",
+        "P",
+        "1",
+        "Open umbrella, sky blue (#6FA8DC) with cream trim, J-shaped handle, about 300 wide. Used as a tent he hides under and as the parasol ride. Attach point: `handle`.",
+        "-",
+        "T6",
+        "384x384",
+        "P1"
+      ]
+    },
+    {
+      "no": "85",
+      "id": "prop_umbrella_closed",
+      "kind": "prop",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        "prop_umbrella_open_01"
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        256,
+        96
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "85",
+        "prop_umbrella_closed",
+        "P",
+        "1",
+        "Furled umbrella lying on the ground (the placed-item state).",
+        "umbrella_open",
+        "T6",
+        "256x96",
+        "P1"
+      ]
+    },
+    {
+      "no": "86",
+      "id": "acc_party_hat",
+      "kind": "acc",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        128,
+        128
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "86",
+        "acc_party_hat",
+        "P",
+        "1",
+        "Tiny cone party hat, bright stripes, pom-pom. Its anchor is the base centre; the game puts it on any pose's head point on birthdays (**replaces birthday.png**).",
+        "-",
+        "T6",
+        "128x128",
+        "P0"
+      ]
+    },
+    {
+      "no": "87",
+      "id": "acc_nightcap",
+      "kind": "acc",
+      "section": "6.8",
+      "facing": "prop",
+      "frames": 1,
+      "tiers": [
+        "P2"
+      ],
+      "anchors": [
+        "prop"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        128,
+        128
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": {
+        "canvasPlaceholder": true
+      },
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "87",
+        "acc_nightcap",
+        "P",
+        "1",
+        "Droopy striped nightcap for sleeping in bed at night.",
+        "-",
+        "T6",
+        "128x128",
+        "P2"
+      ]
+    },
+    {
+      "no": "88",
+      "id": "icon_app",
+      "kind": "icon",
+      "section": "6.9",
+      "facing": "icon",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "icon"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T8"
+      ],
+      "canvas": [
+        1024,
+        1024
+      ],
+      "masterScale": 1,
+      "atlas": false,
+      "pose": null,
+      "placeholders": {
+        "01": "art/reference/v1/tray_icon.png"
+      },
+      "fallback": [],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "88",
+        "icon_app",
+        "I",
+        "1",
+        "1024 master: Earl's head and shoulders, front, big eyes, brown rim. `tauri icon` builds every app icon from it.",
+        "sit_idle",
+        "T8",
+        "1024",
+        "P0"
+      ]
+    },
+    {
+      "no": "89",
+      "id": "icon_tray",
+      "kind": "icon",
+      "section": "6.9",
+      "facing": "icon",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "icon"
+      ],
+      "bases": [
+        "earl_sit_idle_01"
+      ],
+      "templates": [
+        "T8"
+      ],
+      "canvas": [
+        1024,
+        1024
+      ],
+      "masterScale": 1,
+      "atlas": false,
+      "pose": null,
+      "placeholders": {
+        "01": "art/reference/v1/tray_icon_32.png"
+      },
+      "fallback": [],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "89",
+        "icon_tray",
+        "I",
+        "1",
+        "1024 master built to read at 16-32 px: head only, oversized eyes and bill, thick brown rim. Exported per DPI (16/20/24/32).",
+        "sit_idle",
+        "T8",
+        "1024",
+        "P0"
+      ]
+    },
+    {
+      "no": "90",
+      "id": "icon_toolbox",
+      "kind": "icon",
+      "section": "6.9",
+      "facing": "icon",
+      "frames": 1,
+      "tiers": [
+        "P0"
+      ],
+      "anchors": [
+        "icon"
+      ],
+      "bases": [
+        null
+      ],
+      "templates": [
+        "T6"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": null,
+      "placeholders": {},
+      "fallback": [],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "90",
+        "icon_toolbox",
+        "I",
+        "1",
+        "Red metal toolbox (#D9483B), closed, silver latch and handle. Used in the tray, the panel and the toolbox drawer header.",
+        "-",
+        "T6",
+        "256",
+        "P0"
+      ]
+    }
+  ]
+}

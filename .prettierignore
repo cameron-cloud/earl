@@ -4,8 +4,11 @@ playwright-report/
 test-results/
 package-lock.json
 src-tauri/
-assets/
 src/assets/
+
+# Generated or machine-written by scripts/art.mjs.
+src/sim/anim/sprites.gen.ts
+art/shots.json
 
 # Hand-written prose and plans: formatting them would only reflow tables and lists.
 *.md
@@ -16,5 +19,3 @@ src/engine/
 src/components/
 src/App.tsx
 
-# v1 sprite script, deleted by M0.3.
-scripts/fix-sprites.mjs
