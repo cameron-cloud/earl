@@ -1,0 +1,158 @@
+{
+  "id": "slow-drop",
+  "note": "under 200 px/s: FALLING, vx discarded",
+  "source": "v1 (origin/master) src/engine/physics.ts, stateMachine.ts, animator.ts, driven in the useEarlBehavior.ts:200-314 frame order by test/v1-fling-capture.test.ts",
+  "world": {
+    "screenW": 1920,
+    "screenH": 1080,
+    "taskbarPad": 40,
+    "size": 64,
+    "stepMs": 16.67,
+    "animationSpeed": 1,
+    "groundY": 976
+  },
+  "release": {
+    "x": 900,
+    "y": 826,
+    "height": 150,
+    "vx": 120,
+    "vy": 60,
+    "speed": 134.16
+  },
+  "units": "px (CSS / logical), ms, y down; x is the box's left edge; t is from release",
+  "v1": {
+    "tier": "FALLING",
+    "landX": 900,
+    "landT": 450,
+    "bounces": 0,
+    "wallContacts": 0,
+    "wallHitFrames": 0,
+    "ceilingHits": 0,
+    "midairStop": null,
+    "settleT": 450,
+    "controlT": 1133.33,
+    "path": [
+      [
+        0,
+        900,
+        826
+      ],
+      [
+        50,
+        900,
+        831
+      ],
+      [
+        100,
+        900,
+        839
+      ],
+      [
+        150,
+        900,
+        850
+      ],
+      [
+        200,
+        900,
+        864
+      ],
+      [
+        250,
+        900,
+        881
+      ],
+      [
+        300,
+        900,
+        901
+      ],
+      [
+        350,
+        900,
+        924
+      ],
+      [
+        400,
+        900,
+        950
+      ],
+      [
+        450,
+        900,
+        976
+      ],
+      [
+        500,
+        900,
+        976
+      ],
+      [
+        550,
+        900,
+        976
+      ],
+      [
+        600,
+        900,
+        976
+      ],
+      [
+        650,
+        900,
+        976
+      ],
+      [
+        700,
+        900,
+        976
+      ],
+      [
+        750,
+        900,
+        976
+      ],
+      [
+        800,
+        900,
+        976
+      ],
+      [
+        850,
+        900,
+        976
+      ],
+      [
+        900,
+        900,
+        976
+      ],
+      [
+        950,
+        900,
+        976
+      ],
+      [
+        1000,
+        900,
+        976
+      ],
+      [
+        1050,
+        900,
+        976
+      ],
+      [
+        1100,
+        900,
+        976
+      ],
+      [
+        1133.33,
+        900,
+        979.84
+      ]
+    ]
+  },
+  "v2Expected": "same-as-v1"
+}
