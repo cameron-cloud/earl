@@ -61,9 +61,12 @@ Nothing in this plan has been run on Windows yet. Anything marked **(W)** can on
 - It replaces v1 "Animation speed".
 - Rationale: it is a smooth slider for the UI while the tuning stays in 5 rows.
 
-**D4 `[C]` (accepted default, Q3) Size.**
-- `earl.size` 48-256 px, step 8, snapping at 48/64/96/128/192/256. Default 96.
+**D4 `[C]` (decided by Cameron 2026-09-29, Q3) Size.**
+- `earl.size` 48-256 px, step 8, snapping at 48/64/96/128/192/256. Default 64 (v1's size; Cameron 2026-09-29: "i want to keep the current fling mechanics we have and his size").
 - 48 is the floor because hit masks and faces stop reading below it.
+- What v1 does today, so 64 in v2 looks the same: v1's default is 64 (`src-tauri/src/config.rs:63`, `src/utils/constants.ts:3`) and the user can change it with the Settings buttons 48/64/80/96 (`constants.ts:4` `SIZE_OPTIONS`, `src/components/SettingsPanel.tsx:50-66`). v1 sizes both the canvas backing store and its CSS box to `size` (`src/components/EarlCanvas.tsx:94-100`) and draws the whole 128x128 frame into that box with high-quality smoothing (`EarlCanvas.tsx:26-37`), so Earl's frame box is exactly `size` CSS px (DIP): 64 DIP is 96 physical px at 150% scaling. The backing store is not DPR-scaled, so v1 is a little soft on high-DPI screens; v2 sizes backing stores at device pixels (5.10), which is sharper at the same on-screen size.
+- For v2 at 64 to match what Cameron sees, `earl.size` means the same DIP frame box and the v2 frames keep v1's framing (the body fills the box as it does in v1's 128x128 frames). The art lineup checks this next to v1 at 64 (Q2).
+- Size never changes the fling: v1's fling constants are in px and px/s with no size term (5.4.1 "Size"), and v2 keeps them identical at every size.
 
 **D5 `[C]` (accepted default, Q4) Personality sliders.** Six sliders in an "Earl's personality" card on the Mood tab: grumpiness, playfulness, curiosity, sleepiness, clinginess, gremlin.
 - They include a "Reset to Earl" button.
@@ -337,7 +340,7 @@ src/
     core/         world.ts  loop.ts  rng.ts  clock.ts  types.ts  events.ts  intent.ts  params.ts
     env/          env.ts (DesktopEnv -> floor/walls/occluders, debounced transitions)  taskbarLane.ts
     physics/      body.ts collide.ts surfaces.ts forces.ts pendulum.ts parachute.ts locomotion.ts reach.ts
-    input/        gestures.ts (click/hold/drag/throw/stroke classification, LSQ velocity)
+    input/        gestures.ts (click/hold/drag/throw/stroke classification, v1 5-sample release velocity, 5.4.3)
     anim/         clips/<owner>.ts (globbed) animator.ts blink.ts procedural.ts frames.ts
                   sprites.gen.ts (GENERATED at build, gitignored)
     brain/        index.ts context.ts perception.ts affect.ts needs.ts relationship.ts memory.ts
@@ -774,6 +777,8 @@ interface Body { x; y /* feet centre */; px; py; pa; vx; vy; angle; angVel; hw; 
 - Speed ∝ `size_eff = 64·(size/64)^0.75`. This is the brain specialist's rule; it stops a 256 px Earl from crawling or teleporting.
 - Jump velocity ∝ √S, so jump height ∝ S.
 - Gravity is constant in screen space.
+- The fling (5.4) has no size term at all, as in v1: release velocity, tiers, friction, gravity and terminal speed are the same px and px/s at every size. Only the walls and the ground move with the box size.
+- At the default size 64 (D4), `S = 1`, so every base value in this plan is the value at the default.
 
 **Surfaces:** one-way platforms `{id, kind: floor|window|item, x0, x1, y, z, vy, owner}`.
 - Screen sides are walls and the screen top is a ceiling.
@@ -798,26 +803,33 @@ Any input or platform event calls `scheduler.kick()`.
 
 | Parameter | Normal | Physics party |
 |---|---|---|
-| gravity | 1800 px/s² | × `chaos.physics.gravity` (default 0.4) |
-| terminal velocity (no chute) | 1400 px/s | same |
-| Earl restitution | 0.22 | from bounciness (default 0.80) |
-| max bounces | 3 | unlimited until below threshold |
-| bounce threshold | 180·√S px/s | same |
-| wall restitution | 0.35; dizzy above 700 px/s | 0.7; never dizzy |
-| ground friction μ | 0.9 | ×0.3 |
-| tumble when landing \|vx\| > | 500·S | 350·S |
+Earl's rows in the Normal column are v1's fling constants (Cameron 2026-09-29, 5.4). None of them scale with size. The Physics party column is a chaos addition that no v1 throw can reach (F16).
+
+| Parameter | Normal | Physics party |
+|---|---|---|
+| gravity (every body) | 1200 px/s² (v1, `src/utils/constants.ts:41`, 5.4.1) | × `chaos.physics.gravity` (default 0.4) |
+| terminal velocity, downward, no chute (every body) | 600 px/s (v1, `constants.ts:42`) | same |
+| Earl horizontal decay in flight | v1's tiers: x0.92 per 60 Hz step while SLIDING, x0.95 while TUMBLING (5.4.1) | same |
+| Earl restitution | 0: a dead stop on landing (v1) | from bounciness (default 0.80) |
+| Earl max bounces | 0 (v1) | unlimited until below threshold |
+| Earl bounce threshold | - (no bounces) | 180·√S px/s |
+| Earl wall restitution | 0.6 while TUMBLING; SLIDING pins against the wall (v1); dizzy after landing if a wall hit was over 700 px/s (F15) | 0.7; never dizzy |
+| Earl ceiling (screen top) | reflects at 0.6, reachable only by an upward throw (F2) | 0.7 |
+| Earl ground slide or roll on landing | none (v1 dead stop) | tumble when landing \|vx\| > 350·S, then ground friction |
+| ground friction μ (items; Earl only in the party) | 0.9 | ×0.3 |
 | ball | e 0.72, rolling decel 120 px/s² | e 0.95 |
 | chute terminal velocity | 110 px/s | 70 px/s |
 
 **Step, per body:**
-1. **Forces:** gravity, plus wind and buoyancy fields. Air drag is computed on velocity relative to the wind: exact linear drag plus quadratic drag.
+1. **Forces:** gravity, plus wind and buoyancy fields. Air drag is computed on velocity relative to the wind: exact linear drag plus quadratic drag. Earl in a fling in Normal has no air drag: only gravity, the terminal clamp and v1's tier decay (5.4.3), unless the chute is open (5.5).
 2. **Integrate** position.
 3. **Swept one-way platform test:** take the highest surface crossed, with `vy >= 0`. It cannot tunnel at 5000 px/s.
 4. **Contact:**
+   - Earl in Normal: v1's dead stop, `LANDED{impact, height, surface, bounces: 0}` (5.4.3). The two rules below apply to items, and to Earl only in the Physics party.
    - If `impact > threshold` and `bounceCount < max`: bounce and emit `BOUNCED`.
    - Otherwise settle and emit `LANDED{impact, height, surface, bounces}`.
    - If the landing `|vx|` exceeds the tumble speed: switch to a rolling circle tumble, which ends with `TUMBLE_END`.
-5. **Walls and ceiling:** reflect and emit `WALL_HIT{side, speed}`. A `climb` intent (Wild, or the calm climb with `earl.wallClimbing = anytime`, D35) switches the body to `mode:'wall'`, which ignores gravity and climbs at 60·S px/s.
+5. **Walls and ceiling:** reflect and emit `WALL_HIT{side, speed}` (Earl in Normal: the v1 wall rule in 5.4.3, once per contact). A `climb` intent (Wild, or the calm climb with `earl.wallClimbing = anytime`, D35) switches the body to `mode:'wall'`, which ignores gravity and climbs at 60·S px/s.
 6. **Grounded:** self-propelled gait. Walking past a surface end makes him airborne.
 
 ### 5.4 Holding and throwing
@@ -838,8 +850,8 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 **Release velocity** (`useDrag.ts:15,37,56-75,91-102`)
 - Samples: the press point plus each pointermove (clientX/Y, CSS px, y down); the last 5 are kept. The pointerup position is not a sample.
 - `v = (last - first) / (tLast - tFirst)` when the span is over 1 ms, else 0. That is the mean velocity over the last 4 move intervals: about 67 ms with a 60 Hz pointer, 33 ms at 125 Hz. It counts samples, not time. No smoothing and **no cap**.
-- Quirk Q1: pausing before the release keeps the old samples, so "stop, then let go" still throws at the last motion's speed.
-- Quirk Q2: moves before the window expansion resolves are ignored (`useDrag.ts:57`), and the press sample is in the small window's coordinates while later samples are full-monitor coordinates. A release after only 1-4 moves gets a spurious downward vy of about `(H - 204) / span`.
+- Quirk K1: pausing before the release keeps the old samples, so "stop, then let go" still throws at the last motion's speed.
+- Quirk K2: moves before the window expansion resolves are ignored (`useDrag.ts:57`), and the press sample is in the small window's coordinates while later samples are full-monitor coordinates. A release after only 1-4 moves gets a spurious downward vy of about `(H - 204) / span`.
 
 **Release classification** (`useEarlBehavior.ts:600-647`, `stateMachine.ts:169-184`), with `speed = hypot(vx, vy)`:
 
@@ -847,7 +859,7 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 |---|---|---|---|---|---|---|
 | under 200 | FALLING | none: vx discarded | - | - | `picked_up`, still (`stateMachine.ts:101-102`) | drop |
 | 200-599 | SLIDING | 0.5 vx | x0.92 | under 15 px/s: FALLING, straight down from there | `tumble` | drop |
-| 600-1199 | TUMBLING | 0.8 vx | x0.95 | under 20 px/s: DROPPED at once, even mid-air (Q3) | `tumble` | tumble |
+| 600-1199 | TUMBLING | 0.8 vx | x0.95 | under 20 px/s: DROPPED at once, even mid-air (K3) | `tumble` | tumble |
 | 1200 and up | TUMBLING | vx | x0.95 | as above | `tumble` | tumble |
 
 - Decay is `v *= k^(dt / 16.67 ms)` (`stateMachine.ts:295-310`): per 60 Hz frame and frame-rate independent. If nothing stops it, the total drift is 0.208 v for a slide and 0.333 v for a tumble.
@@ -858,8 +870,8 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 **Flight** (`physics.ts:86-153`, `constants.ts:41-42`), once per rAF frame with the raw frame delta (no clamp, `useEarlBehavior.ts:201`). Frame order: state tick (decay and stop rules), animation, position, events, clamp (`useEarlBehavior.ts:222-314`).
 - Vertical: `vy = min(vy + 1200 dt, 600)`, then `y += vy dt` (semi-implicit Euler). Gravity is 1200 px/s^2 and terminal velocity 600 px/s. A downward release faster than 600 is cut to 600 on the first step.
 - Horizontal: `x += vxSlide dt`, with vxSlide decayed first. FALLING has no horizontal motion at all (bug 14).
-- Q3: when a tumble's vxSlide drops under 20 px/s the state becomes DROPPED, a ground state, so Earl is put straight onto the ground at that x with no fall (`stateMachine.ts:296-299`, `physics.ts:154-157`, then the window shrink at `useEarlBehavior.ts:279-293`). No drop sound and no height penalty on that path. A fast throw that is nearly vertical (`|0.8 vx| < 21` px/s), such as straight down at 600 or more or straight up, snaps to the ground on the first frame.
-- Walls: x is clamped to `[0, W - size]`, the monitor's left and right edges. TUMBLING reflects, `vxSlide = -0.6 vxSlide` (`stateMachine.ts:200-204`); each hit plays the wall bump sound and costs mood -10 (`useEarlBehavior.ts:308-312`). SLIDING does not reflect: Earl stays pinned to the wall while vxSlide decays, and the sound and the -10 repeat every frame (Q4; 26 frames in the `wall-slide` fixture).
+- K3: when a tumble's vxSlide drops under 20 px/s the state becomes DROPPED, a ground state, so Earl is put straight onto the ground at that x with no fall (`stateMachine.ts:296-299`, `physics.ts:154-157`, then the window shrink at `useEarlBehavior.ts:279-293`). No drop sound and no height penalty on that path. A fast throw that is nearly vertical (`|0.8 vx| < 21` px/s), such as straight down at 600 or more or straight up, snaps to the ground on the first frame.
+- Walls: x is clamped to `[0, W - size]`, the monitor's left and right edges. TUMBLING reflects, `vxSlide = -0.6 vxSlide` (`stateMachine.ts:200-204`); each hit plays the wall bump sound and costs mood -10 (`useEarlBehavior.ts:308-312`). SLIDING does not reflect: Earl stays pinned to the wall while vxSlide decays, and the sound and the -10 repeat every frame (K4; 26 frames in the `wall-slide` fixture).
 - No ceiling: vy is never negative.
 - Ground: `H - pad - size`, where pad is 40 px with the taskbar visible and 4 px when it is hidden (`physics.ts:48-49`, `useEarlBehavior.ts:77-80`, `constants.ts:8`).
 
@@ -880,9 +892,9 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 | fast-right | 900, 150, 1500, 100 | TUMBLING | 1243.3 | 417 ms | 1100 ms |
 | diagonal-down | 700, 300, 700, 500 | TUMBLING | 841.2 | 517 ms | 1200 ms |
 | straight-down | 900, 300, 0, 180 | FALLING | 900 | 617 ms | 1300 ms |
-| straight-down-fast | 900, 300, 0, 900 | TUMBLING | 900 (Q3 snap) | 17 ms | 700 ms |
+| straight-down-fast | 900, 300, 0, 900 | TUMBLING | 900 (K3 snap) | 17 ms | 700 ms |
 | upward | 900, 150, 400, -900 | TUMBLING | 979.6 | 500 ms | 1183 ms |
-| upward-straight | 900, 150, 0, -1000 | TUMBLING | 900 (Q3 snap) | 17 ms | 700 ms |
+| upward-straight | 900, 150, 0, -1000 | TUMBLING | 900 (K3 snap) | 17 ms | 700 ms |
 | wall-slide | 30, 400, -560, 0 | SLIDING | 0 (pinned) | 917 ms | 1600 ms |
 | wall-tumble | 1500, 400, 1400, 0 | TUMBLING | 1820.3 (1 reflect) | 917 ms | 1600 ms |
 | v1-cap | 200, 700, 3000, 900 | TUMBLING | 1124.0 | 1167 ms | 1850 ms |
@@ -908,8 +920,8 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 
 #### 5.4.3 Throwing (v2)
 
-- **Release velocity:** v1's estimator. Samples are the pickup point and each pointer move in CSS px (DIP, y down); the last 5 are kept and `v = (last - first) / span`, or 0 under a 1 ms span. No 4000 px/s clamp, only a 20000 px/s glitch guard (F10). Q1 (a paused release still throws) is kept for parity. Q2 cannot happen (F6).
-- **Classification, horizontal velocity, decay and stop rules:** exactly the v1 table in 5.4.1, on the same `speed = hypot(vx, vy)`. The one exception is Q3: when a tumble's horizontal velocity dies mid-air he falls straight down from there, like v1's slide stop (F4). The landing x is unchanged.
+- **Release velocity:** v1's estimator. Samples are the pickup point and each pointer move in CSS px (DIP, y down); the last 5 are kept and `v = (last - first) / span`, or 0 under a 1 ms span. No 4000 px/s clamp, only a 20000 px/s glitch guard (F10). K1 (a paused release still throws) is kept for parity. K2 cannot happen (F6).
+- **Classification, horizontal velocity, decay and stop rules:** exactly the v1 table in 5.4.1, on the same `speed = hypot(vx, vy)`. The one exception is K3: when a tumble's horizontal velocity dies mid-air he falls straight down from there, like v1's slide stop (F4). The landing x is unchanged.
 - **Vertical:** `vy0 = vy`, **including upward** (F1). Gravity 1200 px/s^2. Downward speed is capped at 600 px/s every step, so a fast downward release starts at 600 as in v1. Upward speed has no cap; the screen top reflects like v1's walls, `vy = -0.6 vy`, and emits `CEILING_HIT` (F2).
 - **Integration:** the fixed 60 Hz step (5.2) in v1's order: decay and stop rules, then gravity and the terminal clamp, then the move, then contacts. At 60 Hz this reproduces v1 at 60 Hz exactly (F9).
 - **Walls:** TUMBLING reflects at 0.6; SLIDING pins against the wall without reflecting. `WALL_HIT` and its sound fire once per contact, not every frame (F5).
@@ -928,9 +940,9 @@ Cameron can veto any row; its v1 column is then the behavior.
 | F1 | the upward part of a throw is discarded (bug 13) | kept: he flies up, peaks and falls | Cameron's parachute request (M1.9). The one deliberate physics change. |
 | F2 | no ceiling (vy is never negative) | the screen top reflects at 0.6 | only reachable through F1; reuses v1's wall coefficient |
 | F3 | no parachute | the chute arms after an upward throw's apex, or on a fall that did not start from a release, over max(3 bodyH, 200 px) | Cameron's request. Level and downward flings never arm it, so they stay v1 at any height. The old plan armed it on any release over 200 px up, which would turn high v1 flings into glides; that is the alternative if Cameron prefers it. |
-| F4 | Q3: a mid-air tumble whose vx drops under 20 px/s snaps onto the ground; a fast near-vertical throw snaps on frame 1 | he falls straight down from that point | the snap is a visible teleport. Landing x is unchanged; only the time to land grows (the `straight-down-fast` and `upward-straight` fixtures). |
-| F5 | Q4: the wall sound and the -10 mood repeat every frame while a slide is pinned to a wall | once per contact | the same path, without the sound spam and a mood hit of up to -260 |
-| F6 | Q2: a release after 1-4 moves gets a spurious downward vy | cannot happen | one overlay and one coordinate space (4.1) |
+| F4 | K3: a mid-air tumble whose vx drops under 20 px/s snaps onto the ground; a fast near-vertical throw snaps on frame 1 | he falls straight down from that point | the snap is a visible teleport. Landing x is unchanged; only the time to land grows (the `straight-down-fast` and `upward-straight` fixtures). |
+| F5 | K4: the wall sound and the -10 mood repeat every frame while a slide is pinned to a wall | once per contact | the same path, without the sound spam and a mood hit of up to -260 |
+| F6 | K2: a release after 1-4 moves gets a spurious downward vy | cannot happen | one overlay and one coordinate space (4.1) |
 | F7 | every press is a pickup, and a click is a pickup under 4 px (bug 11) | the 5.4.2 gesture thresholds (pickup at 6 px or 200 ms) | clicks, pets and double-clicks need presses that are not pickups. A throw needs movement anyway, so no v1 throw changes. |
 | F8 | the hold follow and lean run per rAF frame, so they are faster on a 144 Hz monitor | the same constants per 60 Hz step | identical at 60 Hz, and the same on every monitor |
 | F9 | flight integrates with the raw rAF delta | the fixed 60 Hz step | identical at 60 Hz, and stable on other monitors |
@@ -941,8 +953,10 @@ Cameron can veto any row; its v1 column is then the behavior.
 | F14 | 6 held sprites: still, left, right, up, down, fast | 4 shots; up and down share `earl_held_01` | v2 art. Add `earl_held_up_01` and `earl_held_down_01` to the shot list if Cameron wants them back. |
 | F15 | the landing beat is always `dropped` (650 ms) | the same beat by default; after it, dizzy following a wall hit over 700 px/s, or a stuck landing when bonded (7.7) | personality additions after the dead stop; the path is unchanged |
 | F16 | no Physics party | chaos Physics party (5.3, right column): bounces and lower gravity | chaos is off by default and not v1-possible |
+| F17 | the landing is the `dropped` frames only | the same frames plus a small procedural squash (at most 0.15, 5.12) | visual only, the path and timing are unchanged; drop it if it reads wrong |
+| F18 | a hold lasts until the user lets go | a wary, grumpy Earl may wriggle free after 1-2 s (6.12: sessionWariness > 0.5 and G > 0.6, 30%) | personality. He leaves the hand with zero velocity, which is v1's drop path from that point, so no v1 throw changes |
 
-Dropped from the old plan in favour of v1: LSQ velocity over 80 ms with a 4000 px/s clamp, the spring follow (omega 25), the cursor-acceleration pendulum, gravity 1800 px/s^2 and terminal velocity 1400 px/s, Earl's bounces (restitution 0.22, 3 bounces, threshold 180 sqrt(S)), ground friction 0.9, the tumble on landing above 500 S, wall restitution 0.35, the long-glide horizontal drag outside the parachute, and any size scaling of fling speeds.
+Dropped from the old plan in favour of v1: LSQ velocity over 80 ms with a 4000 px/s clamp, the spring follow (omega 25), the cursor-acceleration pendulum, gravity 1800 px/s^2 and terminal velocity 1400 px/s, Earl's bounces (restitution 0.22, 3 bounces, threshold 180 sqrt(S)), ground friction 0.9, the tumble on landing above 500 S, wall restitution 0.35, the long-glide horizontal drag outside the parachute, the 7.7 "relaxed dangle with swing" while held (the hold is v1's lean; mood shows in the face and flail frames), and any size scaling of fling speeds.
 
 #### 5.4.5 v1 parity test (M1.3)
 
@@ -957,9 +971,11 @@ Dropped from the old plan in favour of v1: LSQ velocity over 80 ms with a 4000 p
 
 ### 5.5 Parachute (`sim/physics/parachute.ts`)
 
-**Arming:** he is descending, the height to the floor is greater than `max(3·bodyH, 200 px)`, and either:
-- the throw's apex has passed, or
-- a fall started from a release or a lost perch.
+**Arming** (F3 in 5.4.4): he is descending, the height to the floor is greater than `max(3·bodyH, 200 px)`, and either:
+- the apex of an **upward** throw has passed (a release with `vy < 0`, F1), or
+- a fall that did **not** start from a release: a lost perch, a floor or window that goes away, a slip off an item.
+
+A release that starts level or downward never arms the chute, from any height, so every throw v1 could make keeps v1's path (5.4). Alternative for Cameron's veto of F3: the old, broader rule (any fall from a release or a lost perch arms it), which puts a chute on long v1-style drops too.
 
 **Deploy timing** (brain RNG stream):
 
@@ -972,7 +988,7 @@ Dropped from the old plan in favour of v1: LSQ velocity over 80 ms with a 4000 p
 
 **Drag:**
 - A 250 ms ramp to `dragQuad = g/vt²`, where vt = 110 px/s.
-- Horizontal linear drag of 0.4, so throws turn into long glides.
+- Horizontal linear drag of 0.4 **only while the chute is open**, so an upward throw that deploys turns into a glide. Before the chute opens, and in every throw that never arms it, the horizontal motion is v1's tier decay (5.4.3), never this drag.
 - Drag is relative to the wind, so the fan pushes the chute hard (at least 5× the drift of bare Earl).
 
 **Sway:**
@@ -1186,7 +1202,7 @@ peek_bob:   { frames:[{f:'earl_peek_01',ms:[600,3000]}], loop:'loop', anchor:'le
 
 | Effect | Rule |
 |---|---|
-| squash and stretch | spring k=300, c=18. Landing squash = clamp(impact/1500, 0, 0.35), volume-preserving (`sx ≈ 1+0.6(1-sy)`) |
+| squash and stretch | spring k=300, c=18. Landing squash = clamp(0.35·impact/600, 0, 0.35), so the 600 px/s terminal speed (5.3) gives the full squash; volume-preserving (`sx ≈ 1+0.6(1-sy)`). On Earl's fling landing it is capped at 0.15, because v1's `earl_land_squish_01` frame already carries the squash (F17) |
 | air tilt | `atan2(vy,\|vx\|)·0.15`, clamped to ±20°. Also a lean into fan wind. |
 | breathing | scaleY 1 ± 0.012 at 0.25 Hz; skipped when under 1 device px |
 | wobble and shake | decaying sine |
@@ -1385,13 +1401,13 @@ wariness (for avoidance) = clamp(sessionWariness + 0.3*(1-trust) + 0.5*grudgeSum
 | Event | trust | fondness |
 |---|---|---|
 | pet | +0.002 | +0.006·dim, where dim = 1/(1+petsToday/30) |
-| gentle put-down (release below 200 px/s) | +0.003 | - |
+| gentle put-down (release below 200 px/s, v1's drop tier in 5.4.1, and not a hard landing) | +0.003 | - |
 | fed while hungry (Needs mode) | +0.004 | +0.010 |
 | played with (ball kicked by user, toy placed near him, fetch) | - | +0.003 |
 | first interaction of the day | - | +0.010 |
 | throw ending in a glide or soft landing | 0 | +0.002 once habituated |
 | slammed into a wall (over 700 px/s) | -0.040 | -0.004 |
-| hard landing (fall over 5 body lengths, no chute) | -0.020 | - |
+| hard landing (fall over 5 body lengths, no chute; with v1's physics that is any level or downward throw from that high, landing at up to the 600 px/s terminal speed) | -0.020 | - |
 | daily drift | toward 0.5+0.4·fondness at 0.03/day | -0.01/day only after 3 or more days away; floor 0.25 |
 
 **Enjoyed throws:** a throw is "wheee" (F +8) when `throwHabituation ≥ 0.6` or `bondedPlay = clamp((trust-0.6)/0.3)·P` is high.
@@ -1547,7 +1563,7 @@ A sub-feature is effective only when `chaos.enabled && sub.enabled`. This is com
 | hover (600 ms) | watches warily | looks up, maybe leans | Needs HUD. Asleep: wakes only after 1.5 s and not within the first 60 s of a nap. |
 | pickup | squirm; if sessionWariness > 0.5 and G > 0.6, 30% chance to wriggle free after 1-2 s; roughMemory only adds a flinch and a bill grip on the taskbar edge | relaxed dangle | annoyance escalates within 30 s: G +0.05·(1-tr) each time |
 | gentle drop | dusts off | lands happy | trust +0.003 |
-| throw | first throws: alarm, "why."; after 3-4 soft landings in a session: "again!" (habituation, 6.4). Only slams and chute-less hard landings cause a grudge and about 2 min of avoidance | "wheee", F +8 | the chute always saves long falls |
+| throw | first throws: alarm, "why."; after 3-4 soft landings in a session: "again!" (habituation, 6.4). Only slams and chute-less hard landings cause a grudge and about 2 min of avoidance | "wheee", F +8 | the chute saves long falls only after an upward throw or a fall that did not start from a release (5.5, F3); level and downward throws land as in v1 |
 | drop onto an item | the affordance runs, but may refuse (G > 0.7: steps off, glares) | the affordance runs, eagerly | see 8 |
 
 ### 6.13 Speech and voice
@@ -1847,10 +1863,10 @@ Reflexes and user actions are exempt but resolve toward allowed zones: dropped o
 
 | id | Trigger | Player sees | Shots | Sound | Effects |
 |---|---|---|---|---|---|
-| picked_up | drag threshold | tr > 0.6: relaxed dangle with swing. tr < 0.35: squirms, maybe wriggles free | earl_held_01, earl_held_grumpy_01, earl_held_side_01, earl_flail_01..02 | pickup chirp (pitch by mood) | G +0.05·(1-tr) |
-| thrown | released faster than 200 px/s | spins, flails; upward velocity kept | earl_tumble_01 (spun), earl_flail_01..02 | "wak!" or "wheee" | per 6.4 |
+| picked_up | pickup gesture (5.4.2) | v1's hold: lerp follow, lean and held frames (5.4.2). Mood shows only in the face: tr > 0.6 relaxed; tr < 0.35 squirms (grumpy face, flail frames), maybe wriggles free (6.12, F18). No swing (v1 parity) | earl_held_01, earl_held_grumpy_01, earl_held_side_01, earl_flail_01..02 | pickup chirp (pitch by mood) | G +0.05·(1-tr) |
+| thrown | released at 200 px/s or more (v1's slide and tumble tiers, 5.4.1) | v1's path per tier; the tumble cycle plus a spin (F13); upward velocity kept (F1); below 200 px/s it is a v1 drop (FALLING tier, no reaction row) | earl_tumble_01 (spun), earl_flail_01..02 | "wak!" or "wheee" | per 6.4 |
 | parachute_glide | 5.5 arming | the canopy pops (scale-in 0.2 to 1), sways down, the fan pushes it; G glares while gliding, P kicks his feet | earl_hang_01, earl_hang_alarm_01, prop_parachute_01..05 | pop, rustle | soft landing, no hard-landing penalty, F +5 if P |
-| land | touchdown | squish scaled by impact; big hits: dizzy; bonded and playful: sticks the landing | earl_land_squish_01, earl_dizzy_01, earl_tada_01 | thump (pitch by impact) | per 6.4 |
+| land | touchdown | v1's dead stop and 650 ms `dropped` beat first (5.4.3); then, as additions (F15): dizzy after a wall hit over 700 px/s; bonded and playful: sticks the landing | earl_land_squish_01, earl_dizzy_01, earl_tada_01 | thump (pitch by impact) | per 6.4 |
 
 ### 7.8 Chaos-only and special
 
@@ -1908,7 +1924,7 @@ Reflexes and user actions are exempt but resolve toward allowed zones: dropped o
 
 | Action | Behavior |
 |---|---|
-| Place | Press a slot. The item spawns under the cursor, grows from slot size to world size over 120 ms, and follows the cursor with the same pendulum as a held Earl. On release it keeps the throw velocity, falls, bounces and settles on the ground. |
+| Place | Press a slot. The item spawns under the cursor, grows from slot size to world size over 120 ms, and follows the cursor with the same hold as Earl (v1's lerp follow and lean, 5.4.2). On release it keeps the throw velocity, falls, bounces and settles on the ground. |
 | Big-item clearance | Trampoline, bed, tub, fan and the open umbrella may not overlap each other's floor footprint. On landing they slide to the nearest free gap; with no gap they hop back into the box ("no room" wiggle). Small items (bread, seeds, ball, rubber duck, closed umbrella) can overlap anything. |
 | Move | Press on the item's mask hit region and drag. Thresholds as in 4.4. |
 | Click | The item's primary action (8.3). |
@@ -1973,7 +1989,7 @@ Rust (`earl-core/src/settings/schema.rs`), `schema: 2`, frozen in M1.0. Keys are
 | General | `general.showHideHotkey` | `{enabled, accel}` | - | `{enabled:false, accel:""}` | never JSON null (D22) |
 | General | `general.autoCheckUpdates` | bool | - | true | checks only, never installs on its own |
 | General | *Bring Earl back* | button | - | - | `earl_command bringBack` |
-| Earl | `earl.size` | u16 px | 48-256, step 8, snaps 48/64/96/128/192/256 | 96 (Q3 accepted) | live rescale about the foot anchor |
+| Earl | `earl.size` | u16 px | 48-256, step 8, snaps 48/64/96/128/192/256 | 64 (v1's size; Cameron 2026-09-29, D4) | live rescale about the foot anchor |
 | Earl | `earl.activity` | u8 | 0-100 (Couch potato / Chill / Normal / Lively / Gremlin) | 50 | replaces "animation speed" |
 | Earl: Where Earl can go | `earl.taskbarHiding` | enum | `never` / `sometimes` / `mostly` / `always` | `sometimes` (Q1 answered) | label "Behind the taskbar"; behind share 0 / 0.15 / 0.6 / 0.85; meaning per level in 5.6; his home is the taskbar top (D1) |
 | Earl: Where Earl can go | `earl.windowPerching` | bool | - | true | label "Perch on windows" (D35) |
@@ -2158,7 +2174,7 @@ RuntimeState { schema, first_launch_at_ms: u64, v2_installed_at_ms, last_seen_at
 
 **Loading (one code path with `settings_patch`, D22):**
 - Value-level migration chain first.
-- Then start from `Settings::default()` (the schema defaults, not `T::default()`) and apply the file's JSON as a merge patch through the same per-field `validate()` that `settings_patch` uses. Each field that fails to parse or validate is dropped and logged, so it keeps its **schema default**: a garbage `sound.volume` is 35, a garbage `sound.enabled` is true, a garbage `earl.size` is 96. No `lenient` / `unwrap_or_default` deserializer exists.
+- Then start from `Settings::default()` (the schema defaults, not `T::default()`) and apply the file's JSON as a merge patch through the same per-field `validate()` that `settings_patch` uses. Each field that fails to parse or validate is dropped and logged, so it keeps its **schema default**: a garbage `sound.volume` is 35, a garbage `sound.enabled` is true, a garbage `earl.size` is 64. No `lenient` / `unwrap_or_default` deserializer exists.
 - `#[serde(default, rename_all="camelCase")]` stays on the containers for struct shape.
 - A file that won't parse as JSON at all is renamed to `.corrupt-<ms>`; defaults load and a notice shows on the About tab. The app **never** gets stuck on "Loading".
 - `earl-core` tests: a garbage value per field yields that field's schema default; `toolbox.hotkey` set to off survives a save and reload; a patch containing null is rejected.
@@ -2214,8 +2230,8 @@ Field mapping:
 | 10 | STRETCH never fires (needs 60 s idle, idle max 30 s) | Stretch on waking, long sits and the morning wake | M1.5 |
 | 11 | Every pointerdown is a pickup (`useDrag.ts:46`) | Gesture thresholds; every tier's click reaction starts with a hop-class move | M1.3, M1.5 |
 | 12 | HOP_OFFSETS sign: he sinks 20 px (`physics.ts:81`, `constants.ts:38,449`) | Real ballistic hops, `hold:'landed'` | M1.3, M1.4 |
-| 13 | Upward throws discarded (`useEarlBehavior.ts:619`) | 2D LSQ throw | M1.3 |
-| 14 | FALLING ignores vx; `bounceCount` unused | Full 2D integration; bounce cap | M1.3 |
+| 13 | Upward throws discarded (`useEarlBehavior.ts:619`) | Upward throws kept, with the 0.6 ceiling; everything else is v1's release velocity and path (5.4.3, F1, F2) | M1.3 |
+| 14 | FALLING ignores vx; `bounceCount` unused | Kept as v1 by Cameron's decision (2026-09-29): a release under 200 px/s drops straight down, and landings are a dead stop with no bounces (5.4.1, 5.4.3). Not a bug any more; the unused counter just goes. | M1.3 |
 | 15 | 12 missing sprites resolved through `SPRITE_FALLBACKS` | Fallback chain from `shots.json`; placeholders; new art | M0.3, M5 |
 | 16 | Hit test paused while falling; the expanded window eats clicks | Never paused; one overlay; Rust capture latch; hang watchdog | M1.1 |
 | 17 | expand/shrink races; the loop restarts on every drag | Deleted; one overlay | M1.1, M1.4 |
@@ -2261,7 +2277,7 @@ Measured on Win11, a mid laptop, 1080p at 125%, with the perf tab of the debug o
 
 | Scenario | Draw work | CPU (all Earl + WebView2 processes) | IPC |
 |---|---|---|---|
-| Asleep or behind the taskbar, size ≤ 96 | ≤ 2 layer repaints/s (blinks, frame changes) | < 0.3% renderer + < 0.5% GPU; TaskDuration ≤ 20 ms/s | 0 from JS (heartbeat piggybacks on the rare region push; a 1 Hz heartbeat only when nothing else is sent) |
+| Asleep or behind the taskbar, size ≤ 96 (covers the default 64 and v1's largest option) | ≤ 2 layer repaints/s (blinks, frame changes) | < 0.3% renderer + < 0.5% GPU; TaskDuration ≤ 20 ms/s | 0 from JS (heartbeat piggybacks on the rare region push; a 1 Hz heartbeat only when nothing else is sent) |
 | Idle, any size | ≤ 2 repaints/s (breathing is a CSS transform, 5.10) | < 0.6% | ≤ 1/s |
 | Walking / normal activity, cursor far | transforms at the paced rate (5.2), repaints only on frame changes (about 7/s, whatever the procedural motion) | < 3%; sim ≤ 0.3 ms/step; render ≤ 1.5 ms/frame; TaskDuration ≤ 60 ms/s | 0-2/s (coarse region only, 4.3) |
 | Cursor near Earl, or chase / flee / gag | as above | as above | exact regions ≤ 30/s + 30 Hz cursor stream |
@@ -2363,8 +2379,10 @@ Measured on Win11, a mid laptop, 1080p at 125%, with the perf tab of the debug o
 **Missing features:** assertions for features that are not merged yet land as `test.fails(...)` or `test.todo(...)`, each tagged with the unit id that turns it on (for example `// unit: M2.1`). Each feature unit's acceptance includes flipping its tests to `test(...)`. A CI check fails if a `test.fails` remains for a unit marked merged in `docs/ROADMAP.md`. CI therefore stays green while M2.6 lands first.
 
 **Physics:**
-- throw apex = v²/2g within 1%;
-- bounce decay and the bounce cap;
+- v1 fling parity: `test/sim/v1-fling-parity.test.ts` against the 13 committed `test/fixtures/v1-fling/` cases, with the 5.4.5 tolerances (M1.3), plus the chute pass (M1.9);
+- fling constants do not scale: the same release gives the same path at sizes 48, 64 and 256 (relative to the ground and walls);
+- upward throw apex = v²/2g within 1% (g = 1200);
+- bounce decay and the bounce cap (items, and Earl in the Physics party);
 - no tunnelling at 5000 px/s;
 - chute terminal velocity 110 ± 5;
 - fan drift on the chute more than 5× bare Earl;
@@ -2597,10 +2615,16 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 - **Dep:** M0.0 (scripts predeclared by M0.1; it may start in parallel). **Par:** M0.1, M0.2, M0.4. **Batch A art waits for the Q2 lineup pick** (Q2 answered: the gate stays).
 
 **M0.4 Windows platform spike (one worker, throwaway branch `spike/overlay`)**
-- **Files:** a minimal Tauri app on the spike branch only: one full-monitor overlay with the 4.1 subclass (permanent LAYERED, `WM_APP_SETHIT`, `WM_ACTIVATE` hand-back, 1 px top inset); one 96 px canvas walking left and right with `translate3d` (layers) and the same in a full-monitor dirty-rect canvas (flag); a pointer thread with transitions-only click-through and the capture latch; ground from `ABM_GETTASKBARPOS`; a key-logger test page for focus; the shared `BROWSER_ARGS`.
+- **Files:** a minimal Tauri app on the spike branch only: one full-monitor overlay with the 4.1 subclass (permanent LAYERED, `WM_APP_SETHIT`, `WM_ACTIVATE` hand-back, 1 px top inset); one 96 px canvas (chosen before D4 moved the default to 64; 96 bounds the default, so its numbers still hold) walking left and right with `translate3d` (layers) and the same in a full-monitor dirty-rect canvas (flag); a pointer thread with transitions-only click-through and the capture latch; ground from `ABM_GETTASKBARPOS`; a key-logger test page for focus; the shared `BROWSER_ARGS`.
 - **Accept (W0, measured by Cameron on the CI-built exe):** idle CPU and GPU (Task Manager plus WebView2 perf); hover flicker; focus loss while typing in Notepad; W3b occlusion; PresentMon "Hardware: Independent Flip" vs "Composed" for a borderless-fullscreen video with Earl visible; layers vs canvas cost. The result is written into D13 and D14 before M1.0: full-monitor or bottom-band/bbox window (with the viewport origin), and which one renderer mode to build.
 - **L:** builds on CI. **W:** W0.
 - **Dep:** M0.0, M0.2 (CI). **Par:** M0.1, M0.3.
+
+**M0.6 Plan update: v1 fling and v1 size (added 2026-09-29 for Cameron's decision)**
+- **Files:** `docs/V2_PLAN.md` (D4, the module layout, 5.1, 5.3, 5.4, 5.5, 5.12, 6.4, 6.12, 7.7, 8.2, 9.1, 9.4, 10 bugs 13 and 14, 11, 12.2, M0.4, M1.3, M1.4, Q3), `docs/SPEC.md`, `docs/ROADMAP.md`, `test/v1-fling-capture.test.ts`, `scripts/capture-v1-fling.mjs`, `test/fixtures/v1-fling/*.json`, the `capture:v1-fling` npm script.
+- **Accept:** every reference to the old 96 default is changed to 64 or justified; 5.4 holds the v1 fling reference with file:line cites and the "Differences from v1 fling" table; M1.3 names the parity test and its tolerances; the fixtures are captured from v1's own code and a plain `npm test` checks them. No v1 runtime change and no new dependency.
+- **L:** lint, typecheck, vitest, `check:dashes`. **W:** -.
+- **Dep:** M0.5. **Par:** M0.4.
 
 ### M1 First playable v2 (new engine, the taskbar request, working settings, updater prompt)
 
@@ -2652,10 +2676,13 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 - **Dep:** M1.S. **Par:** M1.1, M1.3-M1.8.
 
 **M1.3 Sim core and physics**
-- **Files:** `src/sim/core/{world,loop,rng,clock}.ts` (completing M1.S), `src/sim/physics/**` (not the parachute), `src/sim/env/**`, `src/sim/input/gestures.ts`, `src/sim/particles.ts`, `src/sim/persist.ts`, `src/sim/stats.ts`, `test/sim/physics*.test.ts`, `test/sim/env*.test.ts`.
+- **Files:** `src/sim/core/{world,loop,rng,clock}.ts` (completing M1.S), `src/sim/physics/**` (not the parachute), `src/sim/env/**`, `src/sim/input/gestures.ts`, `src/sim/particles.ts`, `src/sim/persist.ts`, `src/sim/stats.ts`, `test/sim/physics*.test.ts`, `test/sim/v1-fling-parity.test.ts`, `test/sim/env*.test.ts`. Reads `test/fixtures/v1-fling/*.json` (committed by M0.6; do not rewrite them).
 - **Accept:** 5.1-5.9 except the parachute:
   - fixed step, seeded streams, `advanceTo` and analytic `onResume`;
-  - swept platforms, bounce cap, 2D throws, pendulum hold;
+  - swept platforms and the item bounce cap (Earl has no bounces in Normal, 5.3);
+  - **v1 fling parity (5.4.5, Cameron 2026-09-29):** `test/sim/v1-fling-parity.test.ts` passes on all 13 fixtures in `test/fixtures/v1-fling/` (slow drop, gentle right, fast left, fast right, diagonal down, straight down, straight down fast, upward, upward straight, wall slide, wall tumble, the v1 cap case, high drop), chute off, no windows or items, with the ground placed at the fixture's `groundY` (or compared relative to the ground). Tolerances: landing x and every 50 ms path sample within 1 px; time to land and settle time within 1 step (16.7 ms); bounces exactly 0; wall contacts and ceiling hits exact; control time within 2 steps (33 ms). The chute pass of 5.4.5 runs in M1.9;
+  - v1's release velocity (5 samples, endpoint difference, no cap but the 20000 px/s guard), tiers and constants (gravity 1200, terminal 600), none scaled by size; upward throws kept (F1) with the 0.6 ceiling (F2);
+  - v1's hold and lean (5.4.2), frame-rate independent (F8);
   - gesture thresholds;
   - floor transitions and the `taskbarLane` controller (the depth ladder, virtual floor, eye-line placement, wade walk, peek-bob, duck, pop-out) with the clip model;
   - the roam-range walkable interval with soft walls on every ground mode (5.6, D35);
@@ -2669,6 +2696,7 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
   - `src/render/**` (except `hud/`, `fx/parachute`), `src/sim/anim/{animator,blink,procedural}.ts`, `src/sim/anim/clips/*.ts` for the M1 behaviors
   - `src/audio/{engine,voice}.ts`, `src/audio/cues/*.ts` (quack, honk, peep, boing, bloop)
   - delete `src/hooks`, `src/components`, `src/engine`, `src/App.tsx`, `src/utils/*`, `src/assets/sprites`, and `index.html` (replaced by `overlay.html`)
+  - with the v1 engine, also delete `test/v1-fling-capture.test.ts`, `scripts/capture-v1-fling.mjs` and the `capture:v1-fling` npm script; **keep** `test/fixtures/v1-fling/` (the M1.3 parity test reads it). To recapture later, check out `origin/master`'s `src/engine`, `src/utils/constants.ts` and the capture test from M0.6's commit.
 - **Accept:** 5.10-5.12 and 5.13 (base):
   - the one renderer mode chosen in M0.4, with CSS-transform procedural motion and CSS clip-path occlusion;
   - DPR, the 256/512 level choice, encoded-page sprite cache, size-slider CSS scaling;
@@ -2724,7 +2752,7 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 
 **M1.9 Parachute**
 - **Files:** `src/sim/physics/parachute.ts`, `src/render/fx/parachute.ts` (placeholder canopy and strings), `behaviors/airborne/parachute_glide.ts`, `clips/parachute_glide.ts`, tests.
-- **Accept:** 5.5; terminal velocity 110 ± 5; deploy timing by mood; drape 20% (over 16 seeds); hem attach points from `sprites.gen.ts`.
+- **Accept:** 5.5; terminal velocity 110 ± 5; deploy timing by mood; drape 20% (over 16 seeds); hem attach points from `sprites.gen.ts`; the F3 arming rule and the 5.4.5 chute pass (with the chute on, the level and downward `test/fixtures/v1-fling/` cases still match v1, and both upward cases deploy it).
 - **L:** physics tests, e2e throw. **W:** subjective.
 - **Dep:** M1.3. **Par:** M1.4-M1.8.
 
@@ -2947,7 +2975,7 @@ Cameron answered on 2026-09-29 (revision 3). Each question keeps its original te
 
 1. **Taskbar default (D1, 5.6).** Your words were "when there is a taskbar he should hide behind it". The setting has four levels: `never` = always on top of the taskbar (like v1); `sometimes` = lives on top, slips behind about 15% of the time to sulk, nap or peek; `mostly` = lives behind about 60% of the time and plays on top; `always` = lives behind about 85% of the time and only hops up for things that need a real surface (windows, items, trampolining, being dragged), coming back behind within a few seconds. Behind the taskbar he is not just a head: he usually stands with his head, wings and chest showing and waddles, quacks and fidgets there, and only sinks to a chin-on-the-edge peek, eyes-only sulk or crest-only nap when the mood calls for it. Recommended was `always`. **Answered: "His home is on top of the taskbar with settings that change where he is allowed to wander." Default is now `sometimes` (home on top, slips behind by choice), and a new "Where Earl can go" group holds five wander-zone controls (D1, D35, 5.6, 9.1, 9.3).**
 2. **Art style (D20) - blocks Batch A.** Keep the originals' crisp look (hard edges, visible pixel steps at large sizes, same tan rims, no dark outlines), or move to a smooth anti-aliased plush illustration at 256 (same shapes, palette and rims)? Both are supported by the pipeline. **Recommended: make `earl_sit_idle_01` in both and decide from the lineup next to v1 at 64/96/256. If you want a default without looking: `v1-faithful`, the literal reading of "original style".** **Answered: confirmed as planned.** The gate stays: make `earl_sit_idle_01` in both style profiles and pick from the lineup next to v1 at 64/96/256; no other masters until then.
-3. **Default size (D4).** 96 px, or v1's 64 px? **Recommended: 96**, with the slider going to 256. **Status: accepted default (Cameron can override).**
+3. **Default size (D4).** 96 px, or v1's 64 px? **Answered by Cameron 2026-09-29: 64, v1's size** ("i want to keep the current fling mechanics we have and his size"). The slider still goes 48-256 with the same snaps. **Status: decided.**
 4. **Personality sliders (D5).** Expose the six personality sliders to Juliette in Settings, or keep them in dev tuning only? **Recommended: expose them**, with a "Reset to Earl" button. **Status: accepted default (Cameron can override).**
 5. **Typing honk (D26).** Is it OK to use a Raw Input keyboard counter (counts key presses only, never which key, only while that chaos option is on, at most 3 honks an hour)? The coarse alternative misfires on scrolling. **Recommended: yes**, disclosed in About. **Answered: yes, capped at about 3 honks per hour, counting key-downs only, never key identity, and only while the option is on** (D26, 4.8).
 6. **Items in fullscreen (D6).** Hide placed items during fullscreen video, or keep them visible but click-through? **Recommended: hide** (Earl alone stays at the bottom, display-only until hovered for 600 ms). **Status: accepted default (Cameron can override).** Revision 3 adds a `stayWithItems` value to the same control for anyone who wants the toys kept, display-only (D6, D35).

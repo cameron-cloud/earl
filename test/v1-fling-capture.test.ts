@@ -105,7 +105,7 @@ const CASES: FlingCase[] = [
   },
   {
     id: "straight-down-fast",
-    note: "TUMBLING with no vx: v1 mid-air stop (Q3)",
+    note: "TUMBLING with no vx: v1 mid-air stop (K3)",
     x: 900,
     height: 300,
     vx: 0,
@@ -121,7 +121,7 @@ const CASES: FlingCase[] = [
   },
   {
     id: "upward-straight",
-    note: "straight up: v1 mid-air stop (Q3)",
+    note: "straight up: v1 mid-air stop (K3)",
     x: 900,
     height: 150,
     vx: 0,
@@ -129,7 +129,7 @@ const CASES: FlingCase[] = [
   },
   {
     id: "wall-slide",
-    note: "SLIDING into the left wall: pinned, no reflect (Q4)",
+    note: "SLIDING into the left wall: pinned, no reflect (K4)",
     x: 30,
     height: 400,
     vx: -560,
@@ -228,7 +228,7 @@ function run(c: FlingCase, variant: Variant): Metrics {
     sm = updateStateMachine(sm, { type: "TICK", deltaMs: dt, mood });
     const airborne = pos.y < GROUND_Y - 1e-6;
     if (smBefore === "TUMBLING" && sm.current === "DROPPED" && airborne && m.landT === null) {
-      // Q3: v1 puts a mid-air tumble whose vx fell under 20 px/s straight onto the ground.
+      // K3 (plan 5.4.1): v1 puts a mid-air tumble whose vx fell under 20 px/s straight onto the ground.
       m.midairStop = { t: r2(t), x: r2(pos.x), y: r2(pos.y) };
       if (variant === "v2") {
         // v2: fall straight down from here instead (v1's own SLIDING stop rule, stateMachine.ts:307).
@@ -343,7 +343,7 @@ function capture(c: FlingCase) {
     units: "px (CSS / logical), ms, y down; x is the box's left edge; t is from release",
     v1,
     // What v2 must produce: v1's code with only the deliberate 5.4 changes applied (upward kept,
-    // ceiling reflect, Q3 mid-air stop falls instead). Equal to v1 when none of them apply.
+    // ceiling reflect, K3 mid-air stop falls instead). Equal to v1 when none of them apply.
     v2Expected: same ? "same-as-v1" : v2,
   };
 }

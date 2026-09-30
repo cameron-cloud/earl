@@ -19,6 +19,8 @@ release to Juliette waits for P0 and P1 art to be final (M5.3), then M6.
 | M0.2 | Rust tooling, icons, config, signing | merged | PR #2 |
 | M0.3 | Docs and art pipeline | merged | PR #3 |
 | M0.4 | Windows platform spike (one worker, throwaway branch `spike/overlay`) | in progress | branch `spike/overlay` (throwaway; result goes into D13 and D14) |
+| M0.5 | Review nits from M0.1-M0.3 | merged | PR #4 |
+| M0.6 | Plan update: keep v1's fling mechanics and v1's size | in review | Cameron 2026-09-29; plan D4, 5.3, 5.4, 5.5; v1 fling fixtures |
 
 ## M1 First playable v2 (new engine, the taskbar request, working settings, updater prompt)
 

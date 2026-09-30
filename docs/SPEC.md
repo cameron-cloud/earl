@@ -52,7 +52,9 @@ assets and makes him cheap to run.
 - Has needs (hunger, energy, fun, plus a hidden "clean"), moods, a relationship with you that
   warms up over days, short-term and episodic memory, whims and an onboarding arc (plan section 6).
 - 80+ behaviors chosen by utility plus sampling, never timers (section 7).
-- Can be picked up, thrown, and parachutes down (5.4-5.5); perches on real windows (M3).
+- Keeps v1's size (default 64 px, slider 48-256, D4) and v1's fling: picking up, flinging and landing
+  feel exactly as in v1 (Cameron 2026-09-29, plan 5.4). New: upward throws go up, and after one he
+  parachutes down (5.5). Perches on real windows (M3).
 - A toolbox of persistent items: trampoline, bed, bread, seeds, tub, ball, rubber duck, fan,
   umbrella (section 8).
 - Optional chaos behind one master switch with four independent subs, all telegraphed and capped
