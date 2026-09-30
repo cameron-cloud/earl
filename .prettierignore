@@ -9,6 +9,7 @@ src/assets/
 # Generated or machine-written by scripts/art.mjs.
 src/sim/anim/sprites.gen.ts
 art/shots.json
+test/fixtures/v1-fling/
 
 # Hand-written prose and plans: formatting them would only reflow tables and lists.
 *.md

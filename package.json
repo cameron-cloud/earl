@@ -24,6 +24,7 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "check:dashes": "node scripts/check-dashes.mjs",
+    "capture:v1-fling": "node scripts/capture-v1-fling.mjs",
     "version:bump": "node scripts/bump-version.mjs",
     "version:selftest": "node --test scripts/bump-version.selftest.mjs",
     "art:import": "node scripts/art.mjs import",
