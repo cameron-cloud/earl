@@ -2,6 +2,7 @@
 // Earl art pipeline CLI (plan D19, docs/ART.md).
 //   node scripts/art.mjs import [--inbox <dir>] [--profile v1-faithful|smooth] [--keep]
 //   node scripts/art.mjs build | check | status | templates | shots   [--root <dir>]
+//   node scripts/art.mjs shots --json   (also prints every finished prompt as JSON, docs/ART.md)
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -13,6 +14,7 @@ import {
   coverageLine,
   importInbox,
   loadDoc,
+  promptCatalog,
   regenerateDoc,
   renderContactSheet,
   renderShotlist,
@@ -23,7 +25,7 @@ import {
 } from "./art/lib/index.mjs";
 
 // Flags that never take a value, so they cannot swallow the argument after them.
-const SWITCHES = new Set(["keep", "quiet"]);
+const SWITCHES = new Set(["keep", "quiet", "json"]);
 
 function parseArgs(argv) {
   const flags = {};
@@ -93,6 +95,12 @@ async function main() {
       const doc = regenerateDoc(root, prev);
       const a = writeIfChanged(file, stringifyDoc(doc));
       const b = writeIfChanged(path.join(root, PATHS.shotlist), renderShotlist(doc));
+      if (flags.json) {
+        // Wait for the flush: process.exit right after a write cuts a piped stdout short.
+        const text = `${JSON.stringify(promptCatalog(doc), null, 2)}\n`;
+        await new Promise((resolve) => process.stdout.write(text, resolve));
+        return 0;
+      }
       const frames = doc.shots.reduce((s, x) => s + x.frames, 0);
       log(
         `art:shots: ${doc.shots.length} shots, ${frames} frames${a || b ? " (updated)" : " (unchanged)"}`,
@@ -173,7 +181,7 @@ async function main() {
     }
     default:
       console.error(
-        "usage: node scripts/art.mjs <import|build|check|status|templates|shots> [--root dir] [--inbox dir] [--profile v1-faithful|smooth] [--keep]",
+        "usage: node scripts/art.mjs <import|build|check|status|templates|shots> [--root dir] [--json] [--inbox dir] [--profile v1-faithful|smooth] [--keep]",
       );
       return 2;
   }

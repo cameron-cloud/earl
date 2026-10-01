@@ -39,6 +39,10 @@ export function symlink(target, file) {
 
 /** Runs a Node script with this Node binary and returns its exit status and output. */
 export function runNode(args, cwd) {
-  const r = spawnSync(process.execPath, args, { cwd, encoding: "utf8" });
+  const r = spawnSync(process.execPath, args, {
+    cwd,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+  });
   return { status: r.status, stdout: r.stdout, stderr: r.stderr };
 }

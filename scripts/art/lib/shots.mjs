@@ -25,7 +25,8 @@ const splitRow = (line) =>
     .map((c) => c.trim());
 
 /**
- * Parses the prompt templates (section 5) and the shot tables (section 6) of a shot-list markdown.
+ * Parses the prompt templates (section 5), the shot tables (section 6) and the per-frame prompt
+ * values (section 9) of a shot-list markdown.
  * The same parser reads docs/ART_SHOTLIST.md and the generated art/SHOTLIST.md, which is how
  * the two are compared.
  */
@@ -33,6 +34,7 @@ export function parseShotlist(md) {
   const lines = md.replace(/\r\n/g, "\n").split("\n");
   const templates = [];
   const sections = [];
+  const values = [];
   let h2 = "";
   let i = 0;
   const shotIntro = [];
@@ -68,6 +70,18 @@ export function parseShotlist(md) {
       });
       continue;
     }
+    if (line.startsWith("### ") && /^9\./.test(h2)) {
+      const m = line.slice(4).match(/^(T\d)\b/);
+      i++;
+      while (i < lines.length && !lines[i].startsWith("|") && !lines[i].startsWith("#")) i++;
+      if (!m || !lines[i] || !lines[i].startsWith("|")) continue;
+      const columns = splitRow(lines[i]);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].startsWith("|")) rows.push(splitRow(lines[i++]));
+      values.push({ key: m[1], columns, rows });
+      continue;
+    }
     if (line.startsWith("### ") && /^6\./.test(h2)) {
       const hm = line
         .slice(4)
@@ -97,7 +111,7 @@ export function parseShotlist(md) {
     }
     i++;
   }
-  return { templates, intro: shotIntro.join("\n").trim(), sections };
+  return { templates, intro: shotIntro.join("\n").trim(), sections, values };
 }
 
 /** "P0" or "01 P0, 02 P2" or "01-03 P0, 04-05 P1" -> one value per frame. */
@@ -164,6 +178,47 @@ const PROC_DEFAULTS = {
   earl_plop: { scaleX: 1.1, scaleY: 0.9 },
   earl_held_side: { rotate: -20 },
 };
+
+// Section 9 column -> the value name the templates' placeholders read (see SLOTS).
+const VALUE_FIELDS = {
+  "pose note": "pose",
+  pose: "pose",
+  facing: "facing",
+  expression: "expression",
+  "face change": "face",
+  "frame clause": "clause",
+  prop: "prop",
+  view: "view",
+  size: "size",
+  colors: "colors",
+  "state change": "change",
+  crop: "crop",
+};
+
+/** Copies the section 9 prompt values onto their frames; a row for no frame, or twice, is an error. */
+function attachValues(shots, tables) {
+  const frames = new Map();
+  for (const s of shots) for (let k = 1; k <= s.frames; k++) frames.set(frameId(s.id, k), [s, k]);
+  for (const t of tables) {
+    const fields = t.columns.slice(1).map((c) => {
+      const f = VALUE_FIELDS[c.toLowerCase()];
+      if (!f) throw new Error(`ART_SHOTLIST section 9 ${t.key}: unknown column "${c}"`);
+      return f;
+    });
+    for (const cells of t.rows) {
+      const hit = frames.get(cells[0]);
+      if (!hit) throw new Error(`ART_SHOTLIST section 9 ${t.key}: no frame "${cells[0]}"`);
+      const [s, k] = hit;
+      if (!(s.templates[k - 1] || "").split("/").includes(t.key))
+        throw new Error(`ART_SHOTLIST section 9 ${t.key}: ${cells[0]} does not use ${t.key}`);
+      if (s.values[k - 1][t.key])
+        throw new Error(`ART_SHOTLIST section 9 ${t.key}: ${cells[0]} twice`);
+      s.values[k - 1][t.key] = Object.fromEntries(
+        fields.map((f, i) => [f, (cells[i + 1] || "").replace(/\.+$/, "").trim()]),
+      );
+    }
+  }
+}
 
 /** Builds the art/shots.json document from a parsed shot list, keeping hand-kept fields of `prev`. */
 export function buildShotsDoc(parsed, prev = null) {
@@ -257,6 +312,7 @@ export function buildShotsDoc(parsed, prev = null) {
       attach: prevShot.attach ?? {},
       target: targetM ? { w: Number(targetM[1]) } : null,
       approved: prevShot.approved ?? [],
+      values: Array.from({ length: frames }, () => ({})),
       row: cells,
     };
     for (let k = 1; k <= frames; k++) {
@@ -266,6 +322,7 @@ export function buildShotsDoc(parsed, prev = null) {
     shots.push(shot);
     byId.set(id, shot);
   }
+  attachValues(shots, parsed.values || []);
   for (const shot of shots) {
     const baseShot = shot.bases[0] ? byId.get(shot.bases[0].replace(/_\d\d$/, "")) : null;
     shot.pose = prevShots.get(shot.id)?.pose ?? poseClass(shot, shot.anchors[0], baseShot);
@@ -338,55 +395,219 @@ export function resolvedAnchor(frame, framesById) {
   return f && f.anchor !== "ovl" ? f.anchor : "gnd";
 }
 
-const EDGES = {
-  "v1-faithful": {
-    lock: "crisp sprite edges like the reference, no soft blur",
-    t1: "Keep the crisp sprite look, just at higher resolution",
-  },
-  smooth: {
-    lock: "smooth clean anti-aliased edges",
-    t1: "Replace the pixelated edges with smooth clean shapes",
-  },
-};
+/** The profile a prompt uses while none is picked: plan Q2's default ("the literal reading of original style"). */
+export const DEFAULT_PROFILE = "v1-faithful";
 
-/** The ready-to-paste prompt for one template of one shot. */
 // A strip (T4) is one wide 16:9 image, so the style lock's square FRAMING line would contradict
 // it, and a small duck in a tall cell imports small (ART_SHOTLIST T4 sizing note).
 const STRIP_FRAMING =
   "FRAMING: wide 16:9 image, one row of frames, every figure whole and not cropped and drawn " +
   "large enough to fill most of the frame height, all on the same ground line.";
 
-export function shotPrompt(doc, shot, key) {
+// T2 asks for the feet on the ground line; a pose aligned in the air (ART_SHOTLIST section 3) says so instead.
+const AIR_ANCHORS = new Set(["ctr", "grip", "hang"]);
+const GROUND_LINE = "Keep his feet on the same ground line and his body centered.";
+const MID_AIR =
+  "He is in mid-air, so his feet do not touch the ground line; keep his body centered on the canvas.";
+
+// Template placeholder -> the section 9 value that fills it.
+const SLOTS = {
+  "POSE NOTE": "pose",
+  POSE: "pose",
+  EXPRESSION: "expression",
+  "right | front | back": "facing",
+  "EYES / LIDS / BROWS / BILL": "face",
+  PROP: "prop",
+  VIEW: "view",
+  "SIZE vs duck": "size",
+  PALETTE: "colors",
+  "STATE CHANGE": "change",
+  CROP: "crop",
+};
+
+const templateKeys = (t) => (t ? t.split("/") : []);
+
+/**
+ * The images a shot is generated as: one per frame and template, except that the T4 frames of a
+ * shot are one strip image with a single prompt.
+ */
+export function promptUnits(shot) {
+  const units = [];
+  let strip = null;
+  for (let k = 1; k <= shot.frames; k++) {
+    for (const template of templateKeys(shot.templates[k - 1])) {
+      if (template === "T4") {
+        strip ??= {
+          key: `${shot.id}:T4`,
+          template,
+          strip: true,
+          frames: [],
+          file: `${shot.id}.png`,
+        };
+        strip.frames.push(k);
+      } else {
+        const id = frameId(shot.id, k);
+        units.push({
+          key: `${id}:${template}`,
+          template,
+          strip: false,
+          frames: [k],
+          file: `${id}.png`,
+        });
+      }
+    }
+  }
+  if (strip) units.push(strip);
+  return units;
+}
+
+/**
+ * The finished, ready-to-paste prompt for one template of one frame (a strip, T4, covers every
+ * frame of the shot): the template with its style lock pasted in, the EDGES wording of the profile
+ * picked, and every placeholder filled from the frame's section 9 values. A value that is missing
+ * leaves its placeholder, which promptProblems reports.
+ */
+export function shotPrompt(doc, shot, key, { frame = 1, profile = null } = {}) {
   const tpl = new Map(doc.templates.map((t) => [t.key, t.body]));
-  const lockKey = shot.kind === "baby" ? "BABY_STYLE_LOCK" : "STYLE_LOCK";
-  let text = tpl.get(key) || "";
-  text = text.replace(/<(BABY )?STYLE LOCK>/g, tpl.get(lockKey) || "");
-  if (key === "T4") text = text.replace(/^FRAMING: square image.*$/m, STRIP_FRAMING);
-  if (doc.profile && EDGES[doc.profile]) {
-    text = text.replace(/<EDGES: v1-faithful = "[^"]*" \| smooth = "[^"]*">/g, (m) =>
-      m.includes("crisp sprite edges") ? EDGES[doc.profile].lock : EDGES[doc.profile].t1,
-    );
-  }
-  const facing = {
-    front: "front",
-    right: "right",
-    back: "back",
-    three_quarter: "three-quarter front-right",
-  }[shot.facing];
-  if (facing) text = text.replace("<right | front | back>", facing);
-  const depicts = shot.row[4].replace(/\*\*/g, "").trim();
-  // A strip prompt (T4) names its frame count and has one "Frame k" clause per frame.
-  if (shot.frames > 1) {
-    text = text.replace("<N>", String(shot.frames));
-    text = text.replace(/Frame 1: <\.\.\.>\.(?: Frame \d+: <\.\.\.>\.)*/, () =>
-      Array.from({ length: shot.frames }, (_, k) => `Frame ${k + 1}: <...>.`).join(" "),
-    );
-  }
-  // The template's own period follows the placeholder, so the description's is dropped.
-  return text.replace(
-    /<(POSE NOTE|POSE|PROP|STATE CHANGE|CROP|EYES \/ LIDS \/ BROWS \/ BILL)>(\.?)/g,
-    (_, _key, dot) => (dot ? `${depicts.replace(/\.+$/, "")}.` : depicts),
+  const lock = tpl.get(shot.kind === "baby" ? "BABY_STYLE_LOCK" : "STYLE_LOCK") || "";
+  const prof = profile || doc.profile || DEFAULT_PROFILE;
+  let text = (tpl.get(key) || "").replace(/<(BABY )?STYLE LOCK>/g, () => lock);
+  text = text.replace(/<EDGES: v1-faithful = "([^"]*)" \| smooth = "([^"]*)">/g, (_, v1, smooth) =>
+    prof === "smooth" ? smooth : v1,
   );
+  const values = shot.values || [];
+  if (key === "T4") {
+    const ks = promptUnits(shot).find((u) => u.strip)?.frames || [];
+    text = text.replace(/^FRAMING: square image.*$/m, STRIP_FRAMING);
+    if (shot.kind === "baby") text = text.replace("this exact duck", "this exact baby duckling");
+    text = text.replace("<N>", String(ks.length));
+    return text.replace(/Frame 1: <\.\.\.>\.(?: Frame \d+: <\.\.\.>\.)*/, () =>
+      ks.map((k, i) => `Frame ${i + 1}: ${values[k - 1]?.T4?.clause || "<...>"}.`).join(" "),
+    );
+  }
+  const v = values[frame - 1]?.[key] || {};
+  if (key === "T2" && AIR_ANCHORS.has(shot.anchors[frame - 1]))
+    text = text.replace(GROUND_LINE, MID_AIR);
+  return text.replace(/<([^<>]+)>/g, (m, name) => (SLOTS[name] && v[SLOTS[name]]) || m);
+}
+
+/** What makes a prompt not copy-ready: placeholders, markdown, doubled periods, notes for us. */
+export function promptProblems(text) {
+  const out = [];
+  if (!text.trim()) out.push("empty");
+  for (const m of text.matchAll(/<[^<>]*>/g)) out.push(`placeholder ${m[0]}`);
+  if (text.includes("`")) out.push("backtick");
+  if (/(?<!\.)\.\.(?!\.)/.test(text)) out.push("doubled period");
+  if (/\.png\b|\bart\/|\bscripts?\/|\bnpm\b|\btauri\b|\blineup\b|\bset in the\b/i.test(text))
+    out.push("file path, tool name or internal note");
+  for (const line of text.split("\n"))
+    if (!/^[A-Z]/.test(line)) out.push(`line not in sentence case: ${line.slice(0, 40)}`);
+  for (const m of text.matchAll(/[.!?]\s+([a-z]\S*)/g))
+    out.push(`sentence not in sentence case: ${m[1]}`);
+  return out;
+}
+
+const BATCH_OF = (kind, tier) =>
+  tier === "P2" ? "E" : kind === "earl" ? (tier === "P0" ? "A" : "C") : tier === "P0" ? "B" : "D";
+
+/** The images to attach to a prompt (ART_SHOTLIST section 5), as frame ids or repo paths. */
+function attachFor(shot, unit) {
+  const k = unit.frames[0];
+  const base = shot.bases[k - 1];
+  const own = (n) => frameId(shot.id, n);
+  switch (unit.template) {
+    case "T1":
+      return [`art/templates/${shot.frames === 1 ? shot.id : own(k)}.png`];
+    case "T2":
+    case "T3":
+    case "T4":
+      return base ? [base] : [];
+    case "T7":
+      return [k > 1 && (!base || !base.startsWith(`${shot.id}_`)) ? own(1) : base || own(1)];
+    default:
+      return ["earl_sit_idle_01", ...(base && !base.startsWith(`${shot.id}_`) ? [base] : [])];
+  }
+}
+
+/**
+ * The machine-readable prompt list (node scripts/art.mjs shots --json): every shot, every frame
+ * with its template, tier and batch, and every prompt finished in both style profiles.
+ */
+export function promptCatalog(doc) {
+  const shots = doc.shots.map((shot) => {
+    const units = promptUnits(shot);
+    const prompts = units.map((u) => {
+      const tier = u.frames.map((k) => shot.tiers[k - 1]).sort()[0];
+      return {
+        key: u.key,
+        template: u.template,
+        strip: u.strip,
+        file: u.file,
+        frames: u.frames.map((k) => frameId(shot.id, k)),
+        tier,
+        batch: BATCH_OF(shot.kind, tier),
+        attach: attachFor(shot, u),
+        text: Object.fromEntries(
+          PROFILES.map((p) => [
+            p,
+            shotPrompt(doc, shot, u.template, { frame: u.frames[0], profile: p }),
+          ]),
+        ),
+      };
+    });
+    const frames = Array.from({ length: shot.frames }, (_, i) => ({
+      id: frameId(shot.id, i + 1),
+      n: i + 1,
+      file: `${frameId(shot.id, i + 1)}.png`,
+      tier: shot.tiers[i],
+      batch: BATCH_OF(shot.kind, shot.tiers[i]),
+      template: shot.templates[i],
+      anchor: shot.anchors[i],
+      base: shot.bases[i],
+      prompts: units.filter((u) => u.frames.includes(i + 1)).map((u) => u.key),
+    }));
+    return {
+      id: shot.id,
+      no: shot.no,
+      kind: shot.kind,
+      section: shot.section,
+      facing: shot.facing,
+      depicts: shot.row[4].replace(/\*\*/g, "").trim(),
+      frames,
+      prompts,
+    };
+  });
+  return {
+    version: 1,
+    source: doc.source,
+    profile: doc.profile,
+    defaultProfile: DEFAULT_PROFILE,
+    profiles: PROFILES,
+    templates: Object.fromEntries(
+      doc.templates
+        .filter((t) => /^T\d$/.test(t.key))
+        .map((t) => [t.key, t.heading.replace(/^T\d+:\s*/, "")]),
+    ),
+    counts: {
+      shots: shots.length,
+      frames: shots.reduce((n, s) => n + s.frames.length, 0),
+      prompts: shots.reduce((n, s) => n + s.prompts.length, 0),
+    },
+    shots,
+  };
+}
+
+/** Every reason a frame is not ready to generate: a frame with no prompt, or a prompt with problems. */
+export function catalogProblems(catalog) {
+  const out = [];
+  for (const shot of catalog.shots) {
+    for (const f of shot.frames) if (!f.prompts.length) out.push(`${f.id}: no prompt (T column)`);
+    for (const p of shot.prompts)
+      for (const [profile, text] of Object.entries(p.text))
+        for (const problem of promptProblems(text))
+          out.push(`prompt ${p.key} (${profile}): ${problem}`);
+  }
+  return out;
 }
 
 const table = (columns, rows) =>
@@ -403,7 +624,7 @@ export function renderShotlist(doc) {
   out.push(
     "Generated by `npm run art:shots` from `art/shots.json`, which is generated from `docs/ART_SHOTLIST.md`. Do not edit this file: edit `docs/ART_SHOTLIST.md` and rerun. `npm run art:check` fails when it is stale.",
     "",
-    `Style profile: ${doc.profile ? `\`${doc.profile}\`` : "not picked yet (plan D20, Q2), so the prompts keep both EDGES wordings"}.`,
+    `Style profile: ${doc.profile ? `\`${doc.profile}\`` : `not picked yet (plan D20, Q2), so the prompts below use the default \`${DEFAULT_PROFILE}\` EDGES wording; \`node scripts/art.mjs shots --json\` has every prompt in both profiles`}.`,
     "",
     "## 5. Prompt templates",
     "",
@@ -433,7 +654,7 @@ export function renderShotlist(doc) {
   }
   out.push("## Per-shot prompts", "");
   out.push(
-    "Each prompt below is the template with the STYLE LOCK (or, for babies, the BABY STYLE LOCK) pasted in and the pose filled from the table. Attach the base named on each shot.",
+    "One finished prompt per image (one per frame, one per strip): the template with the STYLE LOCK (or, for babies, the BABY STYLE LOCK) pasted in and every placeholder filled from section 9 of `docs/ART_SHOTLIST.md`. Attach the images named with each prompt.",
     "",
   );
   for (const s of doc.shots) {
@@ -445,9 +666,17 @@ export function renderShotlist(doc) {
       `#${s.no}, ${[...new Set(s.tiers)].join("/")}, ${s.frames} frame${s.frames > 1 ? "s" : ""}: ${files}. Base: ${s.row[5]}.`,
       "",
     );
-    const keys = [...new Set(s.templates.flatMap((t) => (t ? t.split("/") : [])))];
-    for (const key of keys) {
-      out.push(`${key}:`, "", "```", shotPrompt(doc, s, key), "```", "");
+    for (const u of promptUnits(s)) {
+      const what = u.strip ? `a strip of ${u.frames.length} frames` : u.template;
+      const attach = attachFor(s, u);
+      out.push(
+        `${u.file} (${what}${u.strip ? `, ${u.template}` : ""}). Attach: ${attach.length ? attach.join(", ") : "nothing"}.`,
+        "",
+        "```",
+        shotPrompt(doc, s, u.template, { frame: u.frames[0] }),
+        "```",
+        "",
+      );
     }
   }
   return (

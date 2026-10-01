@@ -43,6 +43,8 @@ export interface Shot {
   attach: Record<string, unknown>;
   target: { w: number } | null;
   approved: (number | string)[];
+  /** Per frame: the ART_SHOTLIST section 9 values of each template the frame uses. */
+  values?: Record<string, Record<string, string>>[];
   row: string[];
   [key: string]: unknown;
 }
@@ -146,9 +148,73 @@ export declare function parseShotlist(md: string): {
     intro: string;
     outro: string;
   }[];
+  values: { key: string; columns: string[]; rows: string[][] }[];
 };
+export declare function buildShotsDoc(
+  parsed: ReturnType<typeof parseShotlist>,
+  prev: ShotsDoc | null,
+): ShotsDoc;
 export declare function renderShotlist(doc: ShotsDoc): string;
-export declare function shotPrompt(doc: ShotsDoc, shot: Shot, key: string): string;
+export declare const DEFAULT_PROFILE: string;
+export interface PromptUnit {
+  key: string;
+  template: string;
+  strip: boolean;
+  /** 1-based frame numbers the image covers (every T4 frame for a strip). */
+  frames: number[];
+  file: string;
+}
+export declare function promptUnits(shot: Shot): PromptUnit[];
+export declare function shotPrompt(
+  doc: ShotsDoc,
+  shot: Shot,
+  key: string,
+  opts?: { frame?: number; profile?: string | null },
+): string;
+export declare function promptProblems(text: string): string[];
+export interface CatalogPrompt {
+  key: string;
+  template: string;
+  strip: boolean;
+  file: string;
+  frames: string[];
+  tier: string;
+  batch: string;
+  attach: string[];
+  text: Record<string, string>;
+}
+export interface CatalogFrame {
+  id: string;
+  n: number;
+  file: string;
+  tier: string;
+  batch: string;
+  template: string | null;
+  anchor: string;
+  base: string | null;
+  prompts: string[];
+}
+export interface PromptCatalog {
+  version: number;
+  source: string;
+  profile: string | null;
+  defaultProfile: string;
+  profiles: string[];
+  templates: Record<string, string>;
+  counts: { shots: number; frames: number; prompts: number };
+  shots: {
+    id: string;
+    no: string;
+    kind: string;
+    section: string;
+    facing: string;
+    depicts: string;
+    frames: CatalogFrame[];
+    prompts: CatalogPrompt[];
+  }[];
+}
+export declare function promptCatalog(doc: ShotsDoc): PromptCatalog;
+export declare function catalogProblems(catalog: PromptCatalog): string[];
 export declare function listFrames(doc: ShotsDoc): Frame[];
 export declare function loadDoc(root: string): ShotsDoc;
 export declare function regenerateDoc(root: string, prev: ShotsDoc | null): ShotsDoc;
