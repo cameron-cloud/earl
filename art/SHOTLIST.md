@@ -422,7 +422,7 @@ BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edg
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
 ```
 
-earl_walk.png (a strip of 3 frames, T4). Attach: nothing.
+earl_walk.png (a strip of 3 frames, T4). Attach: earl_walk_02.
 
 ```
 Make a horizontal sprite strip of 3 frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: near foot stepping forward, far foot back. Frame 2: feet together under his body, passing. Frame 3: far foot stepping forward, near foot back.

@@ -520,8 +520,10 @@ function attachFor(shot, unit) {
       return [`art/templates/${shot.frames === 1 ? shot.id : own(k)}.png`];
     case "T2":
     case "T3":
-    case "T4":
       return base ? [base] : [];
+    case "T4":
+      // A strip with no base outside it (earl_walk) is drawn from the standing side master.
+      return base ? [base] : shot.kind === "earl" ? ["earl_walk_02"] : [];
     case "T7":
       return [k > 1 && (!base || !base.startsWith(`${shot.id}_`)) ? own(1) : base || own(1)];
     default:
