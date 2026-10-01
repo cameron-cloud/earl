@@ -68,7 +68,10 @@ export function isBinary(path, bytes) {
   return bytes.subarray(0, 8192).includes(0);
 }
 
-/** Lists the files git tracks, relative to the repo root. */
+/**
+ * Lists the files git tracks, relative to the repo root.
+ * @param {string} root
+ */
 function trackedFiles(root) {
   const out = execFileSync("git", ["ls-files", "-z", "--cached"], {
     cwd: root,
@@ -87,7 +90,7 @@ function main() {
     try {
       bytes = readFileSync(resolve(root, file));
     } catch (e) {
-      if (e?.code === "ENOENT") continue; // tracked but deleted in the working tree
+      if (/** @type {NodeJS.ErrnoException} */ (e)?.code === "ENOENT") continue; // tracked but deleted in the working tree
       throw e;
     }
     if (isBinary(file, bytes)) continue;
@@ -109,10 +112,19 @@ function main() {
 }
 
 // Compares real paths, so running the script through a symlink or a non-canonical path still
-// scans instead of exiting 0 without checking anything.
-if (
-  process.argv[1] &&
-  realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
-) {
+// scans instead of exiting 0 without checking anything. realpathSync throws when argv[1] is not
+// an existing file (node -e, a test runner, a deleted path); importing must never throw, so that
+// case falls back to comparing the resolved paths.
+export function isEntryPoint(argv1 = process.argv[1]) {
+  if (!argv1) return false;
+  const self = fileURLToPath(import.meta.url);
+  try {
+    return realpathSync(argv1) === realpathSync(self);
+  } catch {
+    return resolve(argv1) === self;
+  }
+}
+
+if (isEntryPoint()) {
   main();
 }

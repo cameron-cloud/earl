@@ -42,6 +42,10 @@ const WORLD = {
 const GROUND_Y = WORLD.screenH - WORLD.taskbarPad - WORLD.size; // physics.ts:49
 const MAX_STEPS = 60 * 12;
 const PATH_EVERY = 3; // record the path every 3 steps (50 ms)
+// F1 threshold (docs/V2_PLAN.md 5.4.3): a release counts as upward only when vy <= -200 px/s,
+// v1's own drop-or-throw speed (stateMachine.ts:169-184). Below it v2 keeps v1's max(vy, 0), so
+// "lift him up, pause, let go" stays a v1 drop and never arms the chute.
+const V_UP_MIN = 200;
 
 interface FlingCase {
   id: string;
@@ -52,8 +56,10 @@ interface FlingCase {
   vy: number;
 }
 
-// Release x and height are chosen so each case shows one v1 rule. Heights of 150 px stay below
-// the parachute's 200 px arming floor (5.5) so M1.3 can compare them with the chute enabled.
+// Release x and height are chosen so each case shows one v1 rule. The 150 px cases sit below the
+// parachute's 200 px arming floor (5.5), so they match with the chute on under any arming rule.
+// The cases released higher than 200 px (300 px and up) are the ones that check F3: a level,
+// downward or slow upward release never arms the chute, so they must still match with it on.
 const CASES: FlingCase[] = [
   {
     id: "slow-drop",
@@ -159,6 +165,30 @@ const CASES: FlingCase[] = [
     vx: 0,
     vy: 0,
   },
+  {
+    id: "upward-under-min",
+    note: "straight up at 195 px/s, just under the 200 px/s upward minimum: a v1 drop in v2 too",
+    x: 900,
+    height: 400,
+    vx: 0,
+    vy: -195,
+  },
+  {
+    id: "upward-over-min",
+    note: "straight up at 205 px/s, just over the upward minimum: v2 rises, then falls (F1)",
+    x: 900,
+    height: 400,
+    vx: 0,
+    vy: -205,
+  },
+  {
+    id: "ceiling",
+    note: "steep up and right: v2 reaches the screen top and reflects at 0.6 (F2)",
+    x: 900,
+    height: 600,
+    vx: 300,
+    vy: -2000,
+  },
 ];
 
 type Variant = "v1" | "v2";
@@ -195,8 +225,9 @@ function run(c: FlingCase, variant: Variant): Metrics {
   sm = updateStateMachine(sm, { type: "DRAG_END", velocityX: c.vx, velocityY: c.vy, speed });
   pos = {
     ...pos,
-    // v1 discards the upward part (line 619). v2 keeps it: the one deliberate physics change.
-    velocityY: variant === "v1" ? Math.max(c.vy, 0) : c.vy,
+    // v1 discards the upward part (line 619). v2 keeps it when the release counts as upward
+    // (vy <= -V_UP_MIN, F1): the one deliberate physics change. A slower upward release is v1's.
+    velocityY: variant === "v2" && c.vy <= -V_UP_MIN ? c.vy : Math.max(c.vy, 0),
     velocityX: c.vx,
     fallStartY: pos.y,
     bounceCount: 0,
@@ -342,8 +373,9 @@ function capture(c: FlingCase) {
     },
     units: "px (CSS / logical), ms, y down; x is the box's left edge; t is from release",
     v1,
-    // What v2 must produce: v1's code with only the deliberate 5.4 changes applied (upward kept,
-    // ceiling reflect, K3 mid-air stop falls instead). Equal to v1 when none of them apply.
+    // What v2 must produce: v1's code with only the deliberate 5.4 changes applied (upward kept
+    // at vy <= -V_UP_MIN, ceiling reflect, K3 mid-air stop falls instead). Equal to v1 when none
+    // of them apply.
     v2Expected: same ? "same-as-v1" : v2,
   };
 }

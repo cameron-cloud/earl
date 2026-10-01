@@ -37,7 +37,7 @@
     {
       "key": "T4",
       "heading": "T4: Cycle strip (walk, run, climb)",
-      "intro": "Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts in `art/SHOTLIST.md` fill in `<N>` and one `Frame k` clause per frame.\n\nSizing: a strip whose frames have no base outside the strip (`earl_walk` and the prop strips) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. Ask for the ducks to fill most of the frame height, and compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.",
+      "intro": "Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts in `art/SHOTLIST.md` fill in `<N>` and one `Frame k` clause per frame.\n\nSizing: a strip based on a master outside the strip (`earl_run` on `earl_walk_02`, `baby_walk` on `baby_sit_01`, `prop_blanket` on `prop_bed_01`) is scaled so its tallest frame matches that master. A strip whose frames have no base outside the strip (`earl_walk`, `prop_bread`, and `prop_fan` and `prop_parachute`, whose later frames base their own earlier ones) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. The generated strip prompts therefore swap the lock's square FRAMING line for a wide 16:9 one that asks for every figure to fill most of the frame height; compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.",
       "body": "Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.\n<STYLE LOCK>"
     },
     {
@@ -360,10 +360,14 @@
         ],
         [
           "drag_up",
-          "earl_held_01 (stretched in code)"
+          "earl_held_up_01"
         ],
         [
-          "drag_down, drag_fast",
+          "drag_down",
+          "earl_held_down_01"
+        ],
+        [
+          "drag_fast",
           "earl_flail_01..02"
         ]
       ],
@@ -1457,6 +1461,106 @@
         "R",
         "1",
         "Dragged sideways fast: body trailing, feet and wings streaming back, eyes squeezed, bill open.",
+        "held",
+        "T2",
+        "grip",
+        "P1"
+      ]
+    },
+    {
+      "no": "19a",
+      "id": "earl_held_up",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "grip"
+      ],
+      "bases": [
+        "earl_held_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "19a",
+        "earl_held_up",
+        "F",
+        "1",
+        "Lifted fast upward (v1's drag_up pose; v1 never shipped the file): body stretched long below the grip, feet dangling straight down, wings pressed to his sides, eyes wide, bill pressed shut.",
+        "held",
+        "T2",
+        "grip",
+        "P1"
+      ]
+    },
+    {
+      "no": "19b",
+      "id": "earl_held_down",
+      "kind": "earl",
+      "section": "6.2",
+      "facing": "front",
+      "frames": 1,
+      "tiers": [
+        "P1"
+      ],
+      "anchors": [
+        "grip"
+      ],
+      "bases": [
+        "earl_held_01"
+      ],
+      "templates": [
+        "T2"
+      ],
+      "canvas": [
+        256,
+        256
+      ],
+      "masterScale": 2,
+      "atlas": true,
+      "pose": "air",
+      "placeholders": {},
+      "fallback": [
+        "earl_held_01",
+        "earl_sit_idle_01"
+      ],
+      "proc": null,
+      "lint": null,
+      "fringy": false,
+      "attachRequired": [],
+      "attach": {},
+      "target": null,
+      "approved": [],
+      "row": [
+        "19b",
+        "earl_held_down",
+        "F",
+        "1",
+        "Pulled fast downward (v1's drag_down pose; v1 never shipped the file): body squashed up toward the grip, feet tucked up, wings flared out for balance, eyes squeezed, bill open.",
         "held",
         "T2",
         "grip",

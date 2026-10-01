@@ -32,6 +32,8 @@ export interface Shot {
   tiers: string[];
   anchors: string[];
   bases: (string | null)[];
+  /** Template keys per frame group, "/"-joined when a row uses several ("T2/T3"). */
+  templates: (string | null)[];
   canvas: [number, number];
   masterScale: number;
   pose: string | null;

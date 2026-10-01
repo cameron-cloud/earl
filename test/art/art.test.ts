@@ -78,6 +78,7 @@ function frameFor(
       tiers: ["P0"],
       anchors: [anchor],
       bases: [null],
+      templates: [],
       canvas: [256, 256],
       masterScale: 2,
       pose: "sit",
@@ -312,8 +313,8 @@ describe("shot list", () => {
   const doc = loadDoc(ROOT);
   const frames = listFrames(doc);
 
-  it("has the 133 frames of ART_SHOTLIST section 8", () => {
-    expect(frames).toHaveLength(133);
+  it("has the 135 frames of ART_SHOTLIST section 8", () => {
+    expect(frames).toHaveLength(135);
     const tiers: Record<string, number> = {};
     const kinds: Record<string, number> = {};
     for (const f of frames) {
@@ -321,8 +322,8 @@ describe("shot list", () => {
       const k = f.shot.kind === "acc" ? "prop" : f.shot.kind;
       kinds[k] = (kinds[k] || 0) + 1;
     }
-    expect(tiers).toEqual({ P0: 63, P1: 59, P2: 11 });
-    expect(kinds).toEqual({ earl: 96, baby: 5, prop: 29, icon: 3 });
+    expect(tiers).toEqual({ P0: 63, P1: 61, P2: 11 });
+    expect(kinds).toEqual({ earl: 98, baby: 5, prop: 29, icon: 3 });
     for (const f of frames) expect(f.id).toMatch(/^(earl|baby|prop|acc|icon)(_[a-z0-9]+)+_\d\d$/);
   });
 
@@ -354,6 +355,49 @@ describe("shot list", () => {
     expect(earl).toMatch(/pale cream body \(#F8E9C7\)/);
   });
 
+  it("has v1's six held poses: still, left/right (mirrored), up, down and fast", () => {
+    const ids = new Set(frames.map((f) => f.id));
+    for (const id of [
+      "earl_held_01",
+      "earl_held_side_01",
+      "earl_held_up_01",
+      "earl_held_down_01",
+      "earl_flail_01",
+    ])
+      expect(ids.has(id), id).toBe(true);
+  });
+
+  it("fills strip prompts (T4) with the frame count, one Frame clause each, and wide framing", () => {
+    const strips = doc.shots.filter((s) =>
+      s.templates.some((t) => (t ? t.split("/") : []).includes("T4")),
+    );
+    expect(strips.map((s) => s.id)).toEqual(expect.arrayContaining(["earl_walk", "baby_walk"]));
+    for (const s of strips) {
+      const p = shotPrompt(doc, s, "T4");
+      expect(p).toContain(`strip of ${s.frames} frames`);
+      expect(p).not.toContain("<N>");
+      expect(p.match(/Frame \d+: <\.\.\.>\./g)).toEqual(
+        Array.from({ length: s.frames }, (_, k) => `Frame ${k + 1}: <...>.`),
+      );
+      expect(p).toMatch(/FRAMING: wide 16:9 image/);
+      expect(p).toMatch(/fill most of the frame height/);
+      expect(p).not.toMatch(/square image/);
+      if (s.kind === "baby") {
+        expect(p).toMatch(/BABY STYLE LOCK/);
+        expect(p).toMatch(/butter-yellow/);
+        expect(p).not.toMatch(/pale cream body/);
+      }
+    }
+    // Single images keep the lock's square framing.
+    expect(shotPrompt(doc, doc.shots[0], "T1")).toMatch(/FRAMING: square image/);
+  });
+
+  it("never doubles a period where a description meets its template", () => {
+    for (const s of doc.shots)
+      for (const key of new Set(s.templates.flatMap((t) => (t ? t.split("/") : []))))
+        expect(shotPrompt(doc, s, key), `${s.id} ${key}`).not.toMatch(/(?<!\.)\.\.(?!\.)/);
+  });
+
   it("maps the v1 sprites that exist to placeholders", () => {
     const withPh = frames.filter((f) => f.placeholder);
     expect(withPh.length).toBe(21);
@@ -364,7 +408,7 @@ describe("shot list", () => {
 describe("pipeline", HEAVY, () => {
   it("builds placeholders from v1 art at 2x and reports coverage", () => {
     const all = computeAll(ROOT);
-    expect(coverageLine(coverage(all))).toBe("final 0/133, placeholder 21");
+    expect(coverageLine(coverage(all))).toBe("final 0/135, placeholder 21");
     const idle = all.results.get("earl_sit_idle_01")!;
     expect(idle.source).toBe("placeholder");
     expect([idle.l1!.width, idle.l2!.width]).toEqual([256, 512]);
@@ -469,8 +513,9 @@ describe("pipeline", HEAVY, () => {
       expect(first.outcomes[0].error).toMatch(/import earl_walk_02 first/);
       expect(listFiles(inbox)).toEqual(["earl_run.png"]);
 
-      // earl_walk (the docs' strip example) and the prop strips have no base; prop_fan's base
-      // is its own first frame. All of them scale like a single raw of the same cell size.
+      // earl_walk (the docs' strip example) has no base and prop_fan's base is its own first
+      // frame, so both scale like a single raw of the same cell size. (prop_blanket bases
+      // prop_bed_01, outside its strip, so it scales to match that master the way earl_run does.)
       writeBytes(join(inbox, "earl_walk.png"), duckStrip(3, 512, [0, -6, 0]));
       writeBytes(join(inbox, "prop_fan.png"), duckStrip(3, 512));
       const second = await run();
