@@ -22,7 +22,9 @@ import {
   attachExtraRows,
   buildShotsDoc,
   listFrames,
+  catalogProblems,
   parseShotlist,
+  promptCatalog,
   renderShotlist,
   resolvedAnchor,
 } from "./shots.mjs";
@@ -759,6 +761,7 @@ export function checkProject(root, all) {
   const shotlistFile = path.join(root, PATHS.shotlist);
   if (!fs.existsSync(shotlistFile) || fs.readFileSync(shotlistFile, "utf8") !== renderShotlist(doc))
     errors.push("art/SHOTLIST.md is stale: run npm run art:shots");
+  for (const p of catalogProblems(promptCatalog(doc))) errors.push(p);
   const seen = new Set();
   for (const f of all.frames) {
     if (seen.has(f.id)) errors.push(`duplicate frame id ${f.id}`);

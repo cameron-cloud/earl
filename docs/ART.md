@@ -37,6 +37,7 @@ All commands take `--root <dir>` (default: the repo root).
 | `npm run art:check` | Everything `art:build` checks, plus the project checks below, and writes the contact sheet. Exits non-zero on any ERR. CI runs it. |
 | `npm run art:status` | Per tier, per shot, per frame status with lint codes, then the coverage report. |
 | `npm run art:shots` | Regenerates `art/shots.json` and `art/SHOTLIST.md` from `docs/ART_SHOTLIST.md`. Run it after editing the shot list; `art:check` and a unit test fail while either file is stale. |
+| `node scripts/art.mjs shots --json` | Prints every shot, frame and finished prompt as JSON (see `art/shots.json` below). Read-only: it writes nothing. |
 | `npm run art:templates` | Writes framing templates (safe area, baseline, anchor) per canvas to `art/templates/` (gitignored), for image-to-image prompts. |
 
 ## The inbox
@@ -174,8 +175,36 @@ source. A few fields are **hand-kept** and survive regeneration: `approved`, `at
 (id, tier, canvas, anchors, templates, placeholders, prompts) is regenerated. The file is
 machine-written JSON and is excluded from Prettier on purpose.
 
-`art/SHOTLIST.md` is the generated, per-shot view of the same data with every prompt fully
-expanded (templates filled in), ready to paste into a generator.
+`art/SHOTLIST.md` is the generated, per-shot view of the same data with every prompt finished,
+ready to paste into a generator: one prompt per image, so one per frame, except that the T4 frames
+of a shot are one strip image with one prompt. Each prompt is the section 5 template with its style
+lock pasted in (the BABY STYLE LOCK for `baby_*` shots, also on T3 face edits) and every placeholder
+filled from the per-frame values in ART_SHOTLIST section 9 (`values` in `art/shots.json`). While no
+style profile is set, the markdown uses the `v1-faithful` EDGES wording (plan Q2's default).
+`art:check` and the unit tests fail on any prompt that still has a placeholder, a backtick, a
+doubled period, a file name or a sentence that does not start with a capital.
+
+### Machine-readable prompts: `node scripts/art.mjs shots --json`
+
+Prints every prompt as JSON on stdout, for the art guide page builder:
+`node scripts/art.mjs shots --json > prompts.json`. It is read-only: the catalog is built in memory
+from `docs/ART_SHOTLIST.md` as it is now, so it is always current, and it never writes
+`art/shots.json` or `art/SHOTLIST.md`. When those are stale it says so on stderr (run
+`npm run art:shots`); stdout stays pure JSON. The shape (typed as `PromptCatalog`
+in `scripts/art/lib/index.d.mts`):
+
+- `profile` (the picked style profile or `null`), `defaultProfile`, `profiles`, `templates`
+  (template key to name), and `counts` (`shots`, `frames`, `prompts`: 101, 135 and 130 today).
+- `shots[]`: `id`, `no`, `kind`, `section`, `facing`, `depicts` (the shot list text, not for
+  pasting), then:
+  - `frames[]`: `id`, `n`, `file`, `tier` (P0-P2), `batch` (A-E, section 8: A is P0 Earl, B P0
+    props and icons, C P1 Earl, D P1 props and babies, E all P2), `template` (the T column for
+    that frame, `T1/T4` when it can be drawn either way), `anchor`, `base`, and `prompts` (the
+    keys of the prompts that draw it).
+  - `prompts[]`: `key` (`<frame>:<T>`, or `<shot>:T4` for a strip), `template`, `strip`, `file`
+    (the raw to save, `<shot>.png` for a strip), `frames`, `tier` and `batch` (the most urgent of
+    its frames), `attach` (frame ids, or the `art/templates` image for a T1 redraw), and `text`:
+    the finished prompt per profile (`v1-faithful` and `smooth`).
 
 ## `sprites.gen.ts`
 

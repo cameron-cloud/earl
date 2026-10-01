@@ -7,6 +7,7 @@ import {
   analyzeFrame,
   blit,
   build,
+  buildShotsDoc,
   checkFrame,
   computeAll,
   coverage,
@@ -23,9 +24,13 @@ import {
   loadDoc,
   magentaPixels,
   pack,
+  catalogProblems,
   parseShotlist,
+  promptCatalog,
+  promptUnits,
   regenerateDoc,
   renderShotlist,
+  resolvedAnchor,
   rimStats,
   shotPrompt,
   softKey,
@@ -37,6 +42,7 @@ import {
   type Img,
 } from "../../scripts/art/lib/index.mjs";
 import {
+  runNode,
   ROOT,
   copy,
   envFlag,
@@ -309,6 +315,8 @@ describe("alignment", HEAVY, () => {
   });
 });
 
+const regenerateFrom = (md: string) => buildShotsDoc(parseShotlist(md), null);
+
 describe("shot list", () => {
   const doc = loadDoc(ROOT);
   const frames = listFrames(doc);
@@ -343,16 +351,28 @@ describe("shot list", () => {
     );
   });
 
+  // Every prompt of a shot, finished for the default profile.
+  const promptsOf = (s: (typeof doc.shots)[number]) =>
+    promptUnits(s).map((u) => ({
+      ...u,
+      text: shotPrompt(doc, s, u.template, { frame: u.frames[0] }),
+    }));
+  const prompt = (key: string) => {
+    for (const s of doc.shots) for (const p of promptsOf(s)) if (p.key === key) return p.text;
+    throw new Error(`no prompt ${key}`);
+  };
+
   it("gives every baby prompt the baby body colour, never Earl's cream", () => {
     const babies = doc.shots.filter((s) => s.kind === "baby");
     expect(babies.length).toBe(4);
-    for (const s of babies) {
-      const p = shotPrompt(doc, s, "T5");
-      expect(p).toMatch(/butter-yellow/);
-      expect(p).not.toMatch(/pale cream body/);
-    }
-    const earl = shotPrompt(doc, doc.shots[0], "T1");
-    expect(earl).toMatch(/pale cream body \(#F8E9C7\)/);
+    for (const s of babies)
+      for (const p of promptsOf(s)) {
+        expect(p.text, p.key).toMatch(/butter-yellow/);
+        expect(p.text, p.key).toMatch(/BABY STYLE LOCK/);
+        expect(p.text, p.key).not.toMatch(/pale cream body/);
+      }
+    expect(prompt("baby_sit_01:T5")).toMatch(/butter-yellow fluff \(#FFE68A base/);
+    expect(prompt("earl_sit_idle_01:T1")).toMatch(/pale cream body \(#F8E9C7\)/);
   });
 
   it("has v1's six held poses: still, left/right (mirrored), up, down and fast", () => {
@@ -367,35 +387,189 @@ describe("shot list", () => {
       expect(ids.has(id), id).toBe(true);
   });
 
-  it("fills strip prompts (T4) with the frame count, one Frame clause each, and wide framing", () => {
+  it("fills strip prompts (T4) with the frame count, every Frame clause, and wide framing", () => {
     const strips = doc.shots.filter((s) =>
       s.templates.some((t) => (t ? t.split("/") : []).includes("T4")),
     );
-    expect(strips.map((s) => s.id)).toEqual(expect.arrayContaining(["earl_walk", "baby_walk"]));
+    expect(strips.map((s) => s.id)).toEqual([
+      "earl_walk",
+      "earl_run",
+      "earl_climb",
+      "earl_carry_overhead",
+      "baby_walk",
+    ]);
     for (const s of strips) {
       const p = shotPrompt(doc, s, "T4");
       expect(p).toContain(`strip of ${s.frames} frames`);
-      expect(p).not.toContain("<N>");
-      expect(p.match(/Frame \d+: <\.\.\.>\./g)).toEqual(
-        Array.from({ length: s.frames }, (_, k) => `Frame ${k + 1}: <...>.`),
-      );
+      expect(p.match(/Frame \d+: [a-z][^.<]+\./g)?.length, s.id).toBe(s.frames);
       expect(p).toMatch(/FRAMING: wide 16:9 image/);
       expect(p).toMatch(/fill most of the frame height/);
       expect(p).not.toMatch(/square image/);
-      if (s.kind === "baby") {
-        expect(p).toMatch(/BABY STYLE LOCK/);
-        expect(p).toMatch(/butter-yellow/);
-        expect(p).not.toMatch(/pale cream body/);
-      }
     }
+    expect(prompt("earl_run:T4")).toContain(
+      "Frame 2: airborne, body leaning forward, wings flared back, both feet tucked up under him.",
+    );
+    expect(prompt("baby_walk:T4")).toContain("of this exact baby duckling");
     // Single images keep the lock's square framing.
-    expect(shotPrompt(doc, doc.shots[0], "T1")).toMatch(/FRAMING: square image/);
+    expect(prompt("earl_sit_idle_01:T1")).toMatch(/FRAMING: square image/);
   });
 
-  it("never doubles a period where a description meets its template", () => {
+  it("finishes every prompt: no placeholder, backtick, doubled period or note, in both profiles", () => {
+    const catalog = promptCatalog(doc);
+    expect(catalogProblems(catalog)).toEqual([]);
+    for (const s of catalog.shots)
+      for (const p of s.prompts)
+        for (const text of Object.values(p.text)) {
+          expect(text, p.key).not.toMatch(/[<>`]/);
+          expect(text, p.key).not.toMatch(/(?<!\.)\.\.(?!\.)/);
+          expect(text, p.key).not.toMatch(/set in the lineup|tauri|\.png/i);
+          expect(text, p.key).not.toMatch(/\bno dithering\. crisp/);
+        }
+    expect(catalog.shots[0].prompts[0].text["v1-faithful"]).toMatch(
+      /no dithering\. Crisp sprite edges like the reference, no soft blur\./,
+    );
+    expect(catalog.shots[0].prompts[0].text.smooth).toMatch(
+      /no dithering\. Smooth clean anti-aliased edges\./,
+    );
+  });
+
+  it("gives every frame its own prompt, with the old guide's values filled in", () => {
     for (const s of doc.shots)
-      for (const key of new Set(s.templates.flatMap((t) => (t ? t.split("/") : []))))
-        expect(shotPrompt(doc, s, key), `${s.id} ${key}`).not.toMatch(/(?<!\.)\.\.(?!\.)/);
+      for (let k = 1; k <= s.frames; k++)
+        expect(
+          promptUnits(s).some((u) => u.frames.includes(k)),
+          `${s.id} ${k}`,
+        ).toBe(true);
+    expect(prompt("earl_tilt_01:T2")).toContain(
+      "Expression: curious, eyes extra glossy, bill slightly open.",
+    );
+    const ball = prompt("prop_ball_01:T6");
+    expect(ball).toContain("Colors: teal #3FA7A0 with a cream #FBF3DD stripe.");
+    expect(ball).toContain(
+      "Size: about 84 px across next to Earl's 212 px height, a bit over half his width.",
+    );
+    expect(ball).toContain("View: front.");
+    expect(prompt("earl_held_down_01:T2")).toContain("pulled fast downward by the scruff");
+    expect(prompt("prop_bread_02:T7")).toContain(
+      "Change ONLY: take one bite out of the top corner",
+    );
+  });
+
+  it("describes only its own frame in each frame's prompt (Master #2 is earl_walk_02)", () => {
+    const master2 = prompt("earl_walk_02:T1");
+    expect(master2).toContain("feet together under his body");
+    expect(master2).not.toMatch(
+      /near foot stepping forward|far foot stepping forward|Master|\b0\d:/,
+    );
+    for (const s of doc.shots.filter((x) => x.frames > 1))
+      for (const p of promptsOf(s).filter((u) => !u.strip))
+        expect(p.text, p.key).not.toMatch(/\b0\d[:\s-]/);
+  });
+
+  it("puts the STYLE LOCK on face edits (T3) and keeps air poses off the ground line", () => {
+    for (const s of doc.shots)
+      for (const p of promptsOf(s).filter((u) => u.template === "T3"))
+        expect(p.text, p.key).toMatch(/\nSTYLE LOCK: .*\nBACKGROUND: .*\nFRAMING: square image/);
+    // Section 3: ctr, grip and hang poses, and face edits of them, are aligned in the air.
+    const byId = new Map(frames.map((f) => [f.id, f]));
+    const air = new Set(
+      frames
+        .filter((f) => ["ctr", "grip", "hang"].includes(resolvedAnchor(f, byId)))
+        .map((f) => f.id),
+    );
+    const airPrompts = doc.shots.flatMap((s) =>
+      promptsOf(s).filter((p) =>
+        p.frames.some((k) => air.has(`${s.id}_${String(k).padStart(2, "0")}`)),
+      ),
+    );
+    const keys = airPrompts.map((p) => p.key);
+    for (const key of [
+      "earl_held_01:T1",
+      "earl_held_side_01:T2",
+      "earl_held_up_01:T2",
+      "earl_held_down_01:T2",
+      "earl_held_grumpy_01:T3",
+      "earl_flail_01:T2",
+      "earl_flail_02:T2",
+      "earl_tumble_01:T2",
+      "earl_bounce_star_01:T2",
+      "earl_bounce_tuck_01:T2",
+      "earl_hang_01:T2",
+      "earl_hang_alarm_01:T3",
+    ])
+      expect(keys).toContain(key);
+    for (const p of airPrompts) {
+      expect(p.text, p.key).not.toContain("ground line");
+      expect(p.text, p.key).toMatch(
+        p.template === "T2"
+          ? /He is in mid-air, not standing on anything; .*\nFRAMING: square image, whole duck visible and not cropped, same size as the reference, body centered on the canvas\.$/s
+          : /\nFRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, in mid-air like the reference\.$/,
+      );
+    }
+    // A pose on the ground keeps both ground-line sentences, and a climb strip shares a height.
+    const tilt = prompt("earl_tilt_01:T2");
+    expect(tilt).toContain("Keep his feet on the same ground line and his body centered.");
+    expect(tilt).toMatch(/\nFRAMING: square image.*feet on the same ground line\.$/);
+    const climb = prompt("earl_climb:T4");
+    expect(climb).not.toContain("ground line");
+    expect(climb).toContain("every frame the same size and at the same height.");
+    expect(climb).toMatch(/\nFRAMING: wide 16:9 image.*all at the same height\.$/);
+  });
+
+  it("emits every shot, frame and finished prompt as JSON (art.mjs shots --json)", () => {
+    const run = runNode(["scripts/art.mjs", "shots", "--json"], ROOT);
+    expect(run.stderr).toBe("");
+    expect(run.status).toBe(0);
+    const json = JSON.parse(run.stdout);
+    expect(json.counts).toEqual({ shots: 101, frames: 135, prompts: 130 });
+    expect(json.shots).toHaveLength(101);
+    const ids = json.shots.flatMap((s: { frames: { id: string }[] }) => s.frames.map((f) => f.id));
+    expect(ids).toEqual(frames.map((f) => f.id));
+    const byKey = new Map<string, { text: Record<string, string>; attach: string[] }>();
+    for (const s of json.shots) for (const p of s.prompts) byKey.set(p.key, p);
+    for (const s of json.shots)
+      for (const f of s.frames) {
+        expect(f.prompts.length, f.id).toBeGreaterThan(0);
+        expect(["A", "B", "C", "D", "E"]).toContain(f.batch);
+        expect(f.tier).toMatch(/^P[0-2]$/);
+        expect(f.template).toMatch(/^T\d(\/T\d)?$/);
+        for (const key of f.prompts) expect(byKey.get(key)?.text["v1-faithful"], key).toBeTruthy();
+      }
+    // Every image to attach is named once (baby_sit_01 and the icons are drawn on earl_sit_idle_01).
+    for (const s of json.shots)
+      for (const p of s.prompts) expect(new Set(p.attach).size, p.key).toBe(p.attach.length);
+    const attachOf = (key: string) => byKey.get(key)?.attach;
+    expect(attachOf("baby_sit_01:T5")).toEqual(["earl_sit_idle_01"]);
+    expect(attachOf("icon_app_01:T8")).toEqual(["earl_sit_idle_01"]);
+    expect(json.shots[0].frames[0]).toMatchObject({
+      id: "earl_sit_idle_01",
+      tier: "P0",
+      batch: "A",
+    });
+    expect(json).toEqual(JSON.parse(JSON.stringify(promptCatalog(doc))));
+  });
+
+  it("prints the JSON without writing the generated files (read-only for the page builder)", () => {
+    const dir = makeTempDir("earl-shots-json-");
+    try {
+      copy(join(ROOT, "docs/ART_SHOTLIST.md"), join(dir, "docs/ART_SHOTLIST.md"));
+      const run = runNode(["scripts/art.mjs", "shots", "--json", "--root", dir], ROOT);
+      expect(run.status).toBe(0);
+      expect(run.stderr).toMatch(/is stale; run npm run art:shots/);
+      expect(JSON.parse(run.stdout).counts).toEqual({ shots: 101, frames: 135, prompts: 130 });
+      expect(exists(join(dir, "art/shots.json"))).toBe(false);
+      expect(exists(join(dir, "art/SHOTLIST.md"))).toBe(false);
+    } finally {
+      removeDir(dir);
+    }
+  });
+
+  it("rejects prompt values for a frame or template that does not exist", () => {
+    const md = readText(join(ROOT, "docs/ART_SHOTLIST.md"));
+    const typo = md.replace("| earl_tilt_01 | sitting", "| earl_tilt_09 | sitting");
+    expect(() => regenerateFrom(typo)).toThrow(/no frame "earl_tilt_09"/);
+    const wrong = md.replace("| baby_sit_01 | sitting", "| earl_tilt_01 | sitting");
+    expect(() => regenerateFrom(wrong)).toThrow(/earl_tilt_01 does not use T5/);
   });
 
   it("maps the v1 sprites that exist to placeholders", () => {

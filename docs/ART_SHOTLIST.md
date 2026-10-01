@@ -181,7 +181,7 @@ These measurements come from the current files:
 ### STYLE LOCK (paste at the end of every duck prompt)
 
 ```
-STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
+STYLE LOCK: Match the attached reference duck exactly - same character, proportions, colors, soft shading and eye style. Earl is a plush toy duckling: pale cream body (#F8E9C7), warm tan shading (#EDD4A7, #E5C69A), a slightly darker tan rim along his edges (#CCA982), a soft cream-white gloss oval centered on top of his head (#FBF3DD). Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Open eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. Oversized round head (about 2/3 of his height), chunky pear-shaped body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "Crisp sprite edges like the reference, no soft blur" | smooth = "Smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, same size and same position on the canvas as the reference, feet on the same ground line.
 ```
@@ -191,7 +191,7 @@ FRAMING: square image, whole duck visible and not cropped, same size and same po
 The STYLE LOCK describes Earl's pale cream body, which contradicts the butter-yellow baby. Every `baby_*` prompt (T5, and T4 strips of babies) ends with this block instead.
 
 ```
-BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "crisp sprite edges like the reference, no soft blur" | smooth = "smooth clean anti-aliased edges">.
+BABY STYLE LOCK: Match the attached reference duck's art style exactly - same soft shading, eye style and feet - but NOT his body colour or size. This is Earl's baby sibling, a plush toy duckling: butter-yellow fluffy body (#FFE68A), warm yellow shading (#F2CF6A), a slightly darker yellow rim along its edges (#E0B94F), a soft pale-yellow gloss oval on top of its head (#FFF4C2), and a small tuft of three feathers on top of the head. NO pale cream or tan on the body. Orange bill and feet (#EA8638, light #EE964A, shade #C97F45, crease lines #8A5333). Open eyes are solid glossy black circles with one large white sparkle in the upper part and one tiny sparkle at the lower edge. About half Earl's height, oversized round head (about 2/3 of its height) with slightly bigger eyes, round little body, tiny rounded wing nubs, short stubby three-toed webbed feet. Soft cel shading, light from straight above-front. NO black or dark outlines, no grey halo, no cast shadow, no texture, no dithering. <EDGES: v1-faithful = "Crisp sprite edges like the reference, no soft blur" | smooth = "Smooth clean anti-aliased edges">.
 BACKGROUND: one flat, pure, uniform magenta #FF00FF filling the entire image edge to edge. No floor, shadow, gradient, vignette, border, text or watermark. No motion lines, stars, hearts, Zzz, sweat drops, sparkles or any effects.
 FRAMING: square image, whole duck visible and not cropped, drawn small at the same world scale as the reference, feet on the same ground line.
 ```
@@ -216,15 +216,16 @@ Edit this image. Keep the same duck, same size, same art style and colors, same 
 
 ### T3: Expression only (`ovl`)
 
-Attach the base.
+Attach the base. The STYLE LOCK goes at the end here too: an edit can still repaint the background, add outlines to new lids or brows, or add effects (Zzz, tears as drops, hearts), and the lock forbids all three while its FRAMING line repeats "same size and same position".
 
 ```
 Edit this image. Change ONLY his face: <EYES / LIDS / BROWS / BILL>. Do not move, resize or redraw anything else - head outline, body, wings, feet, colors and background must stay identical.
+<STYLE LOCK>
 ```
 
 ### T4: Cycle strip (walk, run, climb)
 
-Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts in `art/SHOTLIST.md` fill in `<N>` and one `Frame k` clause per frame.
+Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts fill in `<N>` and one `Frame k` clause per frame from section 9.
 
 Sizing: a strip based on a master outside the strip (`earl_run` on `earl_walk_02`, `baby_walk` on `baby_sit_01`, `prop_blanket` on `prop_bed_01`) is scaled so its tallest frame matches that master. A strip whose frames have no base outside the strip (`earl_walk`, `prop_bread`, and `prop_fan` and `prop_parachute`, whose later frames base their own earlier ones) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. The generated strip prompts therefore swap the lock's square FRAMING line for a wide 16:9 one that asks for every figure to fill most of the frame height; compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.
 
@@ -395,7 +396,7 @@ Until these arrive, the swarm uses a small tinted Earl.
 | # | Shot | Facing | Frames | Depicts / key details | Base | T | Anchor | Tier |
 |---|---|---|---|---|---|---|---|---|
 | 69 | baby_sit | F | 1 | Earl's baby sibling sitting: about 55% of his height, butter yellow, head tuft. | sit_idle | T5 | gnd | P1 |
-| 70 | baby_walk | R | 2 | Two-frame waddle; the bob is added in code. | baby_sit | T5/T4 | gnd | P1 |
+| 70 | baby_walk | R | 2 | Two-frame waddle; the bob is added in code. | baby_sit | T4 | gnd | P1 |
 | 71 | baby_peep | F | 1 | Bill open peeping, wings up. | baby_sit | T5 | gnd | P1 |
 | 72 | baby_sleep | F | 1 | Curled up asleep. | baby_sit | T5 | gnd | P2 |
 
@@ -403,17 +404,17 @@ Until these arrive, the swarm uses a small tinted Earl.
 
 | # | Shot | Facing | Frames | Depicts / key details | Base | T | Canvas | Tier |
 |---|---|---|---|---|---|---|---|---|
-| 73 | prop_parachute | P | 5 | 01: crumpled fabric bursting out. 02: half open, stretched tall, rippled. 03: fully open dome with red (#D9483B) and cream (#FBF3DD) panels, about 320 wide. 04: deflating, sides sagging. 05: collapsed heap on the ground (he wriggles out from under it). **No strings** (drawn in code). Attach points: `hemL`, `hemR` (set in the lineup). | - (04-05: parachute_03) | T6/T7 | 384x256 | 01-03 P0, 04-05 P1 |
+| 73 | prop_parachute | P | 5 | 01: crumpled fabric bursting out. 02: half open, stretched tall, rippled. 03: fully open dome with red (#D9483B) and cream (#FBF3DD) panels, about 320 wide. 04: deflating, sides sagging. 05: collapsed heap on the ground (he wriggles out from under it). **No strings** (drawn in code). Attach points: `hemL`, `hemR` (set in the lineup). | - (04-05: parachute_03) | 01-03 T6, 04-05 T7 | 384x256 | 01-03 P0, 04-05 P1 |
 | 75 | prop_bed | P | 1 | Small light-wood bed (#C89B6D), headboard on the left, mattress, white pillow. About 340 long. Back layer. Attach line: `mattress` (where he lies). | - | T6 | 384x192 | P0 |
 | 76 | prop_blanket | P | 2 | Same canvas as the bed. Blue gingham (#8DB6E0 / #F8F4EA). 01: flat on the empty bed. 02: tucked over a duckling-shaped bump, pillow area left open. Front layer. | bed_01 | T7 | 384x192 | P0 |
-| 77 | prop_bread | P | 4 | Bread slice (crust #C98A43, crumb #F2DDB0), about 96 wide. 01 whole, 02 one bite, 03 half, 04 crust scraps. Crumbs are drawn in code. | - | T6/T7 | 128x128 | P0 |
+| 77 | prop_bread | P | 4 | Bread slice (crust #C98A43, crumb #F2DDB0), about 96 wide. 01 whole, 02 one bite, 03 half, 04 crust scraps. Crumbs are drawn in code. | - | 01 T6, 02-04 T7 | 128x128 | P0 |
 | 78 | prop_ball | P | 1 | Rubber ball, teal (#3FA7A0) with a cream stripe so the spin reads, about 84 across. The game rotates and squashes it. | - | T6 | 128x128 | P0 |
-| 79 | prop_seeds | P | 3 | Small pile of mixed brown and tan seeds. 01 full, 02 half, 03 a few scattered. | - | T6/T7 | 128x64 | P1 |
-| 80 | prop_trampoline | P | 2 | Mini trampoline, three-quarter front view: navy mat (#2F3E57), red padded rim, silver legs, about 290 wide. 01 at rest, 02 mat pressed down. Attach line: `mat`. | - | T6/T7 | 320x128 | P1 |
+| 79 | prop_seeds | P | 3 | Small pile of mixed brown and tan seeds. 01 full, 02 half, 03 a few scattered. | - | 01 T6, 02-03 T7 | 128x64 | P1 |
+| 80 | prop_trampoline | P | 2 | Mini trampoline, three-quarter front view: navy mat (#2F3E57), red padded rim, silver legs, about 290 wide. 01 at rest, 02 mat pressed down. Attach line: `mat`. | - | 01 T6, 02 T7 | 320x128 | P1 |
 | 81a | prop_tub_back | P | 1 | Small galvanized washtub (#9AA9B5): the rear rim and the opaque water surface (#8FD3F0), a few white bubbles. Earl sits in front of this layer. Attach line: `waterline`. | - | T6 | 320x192 | P1 |
 | 81b | prop_tub_front | P | 1 | The same tub's front wall and front rim only, lined up exactly with `prop_tub_back_01` (draw it as an edit of the back layer). It covers Earl's lower body. | tub_back | T7 | 320x192 | P1 |
-| 82 | prop_rubber_duck | P (R) | 2 | Classic glossy vinyl rubber duck, saturated #FFD21F (contrasts with Earl's cream), orange bill #FF7A1A, painted dot eye, about 75% of Earl's height, duck framing (ground line 240). 02: squeezed mid-squeak, bill open. | - | T6/T7 | 256x256 | P1 |
-| 83 | prop_fan | P (R) | 3 | Small retro desk fan, mint body (#9ED9C3), silver cage, three-quarter view facing right, about Earl's height. Three blade positions, opaque (the blur is added in code). Attach point: `hub`. | fan_01 | T6/T7 | 256x256 | P1 |
+| 82 | prop_rubber_duck | P (R) | 2 | Classic glossy vinyl rubber duck, saturated #FFD21F (contrasts with Earl's cream), orange bill #FF7A1A, painted dot eye, about 75% of Earl's height, duck framing (ground line 240). 02: squeezed mid-squeak, bill open. | - | 01 T6, 02 T7 | 256x256 | P1 |
+| 83 | prop_fan | P (R) | 3 | Small retro desk fan, mint body (#9ED9C3), silver cage, three-quarter view facing right, about Earl's height. Three blade positions, opaque (the blur is added in code). Attach point: `hub`. | fan_01 | 01 T6, 02-03 T7 | 256x256 | P1 |
 | 84 | prop_umbrella_open | P | 1 | Open umbrella, sky blue (#6FA8DC) with cream trim, J-shaped handle, about 300 wide. Used as a tent he hides under and as the parasol ride. Attach point: `handle`. | - | T6 | 384x384 | P1 |
 | 85 | prop_umbrella_closed | P | 1 | Furled umbrella lying on the ground (the placed-item state). | umbrella_open | T6 | 256x96 | P1 |
 | 86 | acc_party_hat | P | 1 | Tiny cone party hat, bright stripes, pom-pom. Its anchor is the base centre; the game puts it on any pose's head point on birthdays (**replaces birthday.png**). | - | T6 | 128x128 | P0 |
@@ -544,3 +545,189 @@ Until these arrive, the swarm uses a small tinted Earl.
 - **Batch C:** P1 Earl expressions and habits.
 - **Batch D:** P1 props and babies.
 - **Batch E:** P2.
+
+---
+
+## 9. Prompt values
+
+The values that turn each section 5 template into a finished prompt, one row per frame and template (a frame drawn two ways, like `earl_walk_01` as a T1 redraw or inside the T4 strip, has a row in both tables). `npm run art:shots` copies them into `art/shots.json`, and the generated prompts in `art/SHOTLIST.md` and `node scripts/art.mjs shots --json` are built from them. `art:check` and the unit tests fail when a frame lacks a value its template needs, or a row names a frame or template that does not exist.
+
+How to write a value: a plain phrase in lower case with no final period (the template supplies the punctuation), no backticks, file names or tool names, since it is pasted into the text you copy. Facing (T2) starts with the shot's facing (front, right, back or three-quarter). Mid-air poses (anchor ctr, grip or hang, and face edits of them) need no note about the ground line: the generator swaps T2's ground-line sentence for a mid-air one and the lock's FRAMING line for one with no ground line (centered for a new pose, the reference's position for a redraw or face edit). A climb strip (anchor wall) asks for its frames at the same height instead of on the same ground line. Strip rows (T4) give each frame's clause; the generator adds the frame count, the 16:9 framing and, for a baby, the BABY STYLE LOCK.
+
+### T1 values: Master or v1 redraw
+
+| Frame | Pose note |
+|---|---|
+| earl_sit_idle_01 | sitting facing front, soles of both feet facing the viewer with dark toe lines, tiny wing nubs down at belly height, neutral open eyes, closed smiling bill |
+| earl_sit_side_01 | sitting side view facing right, feet poking forward, wing nub at his side, neutral open eye, closed bill |
+| earl_walk_01 | walking side view facing right, near foot stepping forward, far foot back, neutral open eye, closed bill |
+| earl_walk_02 | standing side view facing right, feet together under his body (the passing frame of a walk), tiny wing nub at his side, neutral open eye, closed bill |
+| earl_walk_03 | walking side view facing right, far foot stepping forward, near foot back, neutral open eye, closed bill |
+| earl_hop_squat_01 | crouched low facing front, body squashed down, ready to spring into a hop |
+| earl_hop_air_01 | in the air mid-hop facing front, wings raised up, feet dangling, happy expression |
+| earl_land_squish_01 | squashed flat like a pancake after landing, facing front, eyes wide, feet splayed out to the sides |
+| earl_held_01 | dangling in the air by the scruff of his neck, top of his head at the top center of the image, big surprised eyes, feet hanging down, wings slightly out |
+| earl_sleep_sit_01 | sitting slumped asleep, facing front, head drooped to one side, eyes closed, bill tucked down |
+
+### T2 values: New pose
+
+| Frame | Pose | Facing | Expression |
+|---|---|---|---|
+| earl_stand_front_01 | standing up, feet flat under his body with toes pointing forward, wing nubs relaxed at his sides | front | neutral, eyes open, closed bill smile |
+| earl_turn_01 | standing, body turned three-quarters toward the viewer's right, halfway between the front view and the right side view | three-quarter front-right | neutral, eyes open, closed bill |
+| earl_sit_to_stand_01 | halfway between sitting and standing: bottom lifting off the ground, feet planted flat under him, tiny wings held out to the sides for balance | front | neutral and focused, eyes open, closed bill |
+| earl_plop_01 | just plopped down to sit hard: body squashed about 10% shorter and wider, both feet flung up in the air | front | eyes squeezed shut |
+| earl_stretch_01 | stretching up on tiptoes, both wings raised high, body about 8% taller | front | eyes shut, bill slightly open |
+| earl_yawn_01 | sitting, starting to yawn | front | bill starting to open, eyes half shut |
+| earl_yawn_02 | sitting, mid-yawn, both wings lifted a little | front | bill wide open in a big yawn, eyes squeezed shut |
+| earl_tada_01 | standing proudly, chest out, both wings flung wide | front | smug closed-eye smile |
+| earl_held_side_01 | held by the scruff and dragged fast to the right: the top of his head stays at the top center, his body trails out behind to the left, feet and wings streaming back | right | eyes squeezed shut, bill open |
+| earl_held_up_01 | lifted fast upward by the scruff: the top of his head stays at the top center, his body stretched long below it, feet dangling straight down, wings pressed flat to his sides | front | eyes wide, bill pressed shut |
+| earl_held_down_01 | pulled fast downward by the scruff: the top of his head stays at the top center, his body squashed up toward it, feet tucked up under him, wings flared out for balance | front | eyes squeezed shut, bill open |
+| earl_flail_01 | falling through the air in a panic, both wings raised high, feet kicking | front | eyes wide, bill wide open |
+| earl_flail_02 | falling through the air in a panic, both wings flapped down low, feet kicking | front | eyes wide, bill wide open |
+| earl_tumble_01 | curled up into a tight round ball, head tucked, feet tucked in, wings wrapped in | front | eyes squeezed shut |
+| earl_wall_bump_01 | side view, he has just walked face-first into a wall on his right: bill and face flattened against an invisible vertical surface, body squashed sideways (do not draw the wall) | right | eyes squeezed shut |
+| earl_dizzy_01 | sitting lopsided, leaning to one side, head wobbly | front | dizzy: black spirals in place of both eyes, slack open bill |
+| earl_puffed_up_01 | standing, every feather fluffed up so his silhouette is bumpy and fuzzy and about 12% wider, wings held out | front | angry brows angled down, bill shut |
+| earl_tantrum_01 | standing, one foot raised high about to stomp, wings flailing downward | front | eyes squeezed shut, bill wide open squawking |
+| earl_tilt_01 | sitting, head tilted about 18 degrees to his left (the viewer's right) | front | curious, eyes extra glossy, bill slightly open |
+| earl_petted_01 | sitting, head pressed down a little as if a hand is patting it (do not draw the hand), wings relaxed and slightly out | front | happy closed-eye arcs curving upward, soft blush on the cheeks (#F0A08C at about 40%) |
+| earl_sit_sleepy_01 | sitting, head drooping slightly forward | front | drowsy, lids half closed and heavy, bill relaxed |
+| earl_look_01 | sitting, body facing front, head turned three-quarters to the viewer's right, looking off-screen | front (head turned three-quarters right) | neutral and attentive, eyes open |
+| earl_stand_look_01 | standing side view with his body facing right, head turned back over his shoulder toward the viewer | right | alert, eyes open, closed bill |
+| earl_look_up_01 | sitting, head tipped back, looking straight up | front | wide curious eyes |
+| earl_stand_look_up_01 | standing side view, head tipped back looking straight up | right | curious, eye open |
+| earl_side_eye_01 | sitting, head turned about 15 degrees to one side | front | jealous side-eye: heavy lids, eyes pushed toward one side as if glancing sideways, bill in a pout |
+| earl_sad_01 | sitting, head drooping, wings hanging limp | front | sad: big wet eyes with bigger sparkles, one tiny tear on one eye, bill turned down |
+| earl_angry_01 | standing, both wings raised like tiny fists | front | angry squawk, bill wide open, sharp brows angled down |
+| earl_startle_01 | jump-scared: feathers bristled out, both wings flung straight up, feet just off the ground | front | eyes wide open in shock |
+| earl_wiggle_01 | standing, leaning to one side, wings out | front | happy closed-eye arcs, open-bill smile, soft blush (#F0A08C at about 40%) |
+| earl_sulk_01 | seen from behind (back view), sitting, head down, shoulders slumped, a small tail tuft visible | back | none visible, he is turned away; the body language is sulky |
+| earl_sneeze_01 | sitting, head tipped back, winding up to sneeze | front | eyes squinting, bill parted |
+| earl_sneeze_02 | sitting, head snapped forward and down mid-sneeze | front | eyes shut, bill open |
+| earl_preen_01 | sitting side view, head twisted back with his bill tucked into the feathers of his wing | right | eyes half closed, focused |
+| earl_preen_02 | sitting side view, head twisted back, tugging at his wing feathers so one small feather tuft sticks up | right | eyes half closed, focused |
+| earl_scratch_01 | sitting side view, one foot raised up scratching his cheek | right | blissful, eyes shut |
+| earl_scratch_02 | sitting side view, scratching his cheek with the foot a little lower | right | blissful, eyes shut |
+| earl_honk_01 | standing, neck pulled back, chest puffed out, winding up | right | determined, bill closed |
+| earl_honk_02 | standing, neck thrust forward | right | honking, bill wide open, eyes shut |
+| earl_sniff_01 | leaning forward to inspect something, neck stretched out, bill close to the ground | right | eye wide, curious |
+| earl_peck_01 | bending forward, bill down at ground level, pecking | right | focused, eye open |
+| earl_peck_02 | standing, head back up after a peck, chewing | right | content, bill slightly open chewing |
+| earl_chew_01 | sitting side view | right | cheeks puffed out chewing, content shut eyes |
+| earl_kick_01 | winding up to kick: one leg swung back, one wing out for balance | right | determined, eye open |
+| earl_kick_02 | kicking through: one foot swung high forward, one wing out for balance | right | excited, bill open |
+| earl_push_01 | shoving against something on his right with his chest, head down, feet braced (do not draw the object) | right | determined squint |
+| earl_push_02 | a bigger shove against something on his right, head down, one foot sliding back behind him (do not draw the object) | right | straining, eyes squeezed |
+| earl_sleep_lie_01 | lying down on his side, curled up, head resting on the ground (do not draw a bed or blanket) | right | eyes closed, peaceful |
+| earl_bounce_star_01 | a star jump at the top of a bounce, wings and feet spread wide | front | happy eyes, laughing with the bill open |
+| earl_bounce_tuck_01 | a cannonball tuck in mid-air, curled into a ball, feet and wings tucked in | front | gleeful grin, eyes bright |
+| earl_splash_01 | sitting as if in a bathtub (do not draw the tub or any water), one wing raised high flinging, the other wing low | front | happy squeezed-shut eyes, laughing with the bill open |
+| earl_shake_01 | shaking himself dry: head twisted one way, body twisted the other way, feathers ruffled out | front | eyes shut tight |
+| earl_windblown_01 | facing into a strong wind blowing from the right: leaning hard forward, head fluff swept back, feet braced and skidding | right | eyes squeezed shut |
+| earl_suspicious_01 | leaning back and away from something on his right, one wing half raised defensively | right | suspicious, visible eye narrowed |
+| earl_nuzzle_01 | leaning forward, cheek pressed against something on his right (do not draw it) | right | happy shut eyes, soft blush (#F0A08C at about 40%) |
+| earl_peek_01 | standing in the same place, peeking over an invisible horizontal ledge that runs just under his bill: his chin rests on that line and both wing tips are raised to rest on top of the same line (not hooked over it). Draw his whole body below the line as usual; do not draw the ledge | front | wide curious eyes |
+| earl_peek_look_01 | the same ledge pose with chin and wing tips still on the line, head turned three-quarters to the viewer's right, looking along the ledge | three-quarter front-right | curious, eyes open |
+| earl_jump_up_01 | launching straight up: body stretched tall, wings swept down and back, feet trailing below, bill pointing up | right | determined, eye open |
+| earl_teeter_01 | teetering at the edge of a drop on his right, leaning out over it, wings windmilling forward (do not draw the ledge) | right | eyes wide in alarm |
+| earl_teeter_02 | teetering at the edge of a drop on his right, leaning out over it, wings windmilling backward (do not draw the ledge) | right | eyes wide in alarm |
+| earl_hang_01 | hanging in the air from both wings: both wings raised straight overhead with the wing tips together at the top center of the image, gripping something (do not draw it), feet dangling | front | smug and content |
+| earl_tug_01 | tug-of-war: bill clamped on something small in front of him (do not draw it), leaning back, feet braced and sliding forward | right | determined, eyes squeezed |
+| earl_tug_02 | tug-of-war, a bigger heave: bill still clamped on the same point, leaning back even further, feet sliding | right | straining, eyes squeezed shut |
+
+### T3 values: Expression only
+
+| Frame | Face change |
+|---|---|
+| earl_sit_blink_01 | close both eyes into soft downward arcs, gently shut like a relaxed blink; keep the bill exactly as it is |
+| earl_sit_quack_01 | keep the neutral open eyes and open his bill mid-quack, upper and lower bill parted with a darker orange inside |
+| earl_sit_side_blink_01 | close his visible eye into a soft downward arc, gently shut like a blink |
+| earl_stand_blink_01 | close both eyes into soft downward arcs, gently shut like a relaxed blink |
+| earl_held_grumpy_01 | flat, unimpressed upper lids lowered halfway over the eyes, bill pushed out into a pout |
+| earl_dizzy_02 | rotate both spiral eyes by 90 degrees clockwise, nothing else on the face changes |
+| earl_sit_pouty_01 | lower bill pushed out in a pout, brows tilted up toward the middle, eyes extra glossy |
+| earl_sit_huffy_01 | heavy flat upper lids covering the top of both eyes, brows angled down toward the middle, bill clamped shut |
+| earl_petted_grumpy_01 | eyes closed but with flat, level brows, bill pushed out into a pout, a faint blush on the cheeks (#F0A08C, faint) |
+| earl_sit_happy_01 | eyes open and bright, a wider bill smile, a faint blush on the cheeks (#F0A08C, faint) |
+| earl_stare_01 | deadpan half-lidded stare straight at the viewer, upper lids lowered flat across the top half of both eyes, bill flat and closed |
+| earl_peek_blink_01 | close both eyes into soft downward arcs, a quick blink, not sleep |
+| earl_peek_grumpy_01 | half-lidded sulky eyes, flat level brows |
+| earl_peek_sleep_01 | eyes closed as soft arcs, relaxed and content like he is napping, bill soft and relaxed |
+| earl_peek_happy_01 | bright open eyes, a wider bill smile, a faint blush on the cheeks (#F0A08C, faint) |
+| earl_peek_quack_01 | bill open mid-quack, eyes stay neutral and open |
+| earl_hang_alarm_01 | eyes wide in alarm, bill open |
+
+### T4 values: Cycle strip, one clause per frame
+
+| Frame | Frame clause |
+|---|---|
+| earl_walk_01 | near foot stepping forward, far foot back |
+| earl_walk_02 | feet together under his body, passing |
+| earl_walk_03 | far foot stepping forward, near foot back |
+| earl_run_01 | running, body leaning forward about 12 degrees, wings flared back, near foot reaching far forward |
+| earl_run_02 | airborne, body leaning forward, wings flared back, both feet tucked up under him |
+| earl_run_03 | body leaning forward, wings flared back, far foot reaching far forward |
+| earl_run_04 | airborne, body leaning forward, wings flared back, both feet trailing behind him |
+| earl_climb_01 | climbing upright against an invisible vertical wall on his right (do not draw the wall), both wings gripping high, near foot pushing down, far foot raised, determined squint |
+| earl_climb_02 | the same climb with the feet swapped: near foot raised, far foot pushing down, determined squint |
+| earl_carry_overhead_01 | walking, near wing raised high overhead as if gripping something (do not draw it), near foot forward |
+| earl_carry_overhead_02 | the same, far foot forward |
+| baby_walk_01 | waddling, near foot forward |
+| baby_walk_02 | waddling, far foot forward |
+
+### T5 values: Baby duckling
+
+| Frame | Pose |
+|---|---|
+| baby_sit_01 | sitting facing front like the reference duck, about 55% of his height |
+| baby_peep_01 | sitting facing front, tiny bill open peeping, tiny wings raised |
+| baby_sleep_01 | curled up asleep, eyes closed |
+
+### T6 values: Prop
+
+| Frame | Prop | View | Size | Colors |
+|---|---|---|---|---|
+| prop_parachute_01 | a parachute just bursting open: a bundle of crumpled red and cream panelled fabric spilling out, with no strings | side-on | a compact bundle about as wide as Earl | red #D9483B and cream #FBF3DD panels |
+| prop_parachute_02 | a half-open parachute, stretched tall and narrow, its red and cream panelled fabric rippling, with no strings | side-on, slightly from below | about 1.3 times Earl's width, taller than it is wide | red #D9483B and cream #FBF3DD panels |
+| prop_parachute_03 | a fully open parachute canopy (a round dome) with alternating red and cream panels, with no strings and no harness | side-on, slightly from below | about 320 px wide next to Earl's 212 px height, roughly twice his width | red #D9483B and cream #FBF3DD panels |
+| prop_bed_01 | a small bed made of light wood with the headboard on the left, a mattress and a white pillow at the headboard end, with no blanket | straight side view | about 340 px long next to Earl's 212 px height, a little more than twice his width | light wood #C89B6D, off-white mattress, white pillow |
+| prop_bread_01 | a single whole slice of bread | face-on, the slice standing on its bottom crust | about 96 px wide next to Earl's 212 px height, a bit under two thirds of his width | crust #C98A43, crumb #F2DDB0 |
+| prop_ball_01 | a rubber ball with one cream stripe around it | front | about 84 px across next to Earl's 212 px height, a bit over half his width | teal #3FA7A0 with a cream #FBF3DD stripe |
+| prop_seeds_01 | a small pile of mixed seeds | from the front, slightly above | a low pile about half of Earl's width | mixed browns and tans (#8A5333, #C98A43, #E5C69A) |
+| prop_trampoline_01 | a mini trampoline with a padded rim and short legs | three-quarter front, slightly from above | about 290 px wide next to Earl's 212 px height, nearly twice his width, and low | navy mat #2F3E57, red #D9483B padded rim, silver legs |
+| prop_tub_back_01 | only the back half of a small galvanized washtub (its rear rim and inside back wall, plus a flat opaque water surface with a few white bubbles on it; leave out the front wall, which is a separate image) | three-quarter front, slightly from above | wide enough for Earl to sit in, about 1.7 times his width | galvanized metal #9AA9B5, opaque water #8FD3F0, white bubbles |
+| prop_rubber_duck_01 | a classic glossy vinyl rubber duck toy with a simple painted dot eye | side view facing right, sitting on the same ground line as the reference duck | about 75% of Earl's height | saturated yellow #FFD21F body, orange #FF7A1A bill, black dot eye |
+| prop_fan_01 | a small retro desk fan with three opaque blades inside a wire cage, on a round base | three-quarter view facing right | about Earl's height | mint body #9ED9C3, silver cage and blades |
+| prop_umbrella_open_01 | an open umbrella with a J-shaped handle | side view, upright, canopy on top and the handle hanging straight down | about 300 px wide next to Earl's 212 px height, about twice his width | sky blue #6FA8DC canopy, cream #FBF3DD trim, light wood handle |
+| prop_umbrella_closed_01 | the same umbrella as the second attached image, furled closed and lying on its side | side view, lying flat on the ground | about 1.4 times Earl's width long | sky blue #6FA8DC canopy, cream #FBF3DD trim, light wood handle |
+| acc_party_hat_01 | a tiny cone-shaped party hat with bright diagonal stripes and a pom-pom on the tip | front, standing upright on its base | tiny, sized to sit on top of Earl's head, about a third of his head width at the base | bright stripes of teal #3FA7A0, butter yellow #FFE68A and red #D9483B, cream #FBF3DD pom-pom |
+| acc_nightcap_01 | a droopy striped nightcap with a small pom-pom on the tip, the tip flopping over to one side | front | small, sized to sit on Earl's head | soft blue #8DB6E0 and cream #F8F4EA stripes, cream pom-pom |
+| icon_toolbox_01 | a closed red metal toolbox with a silver latch and a silver carry handle on top | three-quarter front | an icon, filling about 85% of a square canvas (not at Earl's scale) | red #D9483B metal, silver latch and handle |
+
+### T7 values: Prop state
+
+| Frame | State change |
+|---|---|
+| prop_parachute_04 | the canopy is deflating: its sides sag and fold inward and the top is dented |
+| prop_parachute_05 | the parachute has collapsed into a wide, low heap of fabric lying on the ground at the bottom of the object |
+| prop_blanket_01 | add a blue gingham blanket (#8DB6E0 checks on #F8F4EA) lying flat over the mattress, leaving the pillow uncovered, then remove the bed, mattress and pillow so only the blanket remains on the magenta background in exactly that position |
+| prop_blanket_02 | make the blanket tucked over a small duckling-shaped bump lying on the mattress, with the pillow area left open (do not draw the duckling) |
+| prop_bread_02 | take one bite out of the top corner of the slice, a rounded bite mark, with no crumbs |
+| prop_bread_03 | half of the slice has been eaten, only the lower half is left, with no crumbs |
+| prop_bread_04 | only a few small crust scraps are left, lying in a little pile where the slice stood, with no crumbs |
+| prop_seeds_02 | the pile is half the size |
+| prop_seeds_03 | only a few seeds are left, scattered loosely where the pile was |
+| prop_trampoline_02 | the mat is pressed down in the middle as if something just landed on it |
+| prop_tub_front_01 | remove the rear rim, the water and the bubbles, and draw only the tub's front wall and front rim, in exactly the place that closes the tub in front of this back half |
+| prop_rubber_duck_02 | the rubber duck is squeezed mid-squeak: body slightly squashed and its bill open |
+| prop_fan_02 | rotate the three blades 40 degrees around the hub |
+| prop_fan_03 | rotate the three blades 80 degrees around the hub |
+
+### T8 values: Icon
+
+| Frame | Crop |
+|---|---|
+| icon_app_01 | head and shoulders, big eyes |
+| icon_tray_01 | head only, simplified so it still reads at 16 px, with extra-oversized eyes and bill and a thicker brown rim than usual |
