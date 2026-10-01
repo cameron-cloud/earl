@@ -48,7 +48,7 @@ an "Unsigned build (expected)" notice in its run summary. That is not a failure.
 `AZURE_*` settings (three repository secrets, three repository variables) turns signing on with
 no code change.
 
-## Installing an unsigned build (note for Juliette, repeated in the release notes)
+## Installing an unsigned build (note for Juliette; M6.1 copies it into the release notes)
 
 1. The first time the installer runs, Windows may show **Windows protected your PC**
    (SmartScreen). Click **More info**, then **Run anyway**. This happens once, at first install.

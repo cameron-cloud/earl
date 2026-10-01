@@ -21,7 +21,7 @@ release to Juliette waits for P0 and P1 art to be final (M5.3), then M6.
 | M0.4 | Windows platform spike (one worker, throwaway branch `spike/overlay`) | in progress | branch `spike/overlay` (throwaway; result goes into D13 and D14) |
 | M0.5 | Review nits from M0.1-M0.3 | merged | PR #4 |
 | M0.6 | Plan update: keep v1's fling mechanics and v1's size | merged | PR #5; Cameron 2026-09-29; plan D4, 5.3, 5.4, 5.5; v1 fling fixtures |
-| M0.7 | Plan pass: M0.5 and M0.6 review nits, Cameron's 2026-09-30 answers, signing skipped | in review | branch `feat/m0.7-plan-pass`; F table decided, 200 px/s upward minimum, 16 fling fixtures (ceiling case), 135 shots (held up and down restored), windows-e2e (M1.6) and Save bug report (M1.2) planned, `@types/node`, unsigned install note in `docs/TESTING.md` |
+| M0.7 | Plan pass: M0.5 and M0.6 review nits, Cameron's 2026-09-30 answers, signing skipped | merged | PR #6; F table decided, 200 px/s upward minimum, 16 fling fixtures (ceiling case), 135 frames over 101 shots (held up and down restored), windows-e2e (M1.6) and Save bug report (M1.2) planned, `@types/node`, unsigned install note in `docs/TESTING.md` |
 
 ## M1 First playable v2 (new engine, the taskbar request, working settings, updater prompt)
 
