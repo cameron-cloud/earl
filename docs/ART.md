@@ -149,7 +149,7 @@ Coverage: final 0/135, placeholder 21 (masters 0, missing 114)
 
 135 is the number of images (frames) in the shot list, spread over 101 shots (the held up and down poses were restored on 2026-09-30). The 21 placeholders
 are the v1 sprites that map onto a v2 frame; the rows of ART_SHOTLIST section 6.10 that pointed
-at v1's missing files (including `drag_up` and `drag_down`, which `sprites.json` names but v1 never shipped) have no placeholder.
+at v1's missing files have no placeholder. v1's `sprites.json` names six held poses, but only `Picked_up.png` shipped; the other five (`drag_left`, `drag_right`, `drag_up`, `drag_down`, `drag_fast`) fall back to it in `src/engine/animator.ts`.
 
 ## Contact sheet
 
