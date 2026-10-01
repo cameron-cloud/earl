@@ -11,10 +11,10 @@ $required = 'AZURE_TENANT_ID', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET',
 $missing = @($required | Where-Object { -not [Environment]::GetEnvironmentVariable($_) })
 if ($missing.Count -gt 0) {
   $names = $missing -join ', '
-  Write-Output "::warning title=Unsigned build::Windows code signing is not set up (missing: $names). This build is UNSIGNED, and Smart App Control may block it. See the M0.2 PR for the Azure Artifact Signing setup."
+  Write-Output "::notice title=Unsigned build (expected)::Code signing is skipped for now (Cameron 2026-09-30), so this build is unsigned, as planned. SmartScreen asks once at first install; Smart App Control, if On, can block it (docs/TESTING.md). Adding the six AZURE_* settings turns signing on (missing: $names)."
   "enabled=false" >> $env:GITHUB_OUTPUT
   "config=" >> $env:GITHUB_OUTPUT
-  "### Unsigned build`nWindows code signing is not set up (missing: $names)." >> $env:GITHUB_STEP_SUMMARY
+  "### Unsigned build (expected)`nCode signing is skipped for now (plan 4.12), so this build is unsigned, as planned. Adding the six AZURE_* settings turns it on (missing: $names)." >> $env:GITHUB_STEP_SUMMARY
   exit 0
 }
 

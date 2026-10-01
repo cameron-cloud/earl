@@ -342,7 +342,8 @@ function run(c: FlingCase, variant: Variant): Metrics {
     if (step % PATH_EVERY === 0) m.path.push([r2(t), r2(pos.x), r2(pos.y)]);
 
     if (sm.current === "IDLE") {
-      // The landing reaction (dropped, 650 ms) finished: the brain has control again.
+      // The landing reaction (dropped, 650 ms nominal, 683 ms in 60 Hz steps because the animator
+      // drops each frame's remainder; plan 5.4.1) finished: the brain has control again.
       m.controlT = r2(t);
       if (step % PATH_EVERY !== 0) m.path.push([r2(t), r2(pos.x), r2(pos.y)]);
       break;

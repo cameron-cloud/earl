@@ -10,7 +10,7 @@ here disagrees with the plan, the plan wins. Other docs:
 |---|---|
 | [`V2_PLAN.md`](V2_PLAN.md) | The approved v2 plan |
 | [`ROADMAP.md`](ROADMAP.md) | Milestones and the status of every work unit |
-| [`ART_SHOTLIST.md`](ART_SHOTLIST.md) | Art style guide, the 133-image shot list and prompt templates |
+| [`ART_SHOTLIST.md`](ART_SHOTLIST.md) | Art style guide, the 135-image shot list and prompt templates |
 | [`ART.md`](ART.md) | The art pipeline (`npm run art:*`) |
 | [`TESTING.md`](TESTING.md) | How to test: local checks, CI and the Windows checklist |
 | [`ANIMATIONS.md`](ANIMATIONS.md) | v1 animation timing (replaced by `sprites.gen.ts` and clips in v2) |

@@ -10,7 +10,7 @@ Nothing in this plan has been run on Windows yet. Anything marked **(W)** can on
 - Earl's home is the **top edge of the taskbar** when one is visible (the bottom of the screen when there is none). Slipping behind it to peek, sulk or nap is an occasional choice of his: the `earl.taskbarHiding` default is now **`sometimes`** (D1, 5.6). The behind lane, the depth ladder and the four levels are unchanged.
 - A new **"Where Earl can go"** settings group (D35, 9.1, 9.3) holds five wander-zone controls: behind the taskbar, perch on windows, climb the screen edges, roam range along the taskbar, and what happens in fullscreen. A disallowed zone gives every behavior that enters it zero utility (7, "Zone gates").
 - The visibility metrics were re-derived for the on-top home (5.6, 12.6); the old 55% / 35% pair is kept as the floor for the `always` level.
-- Q2 (art style gate), Q5 (typing honk, now counting key-downs), Q14 (no hard date) are answered; the rest are accepted at their recommended defaults, except the server-tool installs in Q10. Q9 is answered: assume default security settings, so builds are signed. Stray copies are kept and their content consolidated into docs/SPEC.md.
+- Q2 (art style gate), Q5 (typing honk, now counting key-downs), Q14 (no hard date) are answered; the rest are accepted at their recommended defaults, except the server-tool installs in Q10. Q9 was answered on 2026-09-29 (assume default security settings, so sign) and changed on 2026-09-30: signing is skipped for now, so v2 ships unsigned and the dormant CI signing path turns on once the six `AZURE_*` settings are added (4.12). Revision 4 (2026-09-30, M0.7) records Cameron's second round of answers (section 15). Stray copies are kept and their content consolidated into docs/SPEC.md.
 
 ---
 
@@ -38,7 +38,7 @@ Nothing in this plan has been run on Windows yet. Anything marked **(W)** can on
 
 ## 2. Decisions
 
-`[C]` marks a decision Cameron was asked to confirm. Each appears again in section 15 with his answer. As of revision 3 every `[C]` decision is answered or accepted at its recommended default, except D34 (Q10, server tools), which stays open. D28 signing is decided by Q9: assume default security settings, so builds are signed.
+`[C]` marks a decision Cameron was asked to confirm. Each appears again in section 15 with his answer. As of revision 3 every `[C]` decision is answered or accepted at its recommended default, except D34 (Q10, server tools), which stays open. D28 signing is decided by Q9: v2 ships unsigned for now (Cameron 2026-09-30); the dormant CI signing path turns on when the six `AZURE_*` settings are added.
 
 ### Product
 
@@ -185,7 +185,7 @@ Nothing in this plan has been run on Windows yet. Anything marked **(W)** can on
   - `v1-faithful`: hard alpha threshold, no anti-aliasing, the hard-edge warning disabled, T1 and STYLE LOCK worded "keep the crisp sprite edges".
   - `smooth`: anti-aliased soft plush illustration at 256, same shapes, palette and own-colour rims, T1 worded "smooth clean edges".
 - **No masters are generated until Cameron picks** (Q2). He approves the 4 masters in the lineup next to v1 at 64/96/256 before starting the rest. Props and canvas placeholders follow the chosen profile, always with own-colour rims, never black outlines.
-- Rationale: the art specialist measured the originals; the coverage review showed that assuming the smooth style could cost Cameron 133 images in a style he never approved.
+- Rationale: the art specialist measured the originals; the coverage review showed that assuming the smooth style could cost Cameron 135 images in a style he never approved.
 
 **D21 Mirroring.** Side poses are drawn facing right and flipped in code. All `*_left.png` files are deleted.
 
@@ -238,7 +238,7 @@ Nothing in this plan has been run on Windows yet. Anything marked **(W)** can on
 - Releases are drafts until Cameron publishes them.
 - `v2-preview` is a rolling pre-release, used only by preview builds through `EARL_UPDATE_ENDPOINT`. The preview CI job sets the version to `2.0.0-preview.<run_number>` at build time (a semver prerelease sorts below 2.0.0, so the final release still upgrades), so preview N+1 is offered to preview N.
 - **Two updater keypairs:** preview builds are signed with a separate preview key whose public key is compiled only into preview builds; the production key is available only to `release.yml` on `v*` tags.
-- **Code signing (Q9 answered: assume default security settings).** Smart App Control on a fresh Windows 11 install is in Evaluation and can block unsigned installers outright, so Azure Trusted Signing is set up in M0.2 and signs every CI build, including previews and the updater NSIS.
+- **Code signing (Q9: skipped for now, Cameron 2026-09-30).** v2 ships unsigned. Cameron first answered "assume default security settings" (2026-09-29), then chose to skip signing ("lets skip": Azure Artifact Signing Basic is about 9.99 USD a month and needs a paid Azure subscription). The M0.2 signing path stays in CI, dormant: it signs every Windows build, previews and the updater NSIS included, as soon as the six `AZURE_*` settings exist, with no code change. The cost of skipping: one SmartScreen "Run anyway" at first install, and the risk that Smart App Control (On, or Evaluation turning On) blocks unsigned Earl. The install note in `docs/TESTING.md` says how to check, and signing comes back if SAC is not Off (4.12, Q9).
 
 **D29 Fresh install, but migration code still ships.** Juliette's machine may hold a v1 `config.json`, since the identifier is the same. v2 migrates once:
 - size, sound and stats carry over;
@@ -269,6 +269,7 @@ Nothing in this plan has been run on Windows yet. Anything marked **(W)** can on
 | npm, dev | `@playwright/test` | Sandbox e2e and screenshots; chromium is already cached |
 | npm, dev | `eslint`, `typescript-eslint`, `eslint-plugin-react-hooks` | Lint. rules-of-hooks would have caught the v1 Settings crash |
 | npm, dev | `prettier` | Formatting |
+| npm, dev | `@types/node` (major 24, matching `.nvmrc`) | Node types, so `vitest.config.ts`, `playwright.config.ts`, `eslint.config.js` and the Node scripts are typechecked (Cameron 2026-09-30) |
 | Rust | `windows` 0.61 | Win32 bindings, same version tao already pulls in |
 | Rust | `ts-rs` | TS types from Rust structs |
 | Tauri plugins | `single-instance`, `global-shortcut`, `log` | Already has `autostart`, `updater` |
@@ -742,7 +743,7 @@ Quit Earl
 **Other points:**
 - Delete `src/utils/updater.ts`, which installs and relaunches silently.
 - `EARL_UPDATE_ENDPOINT` is honoured only in preview builds, which carry a `2.0.0-preview.<run>` version and the preview updater key (D28).
-- **Signing:** Smart App Control on a fresh Windows 11 (22H2+) blocks unsigned, unknown-reputation executables outright, with no bypass, including every updater-downloaded installer. Before M6 (ideally before M0.2 finishes), Cameron checks Windows Security > App & browser control > Smart App Control on Juliette's PC. If it is On or Evaluation, signing is required: Azure Trusted Signing is set up in M0.2 and signs every CI build, previews and the updater NSIS included. W1 runs on a clean Win11 VM with SAC On. If SAC is Off, unsigned remains acceptable (one SmartScreen "Run anyway"). Updates downloaded by Rust carry no Mark-of-the-Web.
+- **Signing (skipped for now, Cameron 2026-09-30):** v2 ships unsigned. Smart App Control on a fresh Windows 11 (22H2+) can block unsigned, unknown-reputation executables outright, with no bypass, including every updater-downloaded installer; SmartScreen alone only asks once ("Windows protected your PC", More info, Run anyway). The M0.2 signing path stays in `ci-rust.yml` and `release.yml`, dormant: adding the six `AZURE_*` settings (three secrets, three repository variables) turns it on for every build, previews and the updater NSIS included. Until then each Windows build reports an expected "Unsigned build" notice, not a warning. Before M6, Cameron checks Windows Security > App & browser control > Smart App Control on Juliette's PC (the install note in `docs/TESTING.md`, which the release notes repeat); if it is not Off, signing comes back before the release. W1 runs on a clean Win11 VM with SAC On and records whether unsigned Earl is blocked. Updates downloaded by Rust carry no Mark-of-the-Web, so they never show SmartScreen.
 
 ---
 
@@ -834,7 +835,7 @@ Earl's rows in the Normal column are v1's fling constants (Cameron 2026-09-29, 5
 
 ### 5.4 Holding and throwing
 
-**Cameron's decision (2026-09-29, verbatim): "i want to keep the current fling mechanics we have and his size".** It overrides the rest of this plan where they differ. The rule is **v1 parity**: for the same release velocity at the same size, v2 produces v1's path. The one deliberate physics change is that upward throws go up (needed for the parachute, 5.5 and M1.9); the parachute itself is the other. Every other difference is in 5.4.4 for Cameron to veto.
+**Cameron's decision (2026-09-29, verbatim): "i want to keep the current fling mechanics we have and his size".** It overrides the rest of this plan where they differ. The rule is **v1 parity**: for the same release velocity at the same size, v2 produces v1's path. The one deliberate physics change is that upward throws go up (needed for the parachute, 5.5 and M1.9); the parachute itself is the other. Every other difference is in 5.4.4; Cameron reviewed them on 2026-09-30 and kept them all, with a 200 px/s minimum before a release counts as upward (5.4.3).
 
 #### 5.4.1 v1 fling reference (origin/master)
 
@@ -862,7 +863,7 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 | 600-1199 | TUMBLING | 0.8 vx | x0.95 | under 20 px/s: DROPPED at once, even mid-air (K3) | `tumble` | tumble |
 | 1200 and up | TUMBLING | vx | x0.95 | as above | `tumble` | tumble |
 
-- Decay is `v *= k^(dt / 16.67 ms)` (`stateMachine.ts:295-310`): per 60 Hz frame and frame-rate independent. If nothing stops it, the total drift is 0.208 v for a slide and 0.333 v for a tumble.
+- Decay is `v *= k^(dt / 16.67 ms)` (`stateMachine.ts:295-310`): per 60 Hz frame and frame-rate independent. If nothing stops it, the total drift is 0.192 v for a slide and 0.317 v for a tumble (`dt k / (1 - k)` with dt = 1/60 s: the decay runs before the move, which the `gentle-right` fixture's 935.2 confirms).
 - Vertical start: `vy0 = max(vy, 0)` (`useEarlBehavior.ts:619`). Upward throws lose their upward part (bug 13).
 - A release over 400 px/s also costs mood -10 (`FLUNG_INTO_WALL`), wall or not (`useEarlBehavior.ts:642-645`, `mood.ts:145-150`).
 - `tumble` alternates `tumble.png` and `dropped_squish.png` every 100 ms and loops. Nothing rotates or spins.
@@ -870,14 +871,14 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 **Flight** (`physics.ts:86-153`, `constants.ts:41-42`), once per rAF frame with the raw frame delta (no clamp, `useEarlBehavior.ts:201`). Frame order: state tick (decay and stop rules), animation, position, events, clamp (`useEarlBehavior.ts:222-314`).
 - Vertical: `vy = min(vy + 1200 dt, 600)`, then `y += vy dt` (semi-implicit Euler). Gravity is 1200 px/s^2 and terminal velocity 600 px/s. A downward release faster than 600 is cut to 600 on the first step.
 - Horizontal: `x += vxSlide dt`, with vxSlide decayed first. FALLING has no horizontal motion at all (bug 14).
-- K3: when a tumble's vxSlide drops under 20 px/s the state becomes DROPPED, a ground state, so Earl is put straight onto the ground at that x with no fall (`stateMachine.ts:296-299`, `physics.ts:154-157`, then the window shrink at `useEarlBehavior.ts:279-293`). No drop sound and no height penalty on that path. A fast throw that is nearly vertical (`|0.8 vx| < 21` px/s), such as straight down at 600 or more or straight up, snaps to the ground on the first frame.
-- Walls: x is clamped to `[0, W - size]`, the monitor's left and right edges. TUMBLING reflects, `vxSlide = -0.6 vxSlide` (`stateMachine.ts:200-204`); each hit plays the wall bump sound and costs mood -10 (`useEarlBehavior.ts:308-312`). SLIDING does not reflect: Earl stays pinned to the wall while vxSlide decays, and the sound and the -10 repeat every frame (K4; 26 frames in the `wall-slide` fixture).
+- K3: when a tumble's vxSlide drops under 20 px/s the state becomes DROPPED, a ground state, so Earl is put straight onto the ground at that x with no fall (`stateMachine.ts:296-299`, `physics.ts:154-157`, then the window shrink at `useEarlBehavior.ts:279-293`). No drop sound and no height penalty on that path. A fast throw that is nearly vertical (`|0.8 vx| < 21` px/s), such as straight down at 600 or more or straight up, snaps to the ground on the first frame. In the real app the snap looks worse than the fixtures show: during an expanded flight `pos.groundY` is still the small window's ground (y 96 in full-monitor coordinates), so the mid-air DROPPED first renders near the top of the monitor, and only then does `shrinkWindow` move him to the ground. The fixtures record the end state. This is the teleport F4 removes.
+- Walls: x (the frame box's left edge) is clamped to `[0, W - size]`, so the whole size-px frame box stays between the monitor's left and right edges. TUMBLING reflects, `vxSlide = -0.6 vxSlide` (`stateMachine.ts:200-204`); each hit plays the wall bump sound and costs mood -10 (`useEarlBehavior.ts:308-312`). SLIDING does not reflect: Earl stays pinned to the wall while vxSlide decays, and the sound and the -10 repeat every frame (K4; 26 frames in the `wall-slide` fixture).
 - No ceiling: vy is never negative.
 - Ground: `H - pad - size`, where pad is 40 px with the taskbar visible and 4 px when it is hidden (`physics.ts:48-49`, `useEarlBehavior.ts:77-80`, `constants.ts:8`).
 
 **Landing** (`physics.ts:97-103,122-127,140-147`, `stateMachine.ts:186-191`, `useEarlBehavior.ts:257-277`)
 - Touchdown is a dead stop: y snaps to the ground and vx and vy go to 0. **No bounce** (`bounceCount` is never incremented), no ground slide, no roll, no tumble on landing.
-- Then `dropped` plays: squish 200 ms, squish 200 ms, squat 150 ms, stand 100 ms. That is 650 ms at the "normal" animation speed (x1.5 chill, x0.5 hyper, `constants.ts:31-35`), then IDLE (`stateMachine.ts:238-244`).
+- Then `dropped` plays: squish 200 ms, squish 200 ms, squat 150 ms, stand 100 ms. That is 650 ms at the "normal" animation speed (x1.5 chill, x0.5 hyper, `constants.ts:31-35`), then IDLE (`stateMachine.ts:238-244`). The fixtures show 683 ms (41 steps) at 60 Hz rather than 650 ms (39): the animator advances a frame only once its whole duration has passed and drops the remainder, so the beat ends 2 steps late. The 2-step control-time tolerance in 5.4.5 covers it.
 - Mood: a fall over 20 px (release y to ground) costs -3 under 100 px, -8 under 300 px, else -15 (`useEarlBehavior.ts:262-264`, `mood.ts:132-143`). The drop sound plays on landing only from FALLING (`useEarlBehavior.ts:265-267`).
 
 **Size.** The fling has no size term: every constant is in px or px/s and is the same at 48, 64, 80 and 96. Size only moves the walls and the ground by the box size.
@@ -899,6 +900,11 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 | wall-tumble | 1500, 400, 1400, 0 | TUMBLING | 1820.3 (1 reflect) | 917 ms | 1600 ms |
 | v1-cap | 200, 700, 3000, 900 | TUMBLING | 1124.0 | 1167 ms | 1850 ms |
 | high-drop | 900, 800, 0, 0 | FALLING | 900 | 1583 ms | 2267 ms |
+| upward-under-min | 900, 400, 0, -195 | FALLING | 900 | 917 ms | 1600 ms |
+| upward-over-min | 900, 400, 0, -205 | SLIDING | 900 | 917 ms | 1600 ms |
+| ceiling | 900, 600, 300, -2000 | TUMBLING | 988.4 (K3 snap) | 883 ms | 1567 ms |
+
+Each fixture's `v2Expected` holds v2's numbers where F1, F2 or F4 apply. For the three newest cases: `upward-under-min` is the same as v1 (under the 200 px/s upward minimum, 5.4.3); `upward-over-min` rises 17.5 px and lands at 1117 ms (control 1800 ms); `ceiling` hits the screen top once (F2), stops mid-air at 883 ms at (988.4, 390), falls (F4) and lands at 1850 ms (control 2533 ms).
 
 #### 5.4.2 Holding (v2)
 
@@ -916,31 +922,32 @@ Line numbers are origin/master's and are the same on v2 until M1.4 deletes the v
 **Held** (v1's hold, made frame-rate independent):
 - The body is kinematic. It follows the target (cursor minus grab offset, clamped to the monitor as in v1) with v1's lerp: `gap *= 0.75^(dt / 16.67 ms)` per step, identical to v1 at 60 Hz.
 - Lean: v1's rule. The sprite rotates about the box's top centre; `target = clamp(0.8 * gapX, -35, 35)` degrees and `angle = 0.6 * angle + 0.4 * target` per 60 Hz step. After release it decays by x0.85 per step and snaps to 0 under 0.5 degrees. gapX is in px at every size, as in v1.
-- Frame, from the gap with v1's rule: `picked_up` maps to `earl_held_01` (`earl_held_grumpy_01` when wary, an addition); `drag_left` and `drag_right` to `earl_held_side_01` (mirrored for left); `drag_up` and `drag_down` to `earl_held_01` for now (F14); `drag_fast` to `earl_flail_01..02`.
+- Frame, from the gap with v1's rule: `picked_up` maps to `earl_held_01` (`earl_held_grumpy_01` when wary, an addition); `drag_left` and `drag_right` to `earl_held_side_01` (mirrored for left); `drag_up` to `earl_held_up_01` and `drag_down` to `earl_held_down_01` (F14); `drag_fast` to `earl_flail_01..02`.
 
 #### 5.4.3 Throwing (v2)
 
 - **Release velocity:** v1's estimator. Samples are the pickup point and each pointer move in CSS px (DIP, y down); the last 5 are kept and `v = (last - first) / span`, or 0 under a 1 ms span. No 4000 px/s clamp, only a 20000 px/s glitch guard (F10). K1 (a paused release still throws) is kept for parity. K2 cannot happen (F6).
+- **Upward or not (Cameron 2026-09-30):** a release counts as **upward** only when `vy <= -V_UP_MIN` (200 px/s) **and** its newest move sample is at most `UP_FRESH_MS` (100 ms) old at release. Any other release starts with `vy0 = max(vy, 0)`, exactly v1's drop, so "lift him up, pause, let go" stays a v1 drop. The tier, vx and decay stay v1's either way. Why these numbers: v1's estimator is the endpoint difference over the last 5 samples, 4 move intervals, which is about 67 ms with a 60 Hz pointer and 28 ms at 144 Hz. A hand held still sends no moves, so (K1) the window keeps the tail of the lift. A smooth 200 px lift over 400 ms covers about 7 px in its last 67 ms, about 105 px/s up. A hand that trembles while held fills the window with jitter instead, and each px of it adds about 15 px/s at 60 Hz (36 px/s at 144 Hz), so a held-still release reads well under 100 px/s. 200 px/s is also v1's own drop-or-throw line (under it v1 releases as FALLING), so every v1 drop stays a drop, while a deliberate toss measures 900-2000 px/s (the `upward`, `upward-straight` and `ceiling` fixtures). The freshness check covers what speed cannot: after a fast yank and a pause on a perfectly still mouse, the release still reads the yank's speed (K1), and v2 would toss him up where v1 drops him. A toss releases mid-motion, so its newest sample is a frame or two old; 100 ms is a pause a person notices. Both checks only narrow F1: a release that fails them takes v1's own path. The `upward-under-min` (-195) and `upward-over-min` (-205) fixtures pin the speed threshold; an M1.3 unit test pins the freshness check (a -900 px/s release whose newest sample is 150 ms old starts with `vy0 = 0`).
 - **Classification, horizontal velocity, decay and stop rules:** exactly the v1 table in 5.4.1, on the same `speed = hypot(vx, vy)`. The one exception is K3: when a tumble's horizontal velocity dies mid-air he falls straight down from there, like v1's slide stop (F4). The landing x is unchanged.
-- **Vertical:** `vy0 = vy`, **including upward** (F1). Gravity 1200 px/s^2. Downward speed is capped at 600 px/s every step, so a fast downward release starts at 600 as in v1. Upward speed has no cap; the screen top reflects like v1's walls, `vy = -0.6 vy`, and emits `CEILING_HIT` (F2).
+- **Vertical:** `vy0 = vy` for an upward release (above), **including the upward part** (F1); otherwise `vy0 = max(vy, 0)` as in v1. Gravity 1200 px/s^2. Downward speed is capped at 600 px/s every step, so a fast downward release starts at 600 as in v1. Upward speed has no cap; the screen top reflects like v1's walls, `vy = -0.6 vy`, and emits `CEILING_HIT` (F2).
 - **Integration:** the fixed 60 Hz step (5.2) in v1's order: decay and stop rules, then gravity and the terminal clamp, then the move, then contacts. At 60 Hz this reproduces v1 at 60 Hz exactly (F9).
-- **Walls:** TUMBLING reflects at 0.6; SLIDING pins against the wall without reflecting. `WALL_HIT` and its sound fire once per contact, not every frame (F5).
+- **Walls:** TUMBLING reflects at 0.6; SLIDING pins against the wall without reflecting. `WALL_HIT` and its sound fire once per contact, not every frame (F5). **Which box:** in a fling, Earl's walls and ceiling use the size-px frame box, as v1 clamps it (`[0, W - size]` for its left edge, 0 for its top), not the 5.1 collision box (0.60 x 0.83 size), which would put `wall-slide` and `wall-tumble` about 12.8 px off. **Coordinates (M1.3):** the 5.1 `Body` x, y is the feet centre, and the fixtures use the frame box's left and top edges, so `boxLeft = x - size / 2` and `boxTop = y - size`: in physics the feet sit on the box's bottom edge. Where the feet are drawn inside the frame is a render offset and stays out of the comparison. The fixture `groundY` is a box top, so the floor is `groundY + size` in feet coordinates.
 - **Landing:** v1's dead stop. No bounce, no ground slide, no roll and no tumble on landing (Earl's rows in 5.3). Emits `LANDED{impact, height, surface, bounces: 0}`.
 - **Landing beat:** v1's 650 ms `dropped` sequence in v2 art (`earl_land_squish_01` for 400 ms, the squat for 150 ms, the stand for 100 ms, scaled by the activity-driven animation speed the same way), then the brain has control. The 7.7 `land` variants are additions (F15).
 - **Size:** none of these constants scale with `earl.size`, at any size (v1 had no size term).
 - **Airborne visuals:** v1's tumble cycle (the tumble shot and the squish alternating every 100 ms) for the SLIDING and TUMBLING tiers; `earl_held_01` held still for the FALLING tier. v2 adds a spin angle `cross(grabOffset, v) * k` on the sprite only (F13).
-- **Parachute (5.5):** it arms only after the apex of an upward throw, or on a fall that did not start from a release (a lost perch, a floor drop). Drops and flings that start level or downward behave exactly like v1 from any height (F3).
+- **Parachute (5.5):** it arms only after the apex of an upward release (as defined above), or on a fall that did not start from a release (a lost perch, a floor drop). Drops, slow or paused lifts, and flings that start level or downward behave exactly like v1 from any height (F3).
 
 #### 5.4.4 Differences from v1 fling
 
-Cameron can veto any row; its v1 column is then the behavior.
+Cameron reviewed this table on 2026-09-30 and kept every change (F1-F4, F13, F17, F18; section 15). A row he vetoes later goes back to its v1 column.
 
 | # | v1 behavior | v2 plan | Why |
 |---|---|---|---|
-| F1 | the upward part of a throw is discarded (bug 13) | kept: he flies up, peaks and falls | Cameron's parachute request (M1.9). The one deliberate physics change. |
-| F2 | no ceiling (vy is never negative) | the screen top reflects at 0.6 | only reachable through F1; reuses v1's wall coefficient |
-| F3 | no parachute | the chute arms after an upward throw's apex, or on a fall that did not start from a release, over max(3 bodyH, 200 px) | Cameron's request. Level and downward flings never arm it, so they stay v1 at any height. The old plan armed it on any release over 200 px up, which would turn high v1 flings into glides; that is the alternative if Cameron prefers it. |
-| F4 | K3: a mid-air tumble whose vx drops under 20 px/s snaps onto the ground; a fast near-vertical throw snaps on frame 1 | he falls straight down from that point | the snap is a visible teleport. Landing x is unchanged; only the time to land grows (the `straight-down-fast` and `upward-straight` fixtures). |
+| F1 | the upward part of a throw is discarded (bug 13) | kept: he flies up, peaks and falls | Cameron's parachute request (M1.9). The one deliberate physics change. Upward means at least 200 px/s up with a fresh sample (5.4.3). **Decided: kept (Cameron 2026-09-30).** |
+| F2 | no ceiling (vy is never negative) | the screen top reflects at 0.6 | only reachable through F1; reuses v1's wall coefficient and the frame box (5.4.3). **Decided: kept (Cameron 2026-09-30).** |
+| F3 | no parachute | the chute arms after the apex of an upward release (`vy <= -200` px/s with a fresh sample, 5.4.3), or on a fall that did not start from a release, over max(3 bodyH, 200 px) | Cameron's request. Level and downward flings, and slow or paused lifts, never arm it, so they stay v1 at any height. **Decided: kept, with the minimum upward speed (Cameron 2026-09-30).** |
+| F4 | K3: a mid-air tumble whose vx drops under 20 px/s snaps onto the ground; a fast near-vertical throw snaps on frame 1 | he falls straight down from that point | the snap is a visible teleport. In the real app v1 first shows him near the monitor top (5.4.1, K3). Landing x is unchanged; only the time to land grows (the `straight-down-fast`, `upward-straight` and `ceiling` fixtures). **Decided: kept (Cameron 2026-09-30)**; `v2Expected` stays as captured. |
 | F5 | K4: the wall sound and the -10 mood repeat every frame while a slide is pinned to a wall | once per contact | the same path, without the sound spam and a mood hit of up to -260 |
 | F6 | K2: a release after 1-4 moves gets a spurious downward vy | cannot happen | one overlay and one coordinate space (4.1) |
 | F7 | every press is a pickup, and a click is a pickup under 4 px (bug 11) | the 5.4.2 gesture thresholds (pickup at 6 px or 200 ms) | clicks, pets and double-clicks need presses that are not pickups. A throw needs movement anyway, so no v1 throw changes. |
@@ -949,33 +956,34 @@ Cameron can veto any row; its v1 column is then the behavior.
 | F10 | no release cap | a 20000 px/s glitch guard | only a pointer glitch goes that fast |
 | F11 | the ground is 40 px above the monitor bottom (4 px with the taskbar hidden) | the real taskbar top and lanes (4.5, 5.6) | Cameron's taskbar request. The path relative to the ground is unchanged. |
 | F12 | only the taskbar floor | window tops and items too, when perching is on (M3.5, M3.6) | a later, separate feature. The parity test runs with no windows. |
-| F13 | the tumble cycle only, no rotation | the same cycle plus a spin angle on the sprite | visual only; drop it if it reads wrong |
-| F14 | 6 held sprites: still, left, right, up, down, fast | 4 shots; up and down share `earl_held_01` | v2 art. Add `earl_held_up_01` and `earl_held_down_01` to the shot list if Cameron wants them back. |
+| F13 | the tumble cycle only, no rotation | the same cycle plus a spin angle on the sprite | visual only. **Decided: kept (Cameron 2026-09-30).** |
+| F14 | 6 held sprites: still, left, right, up, down, fast (`sprites.json` names `drag_up` and `drag_down`, but those two files never shipped) | 6 poses: `earl_held_01`, `earl_held_side_01` (mirrored for left), `earl_held_up_01`, `earl_held_down_01`, `earl_flail_01..02` | v1's six held poses in v2 art. **Decided: restored (Cameron 2026-09-30)**; the shot list has 135 shots. |
 | F15 | the landing beat is always `dropped` (650 ms) | the same beat by default; after it, dizzy following a wall hit over 700 px/s, or a stuck landing when bonded (7.7) | personality additions after the dead stop; the path is unchanged |
 | F16 | no Physics party | chaos Physics party (5.3, right column): bounces and lower gravity | chaos is off by default and not v1-possible |
-| F17 | the landing is the `dropped` frames only | the same frames plus a small procedural squash (at most 0.15, 5.12) | visual only, the path and timing are unchanged; drop it if it reads wrong |
-| F18 | a hold lasts until the user lets go | a wary, grumpy Earl may wriggle free after 1-2 s (6.12: sessionWariness > 0.5 and G > 0.6, 30%) | personality. He leaves the hand with zero velocity, which is v1's drop path from that point, so no v1 throw changes |
+| F17 | the landing is the `dropped` frames only | the same frames plus a small procedural squash (at most 0.15, 5.12) | visual only, the path and timing are unchanged. **Decided: kept (Cameron 2026-09-30).** |
+| F18 | a hold lasts until the user lets go | a wary, grumpy Earl may wriggle free after 1-2 s (6.12: sessionWariness > 0.5 and G > 0.6, 30%) | personality. He leaves the hand with zero velocity, which is v1's drop path from that point, so no v1 throw changes. **Decided: kept (Cameron 2026-09-30).** |
+| F19 | no mood while held or after a landing | a wary Earl wears `earl_held_grumpy_01` and flinches at pickup when roughMemory is set; after a gentle drop's landing beat he dusts off (wary) or lands happy (bonded) (6.12) | visual and brain only: the hold path, the lean, the landing beat and control time stay v1's. Added in M0.7 for the 6.12 rows. 6.12's "bill grip on the taskbar edge" and "relaxed dangle" were removed instead, because each changes v1's hold: a grip anchors him at pickup, and a dangle replaces v1's lean (dropped below). |
 
 Dropped from the old plan in favour of v1: LSQ velocity over 80 ms with a 4000 px/s clamp, the spring follow (omega 25), the cursor-acceleration pendulum, gravity 1800 px/s^2 and terminal velocity 1400 px/s, Earl's bounces (restitution 0.22, 3 bounces, threshold 180 sqrt(S)), ground friction 0.9, the tumble on landing above 500 S, wall restitution 0.35, the long-glide horizontal drag outside the parachute, the 7.7 "relaxed dangle with swing" while held (the hold is v1's lean; mood shows in the face and flail frames), and any size scaling of fling speeds.
 
 #### 5.4.5 v1 parity test (M1.3)
 
-- **Fixtures:** `test/fixtures/v1-fling/*.json`, 13 cases captured from v1's own step functions by `test/v1-fling-capture.test.ts`. `npm run capture:v1-fling` rewrites them; a plain `npm test` checks that they still match v1. M1.4 deletes the capture test together with the v1 engine and keeps the fixtures.
-- **Contents:** the release (x, y, height, vx, vy, speed), the world (1920x1080, pad 40, size 64, 60 Hz), `v1`, and `v2Expected`. `v2Expected` is `"same-as-v1"` unless F1, F2 or F4 applies; then it is v1's own step functions with only those changes. Each holds the tier, landing x, time to land, bounces, wall contacts, ceiling hits, the mid-air stop, settle time (the last motion), control time (the landing beat is over) and the path sampled every 50 ms.
+- **Fixtures:** `test/fixtures/v1-fling/*.json`, 16 cases captured from v1's own step functions by `test/v1-fling-capture.test.ts`. `npm run capture:v1-fling` rewrites them; a plain `npm test` checks that they still match v1. M1.4 deletes the capture test together with the v1 engine and keeps the fixtures.
+- **Contents:** the release (x, y, height, vx, vy, speed), the world (1920x1080, pad 40, size 64, 60 Hz), `v1`, and `v2Expected`. `v2Expected` is `"same-as-v1"` unless F1, F2 or F4 applies; then it is v1's own step functions with only those changes, where a release is upward only at `vy <= -200` px/s (5.4.3; a fixture releases mid-motion, so the freshness check always passes). Each holds the tier, landing x, time to land, bounces, wall contacts, ceiling hits, the mid-air stop, settle time (the last motion), control time (the landing beat is over) and the path sampled every 50 ms.
 - **Test:** `test/sim/v1-fling-parity.test.ts` (M1.3) runs the v2 sim on each fixture with no windows or items and the chute off, and compares with `v2Expected`:
   - landing x within 1 px, and every path sample within 1 px;
   - time to land and settle time within 1 step (16.7 ms);
   - bounces exactly 0; wall contacts and ceiling hits exact;
   - control time within 2 steps (33 ms; v1's animator drops each frame's remainder).
-- **Chute pass:** the same run with the chute on. The 150 px cases that start level or downward must still match (they never arm it), and both upward cases must deploy it.
+- **Chute pass:** the same run with the chute on. Every case that is not an upward release must still match `v2Expected`. Only the ones that fall more than 200 px test F3: `diagonal-down`, `straight-down`, `straight-down-fast`, `wall-slide`, `wall-tumble`, `v1-cap`, `high-drop` and `upward-under-min` (a slow lift is a drop). The 150 px cases (`slow-drop`, `gentle-right`, `fast-left`, `fast-right`) fall less than the 200 px arming height, so they pass under any arming rule. The four upward releases (`upward`, `upward-straight`, `upward-over-min`, `ceiling`) must arm the chute after their apex.
 
 ### 5.5 Parachute (`sim/physics/parachute.ts`)
 
 **Arming** (F3 in 5.4.4): he is descending, the height to the floor is greater than `max(3·bodyH, 200 px)`, and either:
-- the apex of an **upward** throw has passed (a release with `vy < 0`, F1), or
+- the apex of an **upward** release has passed (`vy <= -200` px/s with a fresh sample, 5.4.3, F1), or
 - a fall that did **not** start from a release: a lost perch, a floor or window that goes away, a slip off an item.
 
-A release that starts level or downward never arms the chute, from any height, so every throw v1 could make keeps v1's path (5.4). Alternative for Cameron's veto of F3: the old, broader rule (any fall from a release or a lost perch arms it), which puts a chute on long v1-style drops too.
+A release that starts level, downward, or upward slower than 200 px/s (or after a pause) never arms the chute, from any height, so every drop v1 could make keeps v1's path (5.4). Decided by Cameron 2026-09-30 (F3); the old broader rule (any fall from a release arms it) is not used.
 
 **Deploy timing** (brain RNG stream):
 
@@ -1561,8 +1569,8 @@ A sub-feature is effective only when `chaos.enabled && sub.enabled`. This is com
 | double-click | startled jump | happy flap or `show_off` | G > 0.55: angry honk. C high: sneeze (the "boop"). |
 | pet (right-click or stroke), 1.2 s cooldown | first pets: `earl_petted_grumpy_01` with the head turned away; after 3-5 pets in 20 s he melts (`earl_petted_01` + heart). On day 1 the melt is guaranteed by the 2nd or 3rd pet (6.18). | melts faster, tail wiggle, may lean in and follow the cursor | Sulking: first 2 refused (shrug), except that a returning user's single pet forgives a needs sulk (6.3). Asleep: smiles and stays asleep. |
 | hover (600 ms) | watches warily | looks up, maybe leans | Needs HUD. Asleep: wakes only after 1.5 s and not within the first 60 s of a nap. |
-| pickup | squirm; if sessionWariness > 0.5 and G > 0.6, 30% chance to wriggle free after 1-2 s; roughMemory only adds a flinch and a bill grip on the taskbar edge | relaxed dangle | annoyance escalates within 30 s: G +0.05·(1-tr) each time |
-| gentle drop | dusts off | lands happy | trust +0.003 |
+| pickup | squirm (`earl_held_grumpy_01`, F19); if sessionWariness > 0.5 and G > 0.6, 30% chance to wriggle free after 1-2 s (F18); roughMemory only adds a flinch (F19) | content face (`earl_held_01`) on v1's lean (5.4.2) | annoyance escalates within 30 s: G +0.05·(1-tr) each time |
+| gentle drop | dusts off, after v1's landing beat (F19) | lands happy, after v1's landing beat (F19) | trust +0.003 |
 | throw | first throws: alarm, "why."; after 3-4 soft landings in a session: "again!" (habituation, 6.4). Only slams and chute-less hard landings cause a grudge and about 2 min of avoidance | "wheee", F +8 | the chute saves long falls only after an upward throw or a fall that did not start from a release (5.5, F3); level and downward throws land as in v1 |
 | drop onto an item | the affordance runs, but may refuse (G > 0.7: steps off, glares) | the affordance runs, eagerly | see 8 |
 
@@ -2379,7 +2387,7 @@ Measured on Win11, a mid laptop, 1080p at 125%, with the perf tab of the debug o
 **Missing features:** assertions for features that are not merged yet land as `test.fails(...)` or `test.todo(...)`, each tagged with the unit id that turns it on (for example `// unit: M2.1`). Each feature unit's acceptance includes flipping its tests to `test(...)`. A CI check fails if a `test.fails` remains for a unit marked merged in `docs/ROADMAP.md`. CI therefore stays green while M2.6 lands first.
 
 **Physics:**
-- v1 fling parity: `test/sim/v1-fling-parity.test.ts` against the 13 committed `test/fixtures/v1-fling/` cases, with the 5.4.5 tolerances (M1.3), plus the chute pass (M1.9);
+- v1 fling parity: `test/sim/v1-fling-parity.test.ts` against the 16 committed `test/fixtures/v1-fling/` cases (including `ceiling`, `upward-under-min` and `upward-over-min`), with the 5.4.5 tolerances (M1.3), plus the chute pass (M1.9);
 - fling constants do not scale: the same release gives the same path at sizes 48, 64 and 256 (relative to the ground and walls);
 - upward throw apex = v²/2g within 1% (g = 1200);
 - bounce decay and the bounce cap (items, and Earl in the Physics party);
@@ -2480,7 +2488,8 @@ Dependabot is enabled for npm, cargo and GitHub Actions.
 | Job | Runner | Steps |
 |---|---|---|
 | `rust` | ubuntu (webkit2gtk-4.1 etc.) | fmt, clippy `-D warnings`, test, bindings and `commands.json` diff |
-| `windows` | windows-latest | clippy, `cargo test` (plus `#[ignore]` real-probe smoke tests), `tauri build --bundles nsis` with `EARL_BUILD=<branch>@<sha7>`; signs if signing is set up (4.12); uploads the setup exe plus a raw `earl.exe` (14 days). Branch builds carry no updater key. |
+| `windows` | windows-latest | clippy, `cargo test` (plus `#[ignore]` real-probe smoke tests), `tauri build --bundles nsis` with `EARL_BUILD=<branch>@<sha7>`; signs only if the six `AZURE_*` settings exist (4.12; skipped for now, so an expected "Unsigned build" notice); uploads the setup exe plus a raw `earl.exe` (14 days). Branch builds carry no updater key. |
+| `windows-e2e` | windows-latest, after `windows` (M1.6) | runs the raw `earl.exe` from `windows` on the hosted runner's desktop and drives it with `SendInput`: click, drag, fling, typing in Notepad (focus kept), click-through beside Earl; uploads screenshots and a short video. Non-blocking until its desktop proof passes (M1.6). |
 | `preview` | push to `v2` only | sets version `2.0.0-preview.<run_number>`, signs with the **preview** updater key, uploads to the rolling `v2-preview` pre-release with a signed `latest.json` |
 | `soak` | nightly | 48 h × 32 seeds (using `advanceTo`) |
 
@@ -2491,7 +2500,7 @@ Dependabot is enabled for npm, cargo and GitHub Actions.
 | # | Area | Check |
 |---|---|---|
 | W0 | Spike (M0.4) | Idle CPU and GPU of the overlay; hover flicker; focus kept in Notepad; PresentMon "Hardware: Independent Flip" vs "Composed" for a borderless-fullscreen video with Earl visible; layers vs canvas cost. Decides D13 and D14. |
-| W1 | Install | NSIS per-user with no UAC; SmartScreen noted; **on a clean Win11 VM with Smart App Control On** (signed build required if it blocks); Start menu entry; uninstall. Upgrade over v1 NSIS and over v1 MSI (the pre-install hook offers to remove the MSI): settings and stats carried over, `reunion` plays, one "Installed apps" entry, autostart path updated. |
+| W1 | Install | NSIS per-user with no UAC; SmartScreen noted; **on a clean Win11 VM with Smart App Control On** (v2 ships unsigned for now: record whether SAC blocks it; if it does, signing comes back before M6, 4.12); Start menu entry; uninstall. Upgrade over v1 NSIS and over v1 MSI (the pre-install hook offers to remove the MSI): settings and stats carried over, `reunion` plays, one "Installed apps" entry, autostart path updated. |
 | W2 | Transparency | No border or black box at 100/125/150/175%, mixed DPI, runtime scale change, text scaling 125%, after sleep/resume, HDR. |
 | W3 | Hover | No flicker on hover transitions (LAYERED is permanent; only TRANSPARENT toggles). |
 | W3b | Occlusion | YouTube playing in Chrome and a Teams call behind Earl keep rendering (`document.visibilityState` stays `visible`) while hovering and dragging him. |
@@ -2541,8 +2550,8 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 
 1. Push to `v2`, and CI builds `v2-preview`.
 2. Cameron runs `earl.exe` or the setup.
-3. **On a problem:** `Ctrl+Alt+Shift+F12` shows the debug overlay; "Dump diagnostics" writes `diag-<ts>.json`.
-4. `EARL_RECORD=1` writes every platform event to JSONL, which the Linux stub and the sandbox (`?replay=`) replay. Dumps include the launch seed (D16).
+3. **On a problem:** `Ctrl+Alt+Shift+F12` shows the debug overlay; "Dump diagnostics" writes `diag-<ts>.json`. Juliette's route is simpler: the tray's **Save bug report** (M1.2) writes the last 5 minutes of platform events plus the seed, in the step 4 format, to `bugreports/earl-bug-<ts>.jsonl` in the app data folder and shows it in Explorer, for her to send to Cameron.
+4. `EARL_RECORD=1` writes every platform event to JSONL, which the Linux stub and the sandbox (`?replay=`) replay. Dumps include the launch seed (D16). The format: one header line (format version, app version and build id, launch seed, settings, monitors and taskbar), then one event per line with its sim time. A cut window (a bug report) also carries a sim snapshot at its first event, so a replay starts there. Typing appears only as the key-down counts the sim already sees (D26), never key identity or text. One replay path serves both.
 5. Each dump becomes a Rust fixture or a sandbox scenario.
 6. Cameron's subjective-hour notes are tagged with the fallback share per behavior, so tuning is never judged on placeholders without knowing it.
 
@@ -2592,10 +2601,10 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
   - `tauri.conf.json` (`$schema`, CSP, `bundle.windows.nsis.installMode: "currentUser"`, updater URL, version from package.json) plus the config test (4.12)
   - untrack `src-tauri/gen/schemas`
   - `.github/workflows/ci-rust.yml`, `release.yml` (Node from `.nvmrc`, NSIS, draft), `scripts/bump-version.mjs`; the separate preview and production updater keypairs (D28)
-  - Azure Trusted Signing in CI (Q9 answered: assume default security settings, so SAC may be in Evaluation and builds are signed)
+  - the Azure Artifact Signing path in CI (`.github/actions/windows-signing`), dormant since Cameron skipped signing on 2026-09-30 (Q9): it signs once the six `AZURE_*` settings exist and otherwise reports an expected "Unsigned build" notice
 - **Accept:** Linux `cargo check`, clippy, test and `cargo audit` green; tray icon has alpha; a second launch focuses the first; the config test passes.
 - **L:** CI `rust` green; `cargo xwin clippy` if tools are approved. **W:** CI artifact runs; tray icon has no grey square; W16a.
-- **Dep:** M0.0, Q9 (answered: sign), Q10 (server tools, open until Cameron confirms). **Par:** M0.1, M0.3, M0.4.
+- **Dep:** M0.0, Q9 (2026-09-30: unsigned for now), Q10 (server tools: clippy and rustfmt approved 2026-09-30, the rest open). **Par:** M0.1, M0.3, M0.4.
 
 **M0.3 Docs and art pipeline**
 - **Files:**
@@ -2610,7 +2619,7 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
   - the keyer (golden image on a synthetic anti-aliased circle), magenta-fringe check, checkerboard rejection, eye-hole check, dark/grey rim ERR and alignment all have tests;
   - `art/SHOTLIST.md` regenerates and matches `ART_SHOTLIST.md`;
   - ART.md carries the stray-copy "Art Pipeline" section;
-  - the coverage report reads "final 0/133, placeholder N".
+  - the coverage report reads "final 0/135, placeholder N".
 - **L:** `art:check`, contact sheet. **W:** -.
 - **Dep:** M0.0 (scripts predeclared by M0.1; it may start in parallel). **Par:** M0.1, M0.2, M0.4. **Batch A art waits for the Q2 lineup pick** (Q2 answered: the gate stays).
 
@@ -2661,7 +2670,8 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 **M1.2 Settings, state, tray, panels plumbing**
 - **Files:**
   - `core/src/settings/{validate,patch,migrate}.rs`
-  - `src-tauri/src/{store,tray,panels,autostart,hotkey}.rs`, `commands/{settings,state,system}.rs`
+  - `src-tauri/src/{store,tray,panels,autostart,hotkey,bugreport}.rs`, `commands/{settings,state,system}.rs`
+  - `src/sim/record/**` (the bug-report ring and snapshots)
 - **Accept:** 9.1-9.4 and 4.11:
   - patch, validate, rev and broadcast; null rejected;
   - one load path with per-field schema defaults, and corrupt quarantine;
@@ -2671,7 +2681,11 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
   - autostart OS truth (`byte0 & 1`) and `autostart_set(true)` clearing StartupApproved;
   - hotkey registration with status, `{enabled, accel}`;
   - quiet time plumbing;
-  - the unowned panel window opened and navigated; its rect as an occluder.
+  - the unowned panel window opened and navigated; its rect as an occluder;
+  - **Save bug report (tray, Cameron 2026-09-30, 12.7):** the overlay keeps an always-on ring of platform events in the 12.7 format, with a sim snapshot every 60 s, and drops whatever is older than the oldest snapshot it still needs, so a report covers the last 5 to 6 minutes. The tray item asks the overlay for the ring, then Rust writes it after the 12.7 header (launch seed, versions, settings, monitors) to `bugreports/earl-bug-<ts>.jsonl` in the app data folder (temp file and rename, off the UI thread) and reveals it in Explorer; the folder keeps the newest 10 reports;
+  - the size cap: the ring is held under 2 MB serialized, oldest events dropped first and the header always kept; a test runs a busy 10-minute session and checks the file is under 2 MB and starts at a snapshot;
+  - privacy: a report never contains typed key contents. Typing is only the key-down counts the sim already gets (D26); a test feeds key events through the platform layer and asserts that no key code or character reaches the file;
+  - replay: a test records a scripted session on the Linux stub, saves a report, replays it from its snapshot in the sandbox (`?replay=`, M1.6) and reaches the same sim state hash at its last event.
 - **L:** `cargo test` (migration fixtures and crash steps, merge, chaos rules, schema-default fallback). **W:** W1 (migration part), W12 (existing controls, autostart, panel z-order).
 - **Dep:** M1.S. **Par:** M1.1, M1.3-M1.8.
 
@@ -2680,7 +2694,9 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 - **Accept:** 5.1-5.9 except the parachute:
   - fixed step, seeded streams, `advanceTo` and analytic `onResume`;
   - swept platforms and the item bounce cap (Earl has no bounces in Normal, 5.3);
-  - **v1 fling parity (5.4.5, Cameron 2026-09-29):** `test/sim/v1-fling-parity.test.ts` passes on all 13 fixtures in `test/fixtures/v1-fling/` (slow drop, gentle right, fast left, fast right, diagonal down, straight down, straight down fast, upward, upward straight, wall slide, wall tumble, the v1 cap case, high drop), chute off, no windows or items, with the ground placed at the fixture's `groundY` (or compared relative to the ground). Tolerances: landing x and every 50 ms path sample within 1 px; time to land and settle time within 1 step (16.7 ms); bounces exactly 0; wall contacts and ceiling hits exact; control time within 2 steps (33 ms). The chute pass of 5.4.5 runs in M1.9;
+  - **v1 fling parity (5.4.5, Cameron 2026-09-29):** `test/sim/v1-fling-parity.test.ts` passes on all 16 fixtures in `test/fixtures/v1-fling/` (slow drop, gentle right, fast left, fast right, diagonal down, straight down, straight down fast, upward, upward straight, wall slide, wall tumble, the v1 cap case, high drop, upward under min, upward over min, ceiling; `ceiling` exercises the F2 ceiling hit), chute off, no windows or items, with the ground placed at the fixture's `groundY` (or compared relative to the ground). Tolerances: landing x and every 50 ms path sample within 1 px; time to land and settle time within 1 step (16.7 ms); bounces exactly 0; wall contacts and ceiling hits exact; control time within 2 steps (33 ms). The chute pass of 5.4.5 runs in M1.9;
+  - in a fling, walls and the ceiling use the size-px frame box, and v2's feet-centre `Body` maps to a fixture's box as `boxLeft = x - size / 2`, `boxTop = y - size` (5.4.3);
+  - the upward-release rule (5.4.3): `upward-under-min` and `upward-over-min` pin the 200 px/s minimum, and a unit test pins the 100 ms freshness check;
   - v1's release velocity (5 samples, endpoint difference, no cap but the 20000 px/s guard), tiers and constants (gravity 1200, terminal 600), none scaled by size; upward throws kept (F1) with the 0.6 ceiling (F2);
   - v1's hold and lean (5.4.2), frame-rate independent (F8);
   - gesture thresholds;
@@ -2734,8 +2750,14 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 
 **M1.6 Sandbox, e2e harness, metrics**
 - **Files:** `sandbox/**` (extending the M1.S minimal sandbox: taskbar visible / auto-hide / fullscreen / d3d toggles, height and edge, scale, keyboard to `typing://burst` and `userBusy`, shell-popup toggle, a zones debug layer that tints the roam range and the allowed zones, JSONL replay), `e2e/**`, `src/sim/metrics/**` (visual signature, per-level visibility, visits, zones, expression, cause and voice metrics), the CI summary step.
-- **Accept:** 12.1 (except fake windows, which move to M3.1b) and 12.6; `metrics.json` in the CI summary; replay of JSONL recordings.
-- **L:** e2e green. **W:** -.
+- **Accept:** 12.1 (except fake windows, which move to M3.1b) and 12.6; `metrics.json` in the CI summary; replay of JSONL recordings and bug reports (12.7). Plus:
+  - **`windows-e2e` (Cameron 2026-09-30, 12.4):** a job in `ci-rust.yml` on GitHub-hosted `windows-latest`, after `windows`, runs the raw `earl.exe` artifact and drives it with `e2e-win/drive.ps1` (PowerShell calling `SendInput`, UI Automation and `System.Drawing` through `Add-Type`; no new dependency). It triggers like every workflow (pull_request, push to `v2` and `master`).
+  - **Step 1, desktop proof, first on the M0.4 spike build:** launch, wait for the overlay, take a full-screen screenshot, and check that Earl's pixels are drawn (they differ, at his rect, from a screenshot taken before launch) and that the desktop shows through 10 px beside him. Known: GitHub documents its hosted Windows images as running the runner in an auto-logged-on interactive session where UI tests and screenshots work, at a 1024x768 default resolution and with no GPU, so WebView2 renders in software (WARP or SwiftShader). Not known until the proof runs: whether a transparent, topmost, layered WebView2 overlay composites in that session. If the proof fails, in order: set a larger resolution and retry; a self-hosted Windows runner (a VM with autologon; Cameron's call, since it costs a machine); otherwise the job stays a smoke test (launch, no crash, a clean log after 60 s) and the interactive checks stay manual in W4 and W5. The job is non-blocking (`continue-on-error`) until the proof passes on `v2`, then it becomes a required check.
+  - **Step 2, drive:** the app runs with `EARL_RECORD=1`, a fixed seed and an e2e hold-still flag (so Earl stays where the script expects him); a click on Earl, a 300 px pickup-drag and release, and a fling released at about 1500 px/s are each checked against the recorded events (a click reaction; held, then landed; a TUMBLING landing within 3 s).
+  - **Focus:** with Notepad in front, the script types a fixed 40-character string and clicks and drags Earl between keystrokes; the Notepad text must equal the string exactly and Notepad must still be the foreground window.
+  - **Click-through:** a small test window under Earl's transparent corner, 10 px from his opaque pixels, must receive a click aimed there; the same click on his body must not reach it.
+  - **Artifacts:** a screenshot per step and a short video of the run (ffmpeg `gdigrab` if the image has ffmpeg, else a 5 fps PNG frame sequence, zipped), kept 14 days. A 20-minute timeout and no automatic retries, so a flaky step shows as a failure and gets fixed.
+- **L:** e2e green. **W:** the `windows-e2e` proof result is recorded in `docs/TESTING.md`.
 - **Dep:** M1.S. **Par:** all M1.
 
 **M1.7 Panel window (Settings and About)**
@@ -2924,7 +2946,7 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 **No hard date (Q14, answered).** Every milestone (M1 to M5) ships as a `v2-preview` build to Cameron; the release to Juliette waits for P0 and P1 art to be final (M5.3).
 
 **M6.1 Release candidate**
-- **Accept:** `bump-version` to 2.0.0; a signed draft release (Q9); the full checklist W1-W17 run on the draft, including upgrades from v1 NSIS and v1 MSI and a clean VM with Smart App Control On.
+- **Accept:** `bump-version` to 2.0.0; a draft release, unsigned unless the six `AZURE_*` settings were added (Q9, 4.12), whose notes carry the install note from `docs/TESTING.md`; the full checklist W1-W17 run on the draft, including upgrades from v1 NSIS and v1 MSI and a clean VM with Smart App Control On.
 - **Dep:** M5.3.
 
 **M6.2 Ship**
@@ -2944,19 +2966,19 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 | WebView2 occlusion throttling freezes rAF | Low / high | The `CalculateNativeWinOcclusion` flag in the shared `BROWSER_ARGS`, tested first. |
 | Earl covers shell popups or the panel | Medium / medium | No topmost reassert on taskbar focus; shell popups, other-process topmost windows and the foreground panel are occluders (4.1, D9); W6, W12. |
 | Topmost fights with video players or other overlays | Medium / low | Reassert policy with a rate limit and give-up. |
-| Smart App Control blocks an unsigned install on Juliette's fresh Windows 11 | Medium / high | Q9 answered: sign with Azure Trusted Signing; W1 on a clean VM with SAC On. |
+| Smart App Control blocks an unsigned install on Juliette's fresh Windows 11 | Medium / high | v2 ships unsigned for now (Cameron 2026-09-30, Q9). Before M6 Cameron checks Smart App Control on her PC (the install note in `docs/TESTING.md`); if it is not Off, adding the six `AZURE_*` settings turns the dormant CI signing on. W1 on a clean VM with SAC On records whether unsigned Earl is blocked. |
 | Antivirus flags an exe using raw input, SetCursorPos and a global hotkey | Medium / medium | No LL hooks; raw input only while the feature is on (off by default); Defender check W10; signing (Q9). |
 | Raw input registration conflicts with tao | High without the fix / medium | `DeviceEventFilter::Always`; earl-platform is the only owner; debug assertion (D26). |
 | Auto-hide slide makes the clip line lag | Medium / low | 30 Hz rect poll only while sliding. |
 | AI art drifts off-model between poses | High / medium | Edit-mode generation from approved masters; ovl alignment; art lint and checks; contact sheets; placeholders keep the code moving. |
-| Cameron makes 133 images in a style he did not choose | Medium / high | Q2 is a hard gate before Batch A; the 4 masters are approved next to v1 first (D20). |
+| Cameron makes 135 images in a style he did not choose | Medium / high | Q2 is a hard gate before Batch A; the 4 masters are approved next to v1 first (D20). |
 | Anti-aliased art at large sizes looks soft at 150-200% | Low / low | The 512 export level (D19). |
 | The behavior feel is still "robotic" despite the design | Medium / high | Visual-signature metrics gate merges; whims, episodic callbacks, attention and the onboarding arc; time-warp debug overlay; tuning override hot reload; Cameron's subjective hour each milestone, tagged with fallback shares. |
 | The `mostly` and `always` levels (behind the taskbar as home) make him a static head most of the time | Low (the default is now on top, D1) / medium | The full-body wade lane and the per-level visibility floors (5.6, 12.6). |
 | At `sometimes` (the default) he never actually slips behind, so the behavior Cameron's words imply is invisible | Medium / medium | Scored visit reasons (sulk, nap, shy, busy peek, curiosity) and the "≥ 2 visits per awake hour" gate (5.6, 12.6). |
 | A narrow roam range or several zones off make him feel caged and repetitive | Medium / medium | Minimum span 25%; soft walls instead of bonks; the restricted-zones scenario must still meet the variety and static-stretch budgets (12.2, 12.6). |
 | The first hour with Juliette reads as unfriendly | Medium / high | The honeymoon arc, throw habituation and the no-avoidance-on-day-1 rule (6.4, 6.18), with scenario tests. |
-| Scope: 133 art images, 80+ behaviors, 9 items | High / medium | Milestones are independently shippable preview builds; P0/P1/P2 tiers; the code never waits on art. |
+| Scope: 135 art images, 80+ behaviors, 9 items | High / medium | Milestones are independently shippable preview builds; P0/P1/P2 tiers; the code never waits on art. |
 | Parallel workers collide | Medium / medium | Contract units own the hot files; per-owner globbed files; generated outputs not committed; one worktree per writer; at most 2 Rust builds; M1.S before the fan-out. |
 | IPC or capability drift between TS and Rust | Medium / medium | `commands.json` codegen and the `ipc-contract` xvfb job (D32). |
 | Statistical tests flake | Medium / medium | 16-seed means with spread-derived tolerances; wall-clock budgets reported, not gated (12.2, 11). |
@@ -2971,7 +2993,9 @@ Baselines live in `test/baselines/behavior-metrics.json` (a hot file owned by M2
 
 ## 15. Open questions for Cameron
 
-Cameron answered on 2026-09-29 (revision 3). Each question keeps its original text and recommendation, followed by its status. **One part stays open:** the server-tool installs in Q10. Q9 is answered (assume default security settings, so builds are signed) and the stray-copy half of Q10 is answered (keep them, content consolidated into `docs/SPEC.md`). Q2 is answered, and its gate still applies: Batch A waits for the lineup pick.
+Cameron answered on 2026-09-29 (revision 3). Each question keeps its original text and recommendation, followed by its status. **One part stays open:** the server-tool installs in Q10. Q9 was answered (assume default security settings, so sign) and changed on 2026-09-30 (unsigned for now) and the stray-copy half of Q10 is answered (keep them, content consolidated into `docs/SPEC.md`). Q2 is answered, and its gate still applies: Batch A waits for the lineup pick.
+
+**Second round, 2026-09-30 (revision 4, M0.7).** Cameron kept all four fling changes in 5.4.4: the upward flings with the parachute (F1, F2, F3), the fall instead of the teleport (F4), the spin and the landing squash (F13, F17) and the wriggle free (F18), each marked decided there. He asked that a release count as upward only above a minimum speed, so lift, pause, let go stays a v1 drop: 200 px/s plus a 100 ms freshness check (5.4.3). He restored v1's two missing held poses (`earl_held_up_01`, `earl_held_down_01`; F14, 135 shots), added two testing items to M1 (a `windows-e2e` CI job in M1.6 and a tray "Save bug report" in M1.2; 12.4, 12.7), skipped code signing for now (Q9), and approved clippy and rustfmt on the server (Q10) and `@types/node` (Q11, D33).
 
 1. **Taskbar default (D1, 5.6).** Your words were "when there is a taskbar he should hide behind it". The setting has four levels: `never` = always on top of the taskbar (like v1); `sometimes` = lives on top, slips behind about 15% of the time to sulk, nap or peek; `mostly` = lives behind about 60% of the time and plays on top; `always` = lives behind about 85% of the time and only hops up for things that need a real surface (windows, items, trampolining, being dragged), coming back behind within a few seconds. Behind the taskbar he is not just a head: he usually stands with his head, wings and chest showing and waddles, quacks and fidgets there, and only sinks to a chin-on-the-edge peek, eyes-only sulk or crest-only nap when the mood calls for it. Recommended was `always`. **Answered: "His home is on top of the taskbar with settings that change where he is allowed to wander." Default is now `sometimes` (home on top, slips behind by choice), and a new "Where Earl can go" group holds five wander-zone controls (D1, D35, 5.6, 9.1, 9.3).**
 2. **Art style (D20) - blocks Batch A.** Keep the originals' crisp look (hard edges, visible pixel steps at large sizes, same tan rims, no dark outlines), or move to a smooth anti-aliased plush illustration at 256 (same shapes, palette and rims)? Both are supported by the pipeline. **Recommended: make `earl_sit_idle_01` in both and decide from the lineup next to v1 at 64/96/256. If you want a default without looking: `v1-faithful`, the literal reading of "original style".** **Answered: confirmed as planned.** The gate stays: make `earl_sit_idle_01` in both style profiles and pick from the lineup next to v1 at 64/96/256; no other masters until then.
@@ -2981,9 +3005,9 @@ Cameron answered on 2026-09-29 (revision 3). Each question keeps its original te
 6. **Items in fullscreen (D6).** Hide placed items during fullscreen video, or keep them visible but click-through? **Recommended: hide** (Earl alone stays at the bottom, display-only until hovered for 600 ms). **Status: accepted default (Cameron can override).** Revision 3 adds a `stayWithItems` value to the same control for anyone who wants the toys kept, display-only (D6, D35).
 7. **v1 migration (D29).** Which v1 installer did Juliette use (setup exe or MSI)? If a v1 config is found, v2 carries over her stats and the "together since" date and greets her with a reunion instead of a first meeting. **Recommended: carry over, with the reunion.** **Status: accepted default (Cameron can override).**
 8. **Updater key.** Is the updater signing private key backed up somewhere other than GitHub secrets? Losing it blocks all future updates. **Recommended: back it up to the vault before M1.8**, and create a separate preview keypair. **Status: accepted default (Cameron can override).**
-9. **Code signing - check needed.** On Juliette's PC, what does Windows Security > App & browser control > Smart App Control say? If On or Evaluation, unsigned installers are blocked outright and Azure Trusted Signing (about $10/month, individual or Threx AI) is required. **Recommended: check before M0.2 finishes; sign if SAC is On or Evaluation, otherwise ship unsigned (one SmartScreen "Run anyway").** **Answered (2026-09-29): "Assume default security settings."** A fresh Windows 11 install ships with Smart App Control in Evaluation mode, which can block unsigned installers, so v2 is signed: Azure Trusted Signing in CI (M0.2), and W1 runs on a clean VM with SAC On.
-10. **Server tools and stray copies (D34).** Is it OK to install clippy, rustfmt, the Windows MSVC target, cargo-xwin and clang/lld/llvm, and for you to move `~/mini earl/`, `"~/mini earl /"` and `~/Downloads/earl-project.zip` to `~/archive/earl-strays-2026-03/` after the art-pipeline section is copied out? **Recommended: yes.** **Stray copies answered (2026-09-29): do not delete or move them, just consolidate.** Their only unique content (the original Art Pipeline section, the birthday snippet and the v1 notes for Claude Code) is now an appendix of `docs/SPEC.md`; the three copies stay where they are and are never a source of truth. **Server tools: still OPEN** (clippy, rustfmt, MSVC target, cargo-xwin, clang/lld/llvm install waits for Cameron's OK; the Windows CI job covers the cross-checks meanwhile).
-11. **New dev dependencies (D33).** Is it OK to add vitest, fast-check, Playwright, ESLint and Prettier, `ts-rs`, the Tauri plugins listed, and the CI-only `cargo-audit` and Dependabot? (`arc-swap`, `parking_lot` and `crossbeam-channel` were dropped.) **Recommended: yes.** **Status: accepted default (Cameron can override).**
+9. **Code signing - check needed.** On Juliette's PC, what does Windows Security > App & browser control > Smart App Control say? If On or Evaluation, unsigned installers are blocked outright and Azure Trusted Signing (about $10/month, individual or Threx AI) is required. **Recommended: check before M0.2 finishes; sign if SAC is On or Evaluation, otherwise ship unsigned (one SmartScreen "Run anyway").** **Answered (2026-09-29): "Assume default security settings."** A fresh Windows 11 install ships with Smart App Control in Evaluation mode, which can block unsigned installers, so the plan was to sign with Azure Trusted Signing in CI (M0.2). **Changed (2026-09-30): "lets skip"** (Azure Artifact Signing Basic is about 9.99 USD a month and needs a paid subscription; Cameron's is a Free Trial). v2 ships unsigned for now; the dormant CI signing path stays, so adding the six `AZURE_*` settings turns it on with no code change. Juliette sees SmartScreen once at first install (More info, Run anyway); auto-updates do not show it. If Smart App Control is On on her PC (or Evaluation turns On), unsigned Earl can be blocked: the install note in `docs/TESTING.md` says how to check, and signing is revisited if SAC is not Off. W1 still runs on a clean VM with SAC On and records the result. **Status: decided, unsigned for now.**
+10. **Server tools and stray copies (D34).** Is it OK to install clippy, rustfmt, the Windows MSVC target, cargo-xwin and clang/lld/llvm, and for you to move `~/mini earl/`, `"~/mini earl /"` and `~/Downloads/earl-project.zip` to `~/archive/earl-strays-2026-03/` after the art-pipeline section is copied out? **Recommended: yes.** **Stray copies answered (2026-09-29): do not delete or move them, just consolidate.** Their only unique content (the original Art Pipeline section, the birthday snippet and the v1 notes for Claude Code) is now an appendix of `docs/SPEC.md`; the three copies stay where they are and are never a source of truth. **Server tools: still OPEN** (clippy, rustfmt, MSVC target, cargo-xwin, clang/lld/llvm install waits for Cameron's OK; the Windows CI job covers the cross-checks meanwhile). **Update 2026-09-30:** clippy and rustfmt are approved and installed (RUSTUP_HOME on the data volume); the MSVC target, cargo-xwin and clang/lld/llvm stay open.
+11. **New dev dependencies (D33).** Is it OK to add vitest, fast-check, Playwright, ESLint and Prettier, `ts-rs`, the Tauri plugins listed, and the CI-only `cargo-audit` and Dependabot? (`arc-swap`, `parking_lot` and `crossbeam-channel` were dropped.) **Recommended: yes.** **Status: accepted default (Cameron can override).** **Update 2026-09-30:** `@types/node` (major 24, matching `.nvmrc`) is approved and added, so the config files and Node scripts are typechecked.
 12. **Toolbox hotkey (D8).** Is `Ctrl+Alt+Shift+D` OK? **Recommended: yes** (configurable, with conflict detection). **Status: accepted default (Cameron can override).**
 13. **Birthdays.** Confirm 4/4 (Juliette) and 6/23 (Cam), and the special lines. **Recommended: as written in 6.13.** **Status: accepted default (Cameron can override).**
 14. **Target date.** Is there a date v2 should be in Juliette's hands (for example, a birthday)? **Recommended: no hard date.** **Answered: no hard date.** Every milestone ships as a preview build to Cameron; the release to Juliette waits for P0+P1 art (M6).
@@ -3001,7 +3025,7 @@ Every other blocker and major issue from the four reviews is fixed in the sectio
 | alive (blocker), fix 4: scale rest_behind to `0.3·behindShare·(...)` | Taken, but the behind share is enforced by the lane, not by rest_behind alone | At `mostly` and `always` (behind the taskbar as home), most behaviors run there at wade depth; at the default `sometimes` the share comes from scored visits (5.6). Either way rest_behind only covers chin-on-edge resting, so scaling it down is right but does not by itself set the behind share. |
 | coverage: add earl_peek_side (R, P1) | Merged into `earl_peek_look` (R, P0) | One side-looking ledge frame serves both periscoping and looking around; wading now uses the real walk cycle, so a second side peek adds little. |
 | alive: earl_stand_blink at P0 | Set to P1 | The procedural eyelid (5.12) makes every frame with eyes blink from day one; a drawn stand blink is a polish item. `earl_peek_blink` stays P0 because the peek is his chin-on-edge rest on every visit behind the taskbar, which the default `sometimes` still includes (revision 3). |
-| engineering: consider Git LFS for `art/masters` | Rejected | About 133 masters at 512 px is tens of MB, well within a normal repo; LFS adds a GitHub bandwidth quota and a tool dependency for every worktree. `.gitattributes` marks PNG as binary. |
+| engineering: consider Git LFS for `art/masters` | Rejected | About 135 masters at 512 px is tens of MB, well within a normal repo; LFS adds a GitHub bandwidth quota and a tool dependency for every worktree. `.gitattributes` marks PNG as binary. |
 | engineering: tauri-specta or a commands manifest | Took the manifest (option b) | It needs no new app dependency (tauri-specta for Tauri v2 is still a release candidate), and the same manifest drives the mock types and the capability test. |
 | engineering: move sandbox replay to M3 with fake windows | Partly rejected; only fake windows move (M3.1b) | JSONL replay is part of Cameron's Windows dev loop from M1.10 on (12.7), so it stays in M1.6. |
 | engineering: "drop the 60 fps cap and only skip unchanged transform writes" (alternative) | Took the frame-pacing option instead, plus the skip | Pacing keeps high-refresh laptops from doing twice the sim-to-render work with no visible gain, and the unchanged-position skip is applied as well. |
