@@ -4,7 +4,7 @@ Cameron, this is the complete list of art for v2. You make every image with AI i
 
 **Before anything else: pick the style (plan Q2, confirmed: the gate stays as planned).** Make `earl_sit_idle_01` in both style profiles (section 1), compare them in the lineup next to v1 at 64/96/256, and tell us which one. No other masters are made until you pick, and the 4 masters are approved next to v1 before Batch A continues.
 
-**Total: 133 images** (P0: 63, P1: 59, P2: 11). The counts are summarised in section 8.
+**Total: 135 images** (P0: 63, P1: 61, P2: 11). The counts are summarised in section 8.
 
 ---
 
@@ -226,7 +226,7 @@ Edit this image. Change ONLY his face: <EYES / LIDS / BROWS / BILL>. Do not move
 
 Attach the master and ask for a wide 16:9 image. For a `baby_*` strip, end with `<BABY STYLE LOCK>` instead of `<STYLE LOCK>`. The generated prompts in `art/SHOTLIST.md` fill in `<N>` and one `Frame k` clause per frame.
 
-Sizing: a strip whose frames have no base outside the strip (`earl_walk` and the prop strips) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. Ask for the ducks to fill most of the frame height, and compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.
+Sizing: a strip based on a master outside the strip (`earl_run` on `earl_walk_02`, `baby_walk` on `baby_sit_01`, `prop_blanket` on `prop_bed_01`) is scaled so its tallest frame matches that master. A strip whose frames have no base outside the strip (`earl_walk`, `prop_bread`, and `prop_fan` and `prop_parachute`, whose later frames base their own earlier ones) is scaled the way a single raw is, one cell (raw width / frames by raw height) to the shot's canvas. In a 16:9 strip each cell is taller than wide, so the cell height sets the scale and the duck's size depends on how much of that height the generator filled. The generated strip prompts therefore swap the lock's square FRAMING line for a wide 16:9 one that asks for every figure to fill most of the frame height; compare `earl_walk_02` with `earl_sit_idle_01` on the contact sheet after import.
 
 ```
 Make a horizontal sprite strip of <N> frames of this exact duck in one row, evenly spaced, clear magenta gaps between frames, every frame the same size and on the same ground line. Facing right. Frame 1: <...>. Frame 2: <...>. Frame 3: <...>.
@@ -309,6 +309,8 @@ App icon of this duck: <CROP>. Front view, centered, filling about 88% of a squa
 | 17 | earl_held | F | 1 | Redraw of Picked_up: dangling by the scruff, big surprised eyes, feet hanging, wings slightly out. | v1 | T1 | grip | P0 |
 | 18 | earl_held_grumpy | F | 1 | Same pose, flat unimpressed lids, pouting bill. | held | T3 | ovl | P1 |
 | 19 | earl_held_side | R | 1 | Dragged sideways fast: body trailing, feet and wings streaming back, eyes squeezed, bill open. | held | T2 | grip | P1 |
+| 19a | earl_held_up | F | 1 | Lifted fast upward (v1's drag_up pose; v1 never shipped the file): body stretched long below the grip, feet dangling straight down, wings pressed to his sides, eyes wide, bill pressed shut. | held | T2 | grip | P1 |
+| 19b | earl_held_down | F | 1 | Pulled fast downward (v1's drag_down pose; v1 never shipped the file): body squashed up toward the grip, feet tucked up, wings flared out for balance, eyes squeezed, bill open. | held | T2 | grip | P1 |
 | 20 | earl_flail | F | 2 | Panic: wings up (01) and down (02), feet kicking, bill open, eyes wide. Free fall, throws, falling off windows. | held | T2 | ctr | P0 |
 | 21 | earl_tumble | F | 1 | Curled into a ball, eyes squeezed, feet tucked; the game spins it. Redraw of tumble **without motion lines**. | held | T2 | ctr | P0 |
 | 22 | earl_wall_bump | R | 1 | April redraw as a side view: hits a wall at the right edge face-first, bill and face flattened, body squashed sideways, eyes squeezed. | walk_02 | T2 | gnd | P0 |
@@ -463,8 +465,9 @@ Until these arrive, the swarm uses a small tinted Earl.
 | plop_down | earl_plop_01 |
 | stretch | earl_stretch_01 |
 | drag_left, drag_right | earl_held_side_01 |
-| drag_up | earl_held_01 (stretched in code) |
-| drag_down, drag_fast | earl_flail_01..02 |
+| drag_up | earl_held_up_01 |
+| drag_down | earl_held_down_01 |
+| drag_fast | earl_flail_01..02 |
 
 ---
 
@@ -511,9 +514,9 @@ Until these arrive, the swarm uses a small tinted Earl.
 | Tier | Earl | Baby | Props + accessories | Icons | Total |
 |---|---|---|---|---|---|
 | **P0** | 48 | 0 | 12 (parachute 3, bed 1, blanket 2, bread 4, ball 1, party hat 1) | 3 | **63** |
-| **P1** | 39 | 4 | 16 (parachute 2, seeds 3, trampoline 2, tub_back 1, tub_front 1, rubber duck 2, fan 3, umbrella 2) | 0 | **59** |
+| **P1** | 41 | 4 | 16 (parachute 2, seeds 3, trampoline 2, tub_back 1, tub_front 1, rubber duck 2, fan 3, umbrella 2) | 0 | **61** |
 | **P2** | 9 (tada 1, dizzy_02 1, scratch 2, chew 1, teeter 2, carry_overhead 2) | 1 | 1 (nightcap) | 0 | **11** |
-| **Total** | 96 | 5 | 29 | 3 | **133** |
+| **Total** | 98 | 5 | 29 | 3 | **135** |
 
 **P0 Earl frames (48):**
 - sit_idle 1, sit_blink 1, sit_quack 1, sit_side 1, stand_front 1, walk 3, run 4, sit_to_stand 1
@@ -525,15 +528,15 @@ Until these arrive, the swarm uses a small tinted Earl.
 
 (13 + 7 + 6 + 9 + 5 + 8 = 48.)
 
-**P1 Earl frames (39):**
+**P1 Earl frames (41):**
 - sit_side_blink 1, stand_blink 1, turn 1, plop 1, stretch 1, yawn 2
-- held_grumpy 1, held_side 1, sit_happy 1, stand_look_up 1
+- held_grumpy 1, held_side 1, held_up 1, held_down 1, sit_happy 1, stand_look_up 1
 - side_eye 1, sad 1, angry 1, startle 1, wiggle 1
 - sneeze 2, preen 2, honk 2, push 2
 - bounce_star 1, bounce_tuck 1, splash 1, shake 1, windblown 1, suspicious 1, nuzzle 1
 - jump_up 1, climb 2, hang_alarm 1, tug 2, peek_happy 1, peek_quack 1
 
-(7 + 4 + 5 + 8 + 7 + 8 = 39.)
+(7 + 6 + 5 + 8 + 7 + 8 = 41.)
 
 **Suggested batches:**
 - **Batch A (after the Q2 style decision):** the 4 masters, then the rest of P0 Earl.

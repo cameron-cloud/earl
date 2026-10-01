@@ -4,8 +4,9 @@ description: >-
   build. Tauri then signs earl.exe, the NSIS installer and its uninstaller
   through bundle.windows.signCommand, before the updater signature is taken,
   so the installer the updater downloads is signed too. When any signing
-  setting is missing it emits a warning and outputs enabled=false, and the
-  build runs unsigned. Pass the settings as env on the step that uses this
+  setting is missing it emits an expected "Unsigned build" notice (signing
+  is skipped for now, plan 4.12) and outputs enabled=false, and the build runs
+  unsigned. Pass the settings as env on the step that uses this
   action: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET (secrets) and
   AZURE_SIGNING_ENDPOINT, AZURE_SIGNING_ACCOUNT, AZURE_SIGNING_PROFILE
   (repository variables).

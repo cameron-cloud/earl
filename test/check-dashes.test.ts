@@ -1,6 +1,6 @@
 // Vitest smoke test: exercises the dash scanner that `npm run check:dashes` runs in CI.
 import { describe, expect, test } from "vitest";
-import { findDashes, isBinary } from "../scripts/check-dashes.mjs";
+import { findDashes, isBinary, isEntryPoint } from "../scripts/check-dashes.mjs";
 import { join, makeTempDir, removeDir, ROOT, runNode, symlink } from "./art/node-helpers.mjs";
 
 const EN = "\u2013";
@@ -37,5 +37,11 @@ describe("check-dashes", () => {
     } finally {
       removeDir(tmp);
     }
+  });
+  test("the entry-point check never throws on a path that does not exist", () => {
+    // realpathSync throws on these; importing the script (node -e, a test runner) must not.
+    expect(isEntryPoint(join(ROOT, "no-such-dir", "check-dashes.mjs"))).toBe(false);
+    expect(isEntryPoint("")).toBe(false);
+    expect(isEntryPoint(join(ROOT, "scripts", "check-dashes.mjs"))).toBe(true);
   });
 });

@@ -693,9 +693,10 @@ export async function importInbox(root, { inbox, profile, keep = false, log = co
 
 /**
  * The scale for every frame of a strip, so the frames keep their sizes relative to each other.
- * A strip whose frames derive from a master outside the strip (earl_run on earl_walk_02) is
- * scaled so its tallest frame matches that master. Any other strip (earl_walk and the prop
- * strips have no base; prop_fan's base is its own first frame) is scaled the way a single raw
+ * A strip whose frames derive from a master outside the strip (earl_run on earl_walk_02,
+ * baby_walk on baby_sit_01, prop_blanket on prop_bed_01) is scaled so its tallest frame matches
+ * that master. Any other strip (earl_walk and prop_bread have no base; prop_fan and
+ * prop_parachute base later frames on their own earlier ones) is scaled the way a single raw
  * is: each evenly spaced cell, raw width / frames by raw height, fills the shot's canvas.
  */
 export function stripScaleFor(shot, frames, segs, raw, masterOf) {

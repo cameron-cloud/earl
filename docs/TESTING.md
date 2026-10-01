@@ -38,10 +38,25 @@ Every pull request (any base branch) and every push to `v2` or `master` runs:
 | `ci.yml` | `e2e` | Playwright on Chromium; uploads `playwright-report` |
 | `ci.yml` | `audit` | `npm audit --audit-level=high`, `cargo audit` |
 | `ci-rust.yml` | `rust` | Linux fmt, clippy `-D warnings`, `cargo test`, version agreement, bump-version self test |
-| `ci-rust.yml` | `windows` | Windows clippy, `cargo test`, a signed NSIS build with `EARL_BUILD=<branch>@<sha7>`; uploads `earl-windows-<run>` (setup exe and raw `earl.exe`, 14 days) |
+| `ci-rust.yml` | `windows` | Windows clippy, `cargo test`, an NSIS build (unsigned for now, see below) with `EARL_BUILD=<branch>@<sha7>`; uploads `earl-windows-<run>` (setup exe and raw `earl.exe`, 14 days) |
 
-`release.yml` runs on a `v*` tag and drafts a signed release. A Windows run takes about 10
+`release.yml` runs on a `v*` tag and drafts a release (unsigned for now). A Windows run takes about 10
 minutes. To test a branch on Windows, download `earl-windows-<run>` from the run's summary page.
+
+Code signing is skipped for now (Cameron 2026-09-30; plan 4.12, Q9). Every Windows build shows
+an "Unsigned build (expected)" notice in its run summary. That is not a failure. Adding the six
+`AZURE_*` settings (three repository secrets, three repository variables) turns signing on with
+no code change.
+
+## Installing an unsigned build (note for Juliette; M6.1 copies it into the release notes)
+
+1. The first time the installer runs, Windows may show **Windows protected your PC**
+   (SmartScreen). Click **More info**, then **Run anyway**. This happens once, at first install.
+2. Auto-updates do not show it: Earl downloads and installs them himself.
+3. Smart App Control can block an unsigned app outright, with no Run anyway button. Check
+   **Windows Security > App & browser control > Smart App Control**. If it says **On**, or
+   **Evaluation** (which can turn itself On later), unsigned Earl can be blocked: tell Cameron,
+   and signing gets revisited. If it says **Off**, nothing more is needed.
 
 ## Windows checklist (plan 12.5)
 

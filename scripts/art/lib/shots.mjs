@@ -350,11 +350,18 @@ const EDGES = {
 };
 
 /** The ready-to-paste prompt for one template of one shot. */
+// A strip (T4) is one wide 16:9 image, so the style lock's square FRAMING line would contradict
+// it, and a small duck in a tall cell imports small (ART_SHOTLIST T4 sizing note).
+const STRIP_FRAMING =
+  "FRAMING: wide 16:9 image, one row of frames, every figure whole and not cropped and drawn " +
+  "large enough to fill most of the frame height, all on the same ground line.";
+
 export function shotPrompt(doc, shot, key) {
   const tpl = new Map(doc.templates.map((t) => [t.key, t.body]));
   const lockKey = shot.kind === "baby" ? "BABY_STYLE_LOCK" : "STYLE_LOCK";
   let text = tpl.get(key) || "";
   text = text.replace(/<(BABY )?STYLE LOCK>/g, tpl.get(lockKey) || "");
+  if (key === "T4") text = text.replace(/^FRAMING: square image.*$/m, STRIP_FRAMING);
   if (doc.profile && EDGES[doc.profile]) {
     text = text.replace(/<EDGES: v1-faithful = "[^"]*" \| smooth = "[^"]*">/g, (m) =>
       m.includes("crisp sprite edges") ? EDGES[doc.profile].lock : EDGES[doc.profile].t1,
