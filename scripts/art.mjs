@@ -2,7 +2,7 @@
 // Earl art pipeline CLI (plan D19, docs/ART.md).
 //   node scripts/art.mjs import [--inbox <dir>] [--profile v1-faithful|smooth] [--keep]
 //   node scripts/art.mjs build | check | status | templates | shots   [--root <dir>]
-//   node scripts/art.mjs shots --json   (also prints every finished prompt as JSON, docs/ART.md)
+//   node scripts/art.mjs shots --json   (prints every finished prompt as JSON, writes nothing, docs/ART.md)
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -93,14 +93,24 @@ async function main() {
       const file = path.join(root, PATHS.shots);
       const prev = fs.existsSync(file) ? loadDoc(root) : null;
       const doc = regenerateDoc(root, prev);
-      const a = writeIfChanged(file, stringifyDoc(doc));
-      const b = writeIfChanged(path.join(root, PATHS.shotlist), renderShotlist(doc));
+      const json = stringifyDoc(doc);
+      const md = renderShotlist(doc);
+      const mdFile = path.join(root, PATHS.shotlist);
       if (flags.json) {
+        // Read-only, so a page builder never dirties the tree: the catalog comes from the shot
+        // list as it is now, and stale generated files only get a note on stderr.
+        const same = (f, content) => fs.existsSync(f) && fs.readFileSync(f, "utf8") === content;
+        if (!same(file, json) || !same(mdFile, md))
+          process.stderr.write(
+            `art:shots: ${PATHS.shots} or ${PATHS.shotlist} is stale; run npm run art:shots\n`,
+          );
         // Wait for the flush: process.exit right after a write cuts a piped stdout short.
         const text = `${JSON.stringify(promptCatalog(doc), null, 2)}\n`;
         await new Promise((resolve) => process.stdout.write(text, resolve));
         return 0;
       }
+      const a = writeIfChanged(file, json);
+      const b = writeIfChanged(mdFile, md);
       const frames = doc.shots.reduce((s, x) => s + x.frames, 0);
       log(
         `art:shots: ${doc.shots.length} shots, ${frames} frames${a || b ? " (updated)" : " (unchanged)"}`,

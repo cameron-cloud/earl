@@ -37,7 +37,7 @@ All commands take `--root <dir>` (default: the repo root).
 | `npm run art:check` | Everything `art:build` checks, plus the project checks below, and writes the contact sheet. Exits non-zero on any ERR. CI runs it. |
 | `npm run art:status` | Per tier, per shot, per frame status with lint codes, then the coverage report. |
 | `npm run art:shots` | Regenerates `art/shots.json` and `art/SHOTLIST.md` from `docs/ART_SHOTLIST.md`. Run it after editing the shot list; `art:check` and a unit test fail while either file is stale. |
-| `node scripts/art.mjs shots --json` | The same, then prints every shot, frame and finished prompt as JSON (see `art/shots.json` below). |
+| `node scripts/art.mjs shots --json` | Prints every shot, frame and finished prompt as JSON (see `art/shots.json` below). Read-only: it writes nothing. |
 | `npm run art:templates` | Writes framing templates (safe area, baseline, anchor) per canvas to `art/templates/` (gitignored), for image-to-image prompts. |
 
 ## The inbox
@@ -186,8 +186,11 @@ doubled period, a file name or a sentence that does not start with a capital.
 
 ### Machine-readable prompts: `node scripts/art.mjs shots --json`
 
-Regenerates like `art:shots`, then prints every prompt as JSON on stdout, for the art guide page
-builder: `node scripts/art.mjs shots --json > prompts.json`. The shape (typed as `PromptCatalog`
+Prints every prompt as JSON on stdout, for the art guide page builder:
+`node scripts/art.mjs shots --json > prompts.json`. It is read-only: the catalog is built in memory
+from `docs/ART_SHOTLIST.md` as it is now, so it is always current, and it never writes
+`art/shots.json` or `art/SHOTLIST.md`. When those are stale it says so on stderr (run
+`npm run art:shots`); stdout stays pure JSON. The shape (typed as `PromptCatalog`
 in `scripts/art/lib/index.d.mts`):
 
 - `profile` (the picked style profile or `null`), `defaultProfile`, `profiles`, `templates`

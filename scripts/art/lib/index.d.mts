@@ -165,6 +165,8 @@ export interface PromptUnit {
   file: string;
 }
 export declare function promptUnits(shot: Shot): PromptUnit[];
+/** Whether frame k (1-based) is posed in the air: anchor ctr, grip or hang, following ovl bases. */
+export declare function inAir(doc: ShotsDoc, shot: Shot, k: number): boolean;
 export declare function shotPrompt(
   doc: ShotsDoc,
   shot: Shot,
@@ -216,6 +218,8 @@ export interface PromptCatalog {
 export declare function promptCatalog(doc: ShotsDoc): PromptCatalog;
 export declare function catalogProblems(catalog: PromptCatalog): string[];
 export declare function listFrames(doc: ShotsDoc): Frame[];
+/** The anchor a frame is aligned by: an ovl frame follows its base chain (gnd when it ends nowhere). */
+export declare function resolvedAnchor(frame: Frame, framesById: Map<string, Frame>): string;
 export declare function loadDoc(root: string): ShotsDoc;
 export declare function regenerateDoc(root: string, prev: ShotsDoc | null): ShotsDoc;
 export declare function stringifyDoc(doc: ShotsDoc): string;

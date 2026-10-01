@@ -404,11 +404,44 @@ const STRIP_FRAMING =
   "FRAMING: wide 16:9 image, one row of frames, every figure whole and not cropped and drawn " +
   "large enough to fill most of the frame height, all on the same ground line.";
 
-// T2 asks for the feet on the ground line; a pose aligned in the air (ART_SHOTLIST section 3) says so instead.
+// A climb strip (wall anchor) is lined up on the wall, not the ground: its frames share a height.
+const WALL_STRIP = [
+  [
+    "every frame the same size and on the same ground line",
+    "every frame the same size and at the same height",
+  ],
+  ["all on the same ground line.", "all at the same height."],
+];
+
+// A pose aligned in the air (ART_SHOTLIST section 3: ctr, grip, hang, or an expression edit of
+// one) is never told about a ground line. T2 swaps its ground-line sentence for a mid-air one, and
+// every template swaps the lock's FRAMING line: a new pose (T2) is centered like the mid-air
+// sentence says, while a redraw (T1) or face edit (T3) keeps the reference's position.
 const AIR_ANCHORS = new Set(["ctr", "grip", "hang"]);
 const GROUND_LINE = "Keep his feet on the same ground line and his body centered.";
-const MID_AIR =
-  "He is in mid-air, so his feet do not touch the ground line; keep his body centered on the canvas.";
+const MID_AIR = "He is in mid-air, not standing on anything; keep his body centered on the canvas.";
+const SQUARE_FRAMING = /^FRAMING: square image.*$/m;
+const AIR_FRAMING_POSE =
+  "FRAMING: square image, whole duck visible and not cropped, same size as the reference, body " +
+  "centered on the canvas.";
+const AIR_FRAMING_KEEP =
+  "FRAMING: square image, whole duck visible and not cropped, same size and same position on " +
+  "the canvas as the reference, in mid-air like the reference.";
+
+/** Whether frame k of a shot is posed in the air: its anchor, or the one its ovl base chain resolves to. */
+export function inAir(doc, shot, k) {
+  let s = shot;
+  let n = k;
+  for (let guard = 0; s && guard < 8; guard++) {
+    const anchor = s.anchors[n - 1];
+    if (anchor !== "ovl") return AIR_ANCHORS.has(anchor);
+    const m = /^(.+)_(\d{2})$/.exec(s.bases[n - 1] || "");
+    if (!m) return false;
+    s = doc.shots.find((x) => x.id === m[1]);
+    n = Number(m[2]);
+  }
+  return false;
+}
 
 // Template placeholder -> the section 9 value that fills it.
 const SLOTS = {
@@ -478,7 +511,9 @@ export function shotPrompt(doc, shot, key, { frame = 1, profile = null } = {}) {
   const values = shot.values || [];
   if (key === "T4") {
     const ks = promptUnits(shot).find((u) => u.strip)?.frames || [];
-    text = text.replace(/^FRAMING: square image.*$/m, STRIP_FRAMING);
+    text = text.replace(SQUARE_FRAMING, () => STRIP_FRAMING);
+    if (ks.every((k) => shot.anchors[k - 1] === "wall"))
+      for (const [from, to] of WALL_STRIP) text = text.replace(from, to);
     if (shot.kind === "baby") text = text.replace("this exact duck", "this exact baby duckling");
     text = text.replace("<N>", String(ks.length));
     return text.replace(/Frame 1: <\.\.\.>\.(?: Frame \d+: <\.\.\.>\.)*/, () =>
@@ -486,8 +521,10 @@ export function shotPrompt(doc, shot, key, { frame = 1, profile = null } = {}) {
     );
   }
   const v = values[frame - 1]?.[key] || {};
-  if (key === "T2" && AIR_ANCHORS.has(shot.anchors[frame - 1]))
-    text = text.replace(GROUND_LINE, MID_AIR);
+  if (inAir(doc, shot, frame)) {
+    if (key === "T2") text = text.replace(GROUND_LINE, MID_AIR);
+    text = text.replace(SQUARE_FRAMING, () => (key === "T2" ? AIR_FRAMING_POSE : AIR_FRAMING_KEEP));
+  }
   return text.replace(/<([^<>]+)>/g, (m, name) => (SLOTS[name] && v[SLOTS[name]]) || m);
 }
 
@@ -527,7 +564,13 @@ function attachFor(shot, unit) {
     case "T7":
       return [k > 1 && (!base || !base.startsWith(`${shot.id}_`)) ? own(1) : base || own(1)];
     default:
-      return ["earl_sit_idle_01", ...(base && !base.startsWith(`${shot.id}_`) ? [base] : [])];
+      // A shot drawn on earl_sit_idle_01 itself (baby_sit_01, the icons) attaches it once.
+      return [
+        ...new Set([
+          "earl_sit_idle_01",
+          ...(base && !base.startsWith(`${shot.id}_`) ? [base] : []),
+        ]),
+      ];
   }
 }
 
